@@ -15,7 +15,7 @@ const StyledHeadingTitle = styled.p`
   font-weight: ${({ weight }) => (weight ? weight : "400")};
   font-size: ${({ size }) => (size ? `var(--text-${size})` : "var(--text-md)")};
   color: ${({ color }) =>
-    color ? `var(--neutral-400)` : "var(--neutral-600)"};
+    color ? `var(--neutral-200)` : "var(--neutral-600)"};
 `;
 
 const SubHeading = ({ title, size, justify, weight, color, align }) => {

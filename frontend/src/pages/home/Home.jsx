@@ -4,6 +4,7 @@ import Collections from "../../components/home/Collections";
 import BestSeller from "../../components/home/BestSeller";
 import Banner from "../../components/home/Banner";
 import Gallery from "../../components/home/Gallery";
+import Cta from "../../components/home/Cta";
 
 const HomePage = () => {
   return (
@@ -13,6 +14,7 @@ const HomePage = () => {
       <BestSeller />  
       <Banner />
       <Gallery />
+      <Cta />
     </>
   );
 };

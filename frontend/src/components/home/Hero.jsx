@@ -1,9 +1,8 @@
-import { ChevronDoubleDownIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
-import { Form } from "react-router-dom";
 
 const StyledHeroContent = styled.div`
   width: 100%;
@@ -32,14 +31,14 @@ const StyledHeroBg = styled.div`
 const StyledLogo = styled.div`
   width: 100%;
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   z-index: 35;
   img {
-    /* width: 50%; */
+    width: 80%;
     height: 100%;
     object-fit: cover;
   }
@@ -47,8 +46,8 @@ const StyledLogo = styled.div`
 const StyledLinkBottom = styled.div`
   position: absolute;
   bottom: 2rem;
-  z-index: 45;
   left: 50%;
+  z-index: 45;
   transform: translateX(-50%);
   display: flex;
   justify-content: center;
@@ -56,10 +55,10 @@ const StyledLinkBottom = styled.div`
   animation: chevron 1.5s ease infinite;
   @keyframes chevron {
     from {
-      transform: translateY(-10px);
+      transform: translateY(-5px) translateX(-50%);
     }
     to {
-      transform: translateY(10px);
+      transform: translateY(5px) translateX(-50%);
     }
   }
 `;
@@ -69,24 +68,17 @@ const Hero = () => {
   gsap.registerPlugin(ScrollTrigger);
 
   useEffect(() => {
-    gsap.fromTo(
-      logoRef.current,
-      {
-        width: "100%",
-        top: "50%"
+    gsap.to(logoRef.current, {
+      width: 250,
+      top: "80%",
+      duration: 0.2,
+      scrollTrigger: {
+        trigger: logoRef.current,
+        start: "bottom bottom",
+        end: "bottom 10%",
+        scrub: true,
       },
-      {
-        width: 120,
-        top: "0",
-        scrollTrigger: {
-          trigger: logoRef.current,
-          start: "bottom ",
-          end: "bottom top",
-          scrub: true,
-          markers: true
-        },
-      }
-    );
+    });
   }, []);
   return (
     <>
@@ -101,7 +93,7 @@ const Hero = () => {
           />
         </StyledLogo>
         <StyledLinkBottom>
-          <ChevronDoubleDownIcon width={40} height={40} />
+            <ChevronDownIcon width={40} height={40} />
         </StyledLinkBottom>
       </StyledHeroContent>
     </>

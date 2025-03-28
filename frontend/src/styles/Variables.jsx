@@ -43,6 +43,7 @@ const Variables = css`
     /* border */
     --b-c: #253046bd;
     --b-f: #4a5565;
+    --darken: #000;
 
     /* Semantic Colors */
     --success-100: hsla(143.05882352941177, 100%, 50%, 0.175);

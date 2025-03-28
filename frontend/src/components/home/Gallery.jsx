@@ -12,6 +12,9 @@ const StyledGallery = styled.section`
   width: 100%;
   margin-top: 5rem;
   direction: ltr;
+  .swiper-slide {
+    width: 38rem !important;
+  }
 `;
 const StyledGalleryList = styled.section`
   padding-top: 5rem;
@@ -141,7 +144,7 @@ const Gallery = () => {
                 <StyledProductCard>
                   <StyledProductImage>
                     <img
-                      src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/99_a8114ef7-6e09-41e8-9421-c5e3c61f3cf7.jpg?crop=region&crop_height=2048&crop_left=204&crop_top=0&crop_width=1638&v=1722634867&width=720"
+                      src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720"
                       alt=""
                     />
                   </StyledProductImage>

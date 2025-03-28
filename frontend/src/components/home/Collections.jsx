@@ -91,7 +91,7 @@ const StyledCollLink = styled.div`
 
 const Collections = () => {
   return (
-    <StyledCollection>
+    <StyledCollection id="collections">
       {/* <Heading title={'مـجمـوعـــاتنـا'} weight={500}/> */}
       <StyledCollList>
         <StyledCollectionItem>

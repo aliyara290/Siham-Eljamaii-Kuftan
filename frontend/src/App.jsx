@@ -1,15 +1,11 @@
 import { useState } from "react";
-import GlobalStyle from "./styles/GlobalStyle";
 import HomePage from "./pages/home/Home";
-import Layouts from "./layouts/Layouts";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
     <>
-      <GlobalStyle />
-      <Layouts>
-        <HomePage />
-      </Layouts>
+        <AppRoutes />
     </>
   );
 }

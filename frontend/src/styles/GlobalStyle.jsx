@@ -59,8 +59,7 @@ img {
   -webkit-user-drag: none;
 }
 .swiper-slide {
-    margin-top: 0.5rem;
-    width: 340px !important;
+    
     &:first-child {
         margin-left: 2rem;
     } 
