@@ -1,178 +1,497 @@
-import React from "react";
+const StyledLanguageDropdown = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const StyledLanguageToggle = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  cursor: pointer;
+  padding: 0.8rem 1.2rem;
+  background-color: var(--bg-secondary, var(--neutral-50));
+  border: 1px solid var(--border-color, var(--neutral-300));
+  border-radius: 0.4rem;
+  transition: all 0.3s ease;
+  width: 12rem;
+  margin-right: 2rem;
+  
+  span {
+    font-weight: 500;
+    font-size: var(--text-sm);
+    color: var(--text-primary, var(--neutral-700));
+  }
+  
+  svg {
+    color: var(--neutral-600);
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    background-color: var(--neutral-200);
+  }
+`;
+
+const StyledLanguageList = styled.ul`
+  max-height: ${({ isOpen }) => (isOpen ? "110px" : "0")};
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
+  background-color: var(--white);
+  border: ${({ isOpen }) => (isOpen ? "1px solid var(--neutral-300)" : "none")};
+  border-radius: 0.4rem;
+  width: 12rem;
+  position: absolute;
+  bottom: 100%;
+  right: 2rem;
+  z-index: 10;
+  box-shadow: ${({ isOpen }) => (isOpen ? "0 4px 8px rgba(0, 0, 0, 0.1)" : "none")};
+  margin-bottom: 0.5rem;
+`;
+
+const StyledLanguageItem = styled.button`
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  color: var(--text-primary, var(--neutral-600));
+  font-size: var(--text-sm);
+  transition: all 0.25s ease;
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  text-align: right;
+  
+  &:hover {
+    color: var(--primary-600);
+    background-color: var(--neutral-100);
+  }
+  
+  &.active {
+    color: var(--primary-600);
+    font-weight: 500;
+    position: relative;
+    background-color: var(--neutral-50);
+  }
+`;import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-// import { Facebook, Instagram, Twitter, TikTok } from 'lucide-react';
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const StyledFooter = styled.footer`
-  display: flex;
-  flex-direction: column;
-  padding: 4rem;
-  padding-bottom: 0;
+  background-color: var(--bg-secondary, var(--neutral-50));
+  padding: 5rem 4rem 0;
+  border-top: 1px solid var(--border-color, var(--neutral-200));
+  color: var(--text-primary, var(--neutral-900));
+  transition: background-color 0.3s ease, color 0.3s ease;
 `;
-const StyledFooterBottom = styled.footer`
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid #00000030;
-  padding: 2rem 0;
-`;
-const FooterContainer = styled.footer`
+
+const FooterContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
   padding-bottom: 4rem;
-  background-color: var(--white);
-  font-size: var(--text-md);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const FooterColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.2rem;
 `;
 
 const ColumnTitle = styled.h4`
-  font-weight: bold;
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
+  font-weight: 600;
   color: var(--neutral-900);
-  margin-bottom: 0.5rem;
-`;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
 
-const FooterLink = styled.a`
-  color: var(--neutral-800);
-  text-decoration: none;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #666;
+  &:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -0.5rem;
+    width: 3rem;
+    height: 2px;
+    background-color: var(--neutral-300);
   }
 `;
 
-const SocialIcons = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+const FooterLink = styled(Link)`
+  color: var(--neutral-700);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: var(--text-md);
+  
+  &:hover {
+    color: var(--neutral-900);
+    transform: translateX(-5px);
+  }
+`;
+
+const FooterText = styled.p`
+  color: var(--neutral-600);
+  line-height: 1.6;
+  font-size: var(--text-md);
 `;
 
 const PaymentIcons = styled.div`
   display: flex;
   gap: 1rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
+  
   img {
     width: 45px;
+    height: auto;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-3px);
+    }
   }
 `;
 
+const SocialIcons = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+`;
+
+const SocialIconLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--white);
+  color: var(--neutral-700);
+  transition: all 0.3s ease;
+  border: 1px solid var(--neutral-200);
+  
+  &:hover {
+    color: var(--neutral-900);
+    background-color: var(--neutral-100);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+`;
+
+const ThemeToggleButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--white);
+  color: var(--neutral-700);
+  transition: all 0.3s ease;
+  border: 1px solid var(--neutral-200);
+  cursor: pointer;
+  
+  &:hover {
+    color: var(--neutral-900);
+    background-color: var(--neutral-100);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  &.dark-mode {
+    background-color: var(--neutral-800);
+    color: var(--neutral-100);
+  }
+`;
+
+const FooterBottom = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 0;
+  border-top: 1px solid var(--neutral-200);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+`;
+
+const Copyright = styled.p`
+  color: var(--neutral-600);
+  font-size: var(--text-sm);
+`;
+
+const FooterNav = styled.div`
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+`;
+
+const FooterNavLink = styled(Link)`
+  color: var(--neutral-600);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: var(--neutral-900);
+  }
+`;
+
+
+
 const Footer = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('العربية');
+
+  const toggleLanguage = () => setLanguageOpen(!languageOpen);
+  
+  const changeLanguage = (lang) => {
+    setCurrentLanguage(lang);
+    setLanguageOpen(false);
+  };
+
+  useEffect(() => {
+    // Check if dark mode is stored in localStorage
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode) {
+      setDarkMode(JSON.parse(savedMode));
+    } else {
+      // Check user's preferred color scheme
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDarkMode(prefersDarkMode);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply dark mode to document
+    if (darkMode) {
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+    }
+    // Save the preference
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => !prevMode);
+  };
   return (
     <StyledFooter>
       <FooterContainer>
         <FooterColumn>
-          <ColumnTitle>المنتجات</ColumnTitle>
-          <FooterLink href="#">فستان</FooterLink>
-          <FooterLink href="#">بليزر</FooterLink>
-          <FooterLink href="#">تنورة</FooterLink>
-          <FooterLink href="#">بنطلون</FooterLink>
-          <FooterLink href="#">جاكيت</FooterLink>
+          <ColumnTitle>القائمة الرئيسية</ColumnTitle>
+          <FooterLink to="/collection/kuftan">قفطان</FooterLink>
+          <FooterLink to="/collection/jewelry">مجوهرات</FooterLink>
+          <FooterLink to="/collection/jlaba">جلابة</FooterLink>
+          <FooterLink to="/collections/bestseller">الأكثر مبيعاً</FooterLink>
+          <FooterLink to="/collections/new">وصل حديثاً</FooterLink>
         </FooterColumn>
-        <FooterColumn>
-          <ColumnTitle>الخدمات</ColumnTitle>
-          <FooterLink href="#">الأسئلة الشائعة</FooterLink>
-          <FooterLink href="#">الشحن</FooterLink>
-          <FooterLink href="#">اتصل بنا</FooterLink>
-        </FooterColumn>
-        <FooterColumn>
-          <ColumnTitle>معلومات</ColumnTitle>
-          <FooterLink href="#">من نحن</FooterLink>
-          <FooterLink href="#">الإرجاع والاسترجاع</FooterLink>
-          <FooterLink href="#">المجال القانوني</FooterLink>
-        </FooterColumn>
-        <FooterColumn>
-          <ColumnTitle>عنا</ColumnTitle>
-          <p>
-            لم نكن لننجح لولا المصادر الرائعة للمحتوى والمنتجات. تفضل بزيارة
-            صفحة من نحن لمعرفة المزيد عن مصادر منتجاتنا.
-          </p>
 
+        <FooterColumn>
+          <ColumnTitle>الدعم والمساعدة</ColumnTitle>
+          <FooterLink to="/faq">الأسئلة الشائعة</FooterLink>
+          <FooterLink to="/shipping">الشحن والتوصيل</FooterLink>
+          <FooterLink to="/returns">سياسة الإرجاع</FooterLink>
+          <FooterLink to="/size-guide">دليل المقاسات</FooterLink>
+          <FooterLink to="/contact">اتصل بنا</FooterLink>
+        </FooterColumn>
+
+        <FooterColumn>
+          <ColumnTitle>عن سهام</ColumnTitle>
+          <FooterText>
+            تجمع تصاميمنا بين التقاليد العريقة والروح المعاصرة، وتعكس الثقافة المغربية الغنية مع لمسة من الأناقة العصرية. كل قطعة تُصنع يدوياً لتكون فريدة من نوعها.
+          </FooterText>
+          <FooterText>
+            نحرص على اختيار أفضل الأقمشة والخامات، ويتم التطريز والتفصيل بواسطة حرفيين موهوبين يستلهمون من التراث المغربي العريق مع إضافة لمسات عصرية تلبي احتياجات المرأة المعاصرة.
+          </FooterText>
+        </FooterColumn>
+
+        <FooterColumn>
+          <ColumnTitle>تواصل معنا</ColumnTitle>
+          <FooterText>
+            الرباط، المغرب<br />
+            هاتف: +212 520 123456<br />
+            البريد الإلكتروني: info@siham-kuftan.com
+          </FooterText>
+          
+          <SocialIcons>
+            <SocialIconLink to="#" aria-label="Instagram">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+              </svg>
+            </SocialIconLink>
+            
+            <SocialIconLink to="#" aria-label="Pinterest">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M8 12a4 4 0 1 0 8 0 4 4 0 0 0-8 0z" />
+                <path d="M12 2v1" />
+                <path d="M12 21v1" />
+                <path d="M4.93 4.93l.7.7" />
+                <path d="M18.37 18.37l.7.7" />
+                <path d="M2 12h1" />
+                <path d="M21 12h1" />
+                <path d="M4.93 19.07l.7-.7" />
+                <path d="M18.37 5.63l.7-.7" />
+              </svg>
+            </SocialIconLink>
+            
+            <SocialIconLink to="#" aria-label="Facebook">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+              </svg>
+            </SocialIconLink>
+            
+            <SocialIconLink to="#" aria-label="TikTok">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 8v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5Z" />
+                <path d="M10 12a3 3 0 1 1-3 3V9m3 3V9m3-3v10a3 3 0 0 1-3 3H9" />
+              </svg>
+            </SocialIconLink>
+          </SocialIcons>
+          
+          <ColumnTitle style={{ marginTop: '2rem' }}>طرق الدفع</ColumnTitle>
           <PaymentIcons>
             <img src="/assets/images/pay/visa.svg" alt="Visa" />
             <img src="/assets/images/pay/mastercard.svg" alt="Mastercard" />
-            <img src="/assets/images/pay/american-ex.svg" alt="AmEx" />
-            <img src="/assets/images/pay/discover.svg" alt="discover" />
-            <img src="/assets/images/pay/d-club.svg" alt="d-club" />
+            <img src="/assets/images/pay/american-ex.svg" alt="American Express" />
+            <img src="/assets/images/pay/discover.svg" alt="Discover" />
+            <img src="/assets/images/pay/d-club.svg" alt="D-Club" />
           </PaymentIcons>
         </FooterColumn>
       </FooterContainer>
-      <StyledFooterBottom>
-        <SocialIcons>
-          <Link to={""}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-instagram-icon lucide-instagram"
-            >
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-            </svg>
-          </Link>
-          <Link to={""}>
-            <svg
-              class="icon"
-              width="24"
-              height="24"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-              focusable="false"
-              role="presentation"
-            >
-              <path
-                d="M24.001 0C10.748 0 0 10.745 0 24.001c0 9.825 5.91 18.27 14.369 21.981-.068-1.674-.012-3.689.415-5.512.462-1.948 3.087-13.076 3.087-13.076s-.765-1.533-.765-3.799c0-3.556 2.064-6.212 4.629-6.212 2.182 0 3.237 1.64 3.237 3.604 0 2.193-1.4 5.476-2.12 8.515-.6 2.549 1.276 4.623 3.788 4.623 4.547 0 7.61-5.84 7.61-12.76 0-5.258-3.543-9.195-9.986-9.195-7.279 0-11.815 5.427-11.815 11.49 0 2.094.616 3.567 1.581 4.708.446.527.505.736.344 1.34-.113.438-.378 1.505-.488 1.925-.16.607-.652.827-1.2.601-3.355-1.369-4.916-5.04-4.916-9.17 0-6.816 5.75-14.995 17.152-14.995 9.164 0 15.195 6.636 15.195 13.75 0 9.416-5.233 16.45-12.952 16.45-2.588 0-5.026-1.4-5.862-2.99 0 0-1.394 5.53-1.688 6.596-.508 1.85-1.504 3.7-2.415 5.14 2.159.638 4.44.985 6.801.985C37.255 48 48 37.255 48 24.001 48 10.745 37.255 0 24.001 0"
-                fill="currentColor"
-                fill-rule="evenodd"
-              ></path>
-            </svg>
-          </Link>
-          <Link to={""}>
-            <svg
-              aria-hidden="true"
-              class="icon icon-facebook"
-              viewBox="2 2 16 16"
-              focusable="false"
-              role="presentation"
-              width={24}
-              height={24}
-            >
-              <path
-                fill="currentColor"
-                d="M18 10.049C18 5.603 14.419 2 10 2c-4.419 0-8 3.603-8 8.049C2 14.067 4.925 17.396 8.75 18v-5.624H6.719v-2.328h2.03V8.275c0-2.017 1.195-3.132 3.023-3.132.874 0 1.79.158 1.79.158v1.98h-1.009c-.994 0-1.303.621-1.303 1.258v1.51h2.219l-.355 2.326H11.25V18c3.825-.604 6.75-3.933 6.75-7.951Z"
-              ></path>
-            </svg>
-          </Link>
-          <Link to={""}>
-            <svg
-              class="icon svg-tiktok"
-              width="24"
-              height="24"
-              viewBox="0 0 15 16"
-              fill="none"
-              aria-hidden="true"
-              focusable="false"
-              role="presentation"
-            >
-              <path
-                fill="currentColor"
-                d="M7.638.013C8.512 0 9.378.007 10.245 0c.054 1.02.42 2.06 1.167 2.78.746.74 1.8 1.08 2.826 1.193V6.66c-.96-.033-1.926-.233-2.8-.647a8.238 8.238 0 0 1-1.08-.62c-.006 1.947.007 3.894-.013 5.834a5.092 5.092 0 0 1-.9 2.626c-.873 1.28-2.387 2.114-3.94 2.14-.953.054-1.907-.206-2.72-.686C1.438 14.513.492 13.06.352 11.5a12.36 12.36 0 0 1-.007-.993A5.003 5.003 0 0 1 2.065 7.2c1.107-.96 2.653-1.42 4.1-1.147.013.987-.027 1.974-.027 2.96-.66-.213-1.433-.153-2.013.247-.42.273-.74.693-.907 1.167-.14.34-.1.713-.093 1.073.16 1.093 1.213 2.013 2.333 1.913.747-.006 1.46-.44 1.847-1.073.127-.22.267-.447.273-.707.067-1.193.04-2.38.047-3.573.007-2.687-.007-5.367.013-8.047Z"
-              ></path>
-            </svg>
-          </Link>
-        </SocialIcons>
-      </StyledFooterBottom>
+      
+      <FooterBottom>
+        <Copyright>© {new Date().getFullYear()} سهام قفطان. جميع الحقوق محفوظة</Copyright>
+        <FooterNav>
+          <FooterNavLink to="/privacy">سياسة الخصوصية</FooterNavLink>
+          <FooterNavLink to="/terms">الشروط والأحكام</FooterNavLink>
+          <FooterNavLink to="/sitemap">خريطة الموقع</FooterNavLink>
+          <StyledLanguageDropdown>
+            <StyledLanguageToggle onClick={toggleLanguage} type="button">
+              <span>{currentLanguage}</span>
+              <ChevronDownIcon 
+                width={16} 
+                height={16} 
+                style={{ 
+                  transform: languageOpen ? 'rotate(180deg)' : 'rotate(0)'
+                }} 
+              />
+            </StyledLanguageToggle>
+            <StyledLanguageList isOpen={languageOpen}>
+              <StyledLanguageItem 
+                className={currentLanguage === 'العربية' ? 'active' : ''}
+                onClick={() => changeLanguage('العربية')}
+                type="button"
+              >
+                العربية
+              </StyledLanguageItem>
+              <StyledLanguageItem 
+                className={currentLanguage === 'English' ? 'active' : ''}
+                onClick={() => changeLanguage('English')}
+                type="button"
+              >
+                English
+              </StyledLanguageItem>
+            </StyledLanguageList>
+          </StyledLanguageDropdown>
+          <ThemeToggleButton 
+            onClick={toggleDarkMode} 
+            className={darkMode ? 'dark-mode' : ''}
+            aria-label={darkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+          >
+            {darkMode ? (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="22" 
+                height="22" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 1v2" />
+                <path d="M12 21v2" />
+                <path d="M4.22 4.22l1.42 1.42" />
+                <path d="M18.36 18.36l1.42 1.42" />
+                <path d="M1 12h2" />
+                <path d="M21 12h2" />
+                <path d="M4.22 19.78l1.42-1.42" />
+                <path d="M18.36 5.64l1.42-1.42" />
+              </svg>
+            ) : (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="22" 
+                height="22" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            )}
+          </ThemeToggleButton>
+        </FooterNav>
+      </FooterBottom>
     </StyledFooter>
   );
 };

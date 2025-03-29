@@ -5,6 +5,7 @@ import BestSeller from "../../components/home/BestSeller";
 import Banner from "../../components/home/Banner";
 import Gallery from "../../components/home/Gallery";
 import Cta from "../../components/home/Cta";
+import Testimonials from "../../components/home/Testimonials";
 
 const HomePage = () => {
   return (
@@ -13,6 +14,7 @@ const HomePage = () => {
       <Collections />
       <BestSeller />  
       <Banner />
+      <Testimonials />
       <Gallery />
       <Cta />
     </>

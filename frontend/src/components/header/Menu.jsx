@@ -1,5 +1,4 @@
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { MinusIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -11,13 +10,15 @@ const StyledMenu = styled.div`
   right: ${({ open }) => (open ? "0" : "-100%")};
   width: 40rem;
   height: 100dvh;
-  background-color: var(--white);
+  background-color: var(--bg-primary, var(--white));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding-bottom: 2rem;
   transition: right 0.4s ease;
+  color: var(--text-primary, var(--neutral-900));
 `;
+
 const StyledTopSection = styled.div`
   width: 100%;
 `;
@@ -29,12 +30,14 @@ const StyledMenuHeader = styled.header`
   align-items: center;
   padding: 1.5rem 2rem;
   padding-left: 1.3rem;
-  border-bottom: 1px solid #00000030;
-  color: var(--neutral-700);
+  border-bottom: 1px solid var(--border-color, var(--neutral-300));
+  color: var(--text-primary, var(--neutral-700));
+  
   h6 {
     font-size: var(--text-xl);
     font-weight: 500;
   }
+  
   .menu_chevron-close {
     width: 38px;
     height: 38px;
@@ -56,6 +59,7 @@ const StyledPagesLinks = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
 `;
 
 const StyledPagesList = styled.ul`
@@ -68,27 +72,73 @@ const StyledLinkItem = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #00000030;
+  border-bottom: 1px solid var(--border-color, var(--neutral-300));
+  
   span {
-    color: var(--neutral-700);
+    color: var(--text-primary, var(--neutral-700));
     font-size: var(--text-md);
     font-weight: 500;
+  }
+  
+  .menu_chevron-toggle {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: var(--neutral-200);
+      border-radius: 50%;
+    }
+  }
+`;
+
+const StyledDropdownContent = styled.div`
+  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+`;
+
+const StyledNestedLinks = styled.ul`
+  padding: 0.5rem 0 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+`;
+
+const StyledNestedLinkItem = styled.li`
+  a {
+    color: var(--text-primary, var(--neutral-600));
+    text-decoration: none;
+    font-size: var(--text-md);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: var(--neutral-900);
+      transform: translateX(-5px);
+    }
   }
 `;
 
 const StyledBottomSection = styled.div`
   padding: 0 2rem;
 `;
+
 const StyledBottomSectionLinks = styled.ul`
   li {
     padding: 0.5rem 0;
     width: max-content;
+    
     &:hover span {
       cursor: pointer;
       color: #800080;
     }
+    
     span {
-      color: var(--neutral-700);
+      color: var(--text-primary, var(--neutral-700));
       font-size: var(--text-md);
       font-weight: 500;
     }
@@ -97,6 +147,11 @@ const StyledBottomSectionLinks = styled.ul`
 
 const Menu = ({ open, onClose }) => {
   const menuRef = useRef(null);
+  const [shopOpen, setShopOpen] = useState(false);
+  const [bestSellerOpen, setBestSellerOpen] = useState(false);
+
+  const toggleShop = () => setShopOpen(!shopOpen);
+  const toggleBestSeller = () => setBestSellerOpen(!bestSellerOpen);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -113,6 +168,7 @@ const Menu = ({ open, onClose }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open, onClose]);
+
   return (
     <StyledMenu ref={menuRef} open={open}>
       <StyledTopSection>
@@ -130,28 +186,65 @@ const Menu = ({ open, onClose }) => {
               <div>
                 <span>تسوق</span>
               </div>
-              <div className="menu_chevron-close">
-                <PlusIcon width={25} height={25} />
+              <div className="menu_chevron-toggle" onClick={toggleShop}>
+                {shopOpen ? (
+                  <MinusIcon width={22} height={22} />
+                ) : (
+                  <PlusIcon width={22} height={22} />
+                )}
               </div>
             </StyledLinkItem>
+            
+            <StyledDropdownContent isOpen={shopOpen}>
+              <StyledNestedLinks>
+                <StyledNestedLinkItem>
+                  <Link to="/collection/kuftan">قفطان</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link to="/collection/jewelry">مجوهرات</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link to="/collection/jlaba">جلابة</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link to="/collection/all">كل التصنيفات</Link>
+                </StyledNestedLinkItem>
+              </StyledNestedLinks>
+            </StyledDropdownContent>
+            
             <StyledLinkItem>
               <div>
                 <span>الاكثر مبيعا</span>
               </div>
-              <div className="menu_chevron-close">
-                <PlusIcon width={25} height={25} />
+              <div className="menu_chevron-toggle" onClick={toggleBestSeller}>
+                {bestSellerOpen ? (
+                  <MinusIcon width={22} height={22} />
+                ) : (
+                  <PlusIcon width={22} height={22} />
+                )}
               </div>
             </StyledLinkItem>
+            
+            <StyledDropdownContent isOpen={bestSellerOpen}>
+              <StyledNestedLinks>
+                <StyledNestedLinkItem>
+                  <Link to="/bestseller/women">للنساء</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link to="/bestseller/men">للرجال</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link to="/bestseller/accessories">اكسسوارات</Link>
+                </StyledNestedLinkItem>
+              </StyledNestedLinks>
+            </StyledDropdownContent>
           </StyledPagesList>
         </StyledPagesLinks>
       </StyledTopSection>
       <StyledBottomSection>
         <StyledBottomSectionLinks>
           <li>
-            <span>اللغة</span>
-          </li>
-          <li>
-            <Link to={"/auth/login"}>
+            <Link to={"/account/login"}>
               <span>الحساب</span>
             </Link>
           </li>
@@ -166,7 +259,7 @@ const Menu = ({ open, onClose }) => {
             </Link>
           </li>
           <li>
-            <Link to={"/Contact"}>
+            <Link to={"/contact"}>
               <span>إتصل بنا</span>
             </Link>
           </li>

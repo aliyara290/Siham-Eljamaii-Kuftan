@@ -15,7 +15,14 @@ const StyledGallery = styled.section`
   .swiper-slide {
     width: 38rem !important;
   }
+  
+  @media (max-width: 768px) {
+    .swiper-slide {
+      width: 28rem !important;
+    }
+  }
 `;
+
 const StyledGalleryList = styled.section`
   padding-top: 5rem;
   width: 100%;
@@ -43,7 +50,16 @@ const StyledLeftArrowNavigation = styled.div`
       background-color: var(--neutral-200);
     }
   }
+  
+  @media (max-width: 768px) {
+    left: 1rem;
+    button {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
 `;
+
 const StyledRightArrowNavigation = styled.div`
   position: absolute;
   top: 50%;
@@ -65,12 +81,25 @@ const StyledRightArrowNavigation = styled.div`
       background-color: var(--neutral-200);
     }
   }
+  
+  @media (max-width: 768px) {
+    right: 1rem;
+    button {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
 `;
 
 const StyledProductCard = styled.div`
   width: 100%;
   height: 50rem;
+  
+  @media (max-width: 768px) {
+    height: 40rem;
+  }
 `;
+
 const StyledProductImage = styled.div`
   width: 100%;
   height: 100%;
@@ -95,6 +124,7 @@ const Gallery = () => {
       });
     }
   }, []);
+  
   return (
     <StyledGallery>
       <Heading title={"مـعـرض الـصـور"} />
@@ -135,7 +165,6 @@ const Gallery = () => {
           onSlideChange={(swiper) => {
             setIsBeginning(swiper.isBeginning);
             setIsEnd(swiper.isEnd);
-            handleIndexChange(swiper);
           }}
         >
           {[...Array(10)].map((_, index) => {
@@ -145,7 +174,7 @@ const Gallery = () => {
                   <StyledProductImage>
                     <img
                       src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720"
-                      alt=""
+                      alt="صورة قفطان"
                     />
                   </StyledProductImage>
                 </StyledProductCard>

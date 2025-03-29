@@ -20,7 +20,7 @@ const StyledFormContent = styled.form`
   border-radius: 1rem;
   box-shadow: 0 0 12px 3px #00000010;
 `;
-const StyledRowsList = styled.form`
+const StyledRowsList = styled.div`
   padding-top: 3rem;
   display: flex;
   flex-direction: column;
@@ -81,9 +81,6 @@ const StyledCreateAccount = styled.div`
     }
   }
 `;
-// const StyledRowsList = styled.form`
-
-// `;
 
 const Login = () => {
   return (
@@ -101,7 +98,7 @@ const Login = () => {
             />
           </StyledRowContent>
           <StyledRowContent>
-            <label htmlFor="email">كلمـة السـر</label>
+            <label htmlFor="password">كلمـة السـر</label>
             <input
               placeholder="كلمـة السر"
               type="password"
@@ -110,7 +107,7 @@ const Login = () => {
             />
           </StyledRowContent>
           <StyledSubmitBtn>
-            <button>تسجيـل الدخـول</button>
+            <button type="submit">تسجيـل الدخـول</button>
           </StyledSubmitBtn>
         </StyledRowsList>
         <StyledCreateAccount>

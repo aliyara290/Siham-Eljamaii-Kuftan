@@ -20,7 +20,7 @@ const StyledFormContent = styled.form`
   border-radius: 1rem;
   box-shadow: 0 0 12px 3px #00000010;
 `;
-const StyledRowsList = styled.form`
+const StyledRowsList = styled.div`
   padding-top: 3rem;
   display: flex;
   flex-direction: column;
@@ -83,18 +83,14 @@ const StyledCreateAccount = styled.div`
   }
 `;
 
-// const StyledRowsList = styled.form`
-
-// `;
-
 const Register = () => {
   return (
     <StyledAuthContent>
       <StyledFormContent>
-        <Heading size={"xl"} title={"تسجيل الدخـول"} />
+        <Heading size={"xl"} title={"إنشاء حساب جديد"} />
         <StyledRowsList>
           <StyledRowContent>
-            <label htmlFor="email">الإسـم الكامـل</label>
+            <label htmlFor="full-name">الإسـم الكامـل</label>
             <input
               placeholder="الإسـم الكامـل"
               type="text"
@@ -112,7 +108,7 @@ const Register = () => {
             />
           </StyledRowContent>
           <StyledRowContent>
-            <label htmlFor="email">كلمـة السـر</label>
+            <label htmlFor="password">كلمـة السـر</label>
             <input
               placeholder="كلمـة السر"
               type="password"
@@ -121,12 +117,12 @@ const Register = () => {
             />
           </StyledRowContent>
           <StyledSubmitBtn>
-            <button>تسجيـل الدخـول</button>
+            <button type="submit">إنشاء حساب</button>
           </StyledSubmitBtn>
         </StyledRowsList>
         <StyledCreateAccount>
           <span> لديك حساب؟</span>
-          <Link to={"/account/register"}>
+          <Link to={"/account/login"}>
             <span>سجل دخولك الأن</span>
           </Link>
         </StyledCreateAccount>
