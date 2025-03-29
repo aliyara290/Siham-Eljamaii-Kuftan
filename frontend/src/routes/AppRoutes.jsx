@@ -8,6 +8,7 @@ import RegisterPage from "../pages/auth/RegisterPage";
 import ProductDetails from "../pages/product/ProductDetails";
 import CollectionsPage from "../pages/collection/CollectionsPage";
 import CollectionPage from "../pages/collection/CollectionPage";
+import FAQPage from "../pages/FAQ/FaqPage";
 
 const AppRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AppRoutes = () => {
         <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/collections" element={<CollectionsPage />} />
         <Route path="/collection/:id" element={<CollectionPage />} />
+        <Route path="/faq" element={<FAQPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
