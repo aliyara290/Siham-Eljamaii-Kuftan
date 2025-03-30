@@ -14,12 +14,18 @@ return new class extends Migration
         // Create products table
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name_ar');
-            $table->string('name_en');
+            $table->string('slug')->unique();
+            $table->string('sku')->unique()->nullable();
+            $table->string('name_ar')->nullable();
+            $table->string('name_en')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('old_price', 10, 2)->nullable();
             $table->text('description_ar')->nullable();
             $table->text('description_en')->nullable();
+            $table->integer('quantity')->default(0);
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('featured', ['yes', 'no'])->default('no');
+            $table->foreignUuid('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
 
