@@ -313,7 +313,7 @@ const ProductGallery = styled.div`
 const MainImageContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 80vh;
+  height: 80rem;
   max-height: 80rem;
   overflow: hidden;
   
