@@ -27,7 +27,7 @@ const ProductDetails = () => {
     }
   }, [addedToCart]);
 
-  // Mock product data - would be fetched from API
+  // Mock product data - would be fetched from API~
   const product = {
     id: "kftn-01",
     name: "قفطان مغربي فخم لايان مرصع بجواهر سواروفسكي وزهور",
