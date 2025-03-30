@@ -41,6 +41,11 @@ class ProductRequest extends FormRequest
             'images' => 'nullable|array',
             'images.*.url' => 'required|string',
             'images.*.sort_order' => 'nullable|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'sku' => 'nullable|string|max:100|unique:products,sku',
+            'quantity' => 'nullable|integer|min:0',
+            'status' => 'nullable|in:active,inactive',
+            'featured' => 'nullable|in:yes,no',
         ];
 
         return $rules;
