@@ -1,82 +1,129 @@
 import React, { useEffect, useRef } from "react";
 import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import styled from "styled-components";
+import { useCart } from "../../context/CartContext";
+import { Link } from "react-router-dom";
 
-const Cart = ({ openCart, onCloseCart }) => {
+const Cart = () => {
+  const { cart, removeFromCart, updateQuantity, closeCart } = useCart();
+  const { items, totalPrice, isOpen } = cart;
   const cartRef = useRef(null);
+
   useEffect(() => {
     const handleCloseCart = (e) => {
       if (cartRef.current && !cartRef.current.contains(e.target)) {
-        onCloseCart();
+        closeCart();
       }
     };
-    if (openCart) {
+    
+    if (isOpen) {
       document.addEventListener("mousedown", handleCloseCart);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleCloseCart);
     };
-  }, [openCart, onCloseCart]);
+  }, [isOpen, closeCart]);
+  
+  // Format price with commas
+  const formatPrice = (price) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handleIncreaseQuantity = (item) => {
+    updateQuantity(item.cartItemId, item.quantity + 1);
+  };
+
+  const handleDecreaseQuantity = (item) => {
+    if (item.quantity > 1) {
+      updateQuantity(item.cartItemId, item.quantity - 1);
+    }
+  };
   
   return (
-    <StyledCart ref={cartRef} open={openCart}>
+    <StyledCart ref={cartRef} open={isOpen}>
       <StyledTopSection>
         <StyledMenuHeader>
           <div>
-            <h6>السلة (5)</h6>
+            <h6>السلة ({items.length})</h6>
           </div>
-          <div className="menu_chevron-close" onClick={onCloseCart}>
+          <div className="menu_chevron-close" onClick={closeCart}>
             <XMarkIcon width={25} height={25} />
           </div>
         </StyledMenuHeader>
       </StyledTopSection>
-      <StyledCartContent>
-        <StyledCartList>
-          {[...Array(6)].map((_, index) => (
-            <StyledCartListItem key={index}>
-              <StyledProductImage>
-                <img
-                  src="https://wonder-theme-fashion.myshopify.com/cdn/shop/products/sp50red2_big.jpg?v=1653405778&width=1200"
-                  alt=""
-                />
-              </StyledProductImage>
-              <StyledProductDetails>
-                <StyledProductName>
-                  <h4>تنورة ميدي مع طيات - أزرق داكن</h4>
-                </StyledProductName>
-                <StyledProductDet>
-                  <span>اللون: كحلي</span>
-                </StyledProductDet>
-                <StyledProductDet>
-                  <span>المقاس: 36</span>
-                </StyledProductDet>
-                <StyledProductPrice>
-                  <span>400 درهم</span>
-                </StyledProductPrice>
-              </StyledProductDetails>
-              <StyledDeleteButton>
-                <TrashIcon width={20} height={20} />
-              </StyledDeleteButton>
-            </StyledCartListItem>
-          ))}
-        </StyledCartList>
-      </StyledCartContent>
-      <StyledCheckoutContent>
-        <StyledTotalPrice>
-          <span>المجموع</span>
-          <h4>13,543 درهم</h4>
-        </StyledTotalPrice>
-        <StyledCheckoutButton>
-          <button>Check out</button>
-        </StyledCheckoutButton>
-      </StyledCheckoutContent>
+      
+      {items.length === 0 ? (
+        <EmptyCart>
+          <EmptyCartMessage>السلة فارغة</EmptyCartMessage>
+          <EmptyCartCTA>
+            <Link to="/collections" onClick={closeCart}>
+              <span>تصفح المنتجات</span>
+            </Link>
+          </EmptyCartCTA>
+        </EmptyCart>
+      ) : (
+        <>
+          <StyledCartContent>
+            <StyledCartList>
+              {items.map((item) => (
+                <StyledCartListItem key={item.cartItemId}>
+                  <StyledProductImage>
+                    <img src={item.image || "https://wonder-theme-fashion.myshopify.com/cdn/shop/products/sp50red2_big.jpg?v=1653405778&width=1200"} alt={item.name} />
+                  </StyledProductImage>
+                  <StyledProductDetails>
+                    <StyledProductName>
+                      <h4>{item.name}</h4>
+                    </StyledProductName>
+                    
+                    {item.selectedColor && (
+                      <StyledProductDet>
+                        <span>اللون: {item.selectedColor}</span>
+                      </StyledProductDet>
+                    )}
+                    
+                    {item.selectedSize && (
+                      <StyledProductDet>
+                        <span>المقاس: {item.selectedSize}</span>
+                      </StyledProductDet>
+                    )}
+                    
+                    <QuantityControls>
+                      <QuantityButton onClick={() => handleDecreaseQuantity(item)}>-</QuantityButton>
+                      <QuantityValue>{item.quantity}</QuantityValue>
+                      <QuantityButton onClick={() => handleIncreaseQuantity(item)}>+</QuantityButton>
+                    </QuantityControls>
+                    
+                    <StyledProductPrice>
+                      <span>{formatPrice(item.price)} درهم</span>
+                    </StyledProductPrice>
+                  </StyledProductDetails>
+                  <StyledDeleteButton onClick={() => removeFromCart(item.cartItemId)}>
+                    <TrashIcon width={20} height={20} />
+                  </StyledDeleteButton>
+                </StyledCartListItem>
+              ))}
+            </StyledCartList>
+          </StyledCartContent>
+          
+          <StyledCheckoutContent>
+            <StyledTotalPrice>
+              <span>المجموع</span>
+              <h4>{formatPrice(totalPrice)} درهم</h4>
+            </StyledTotalPrice>
+            <StyledCheckoutButton>
+              <button>إتمام الطلب</button>
+            </StyledCheckoutButton>
+          </StyledCheckoutContent>
+        </>
+      )}
     </StyledCart>
   );
 };
 
 export default Cart;
 
+// Styled Components
 const StyledCart = styled.div`
   position: fixed;
   z-index: 2345674567;
@@ -88,7 +135,6 @@ const StyledCart = styled.div`
   background-color: var(--white);
   display: flex;
   flex-direction: column;
-  /* padding-bottom: 2rem; */
   transition: left 0.4s ease;
 `;
 
@@ -123,34 +169,69 @@ const StyledMenuHeader = styled.header`
   }
 `;
 
+const EmptyCart = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 2rem;
+  padding: 2rem;
+`;
+
+const EmptyCartMessage = styled.div`
+  font-size: var(--text-xl);
+  color: var(--neutral-600);
+  font-weight: 500;
+`;
+
+const EmptyCartCTA = styled.div`
+  a {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--neutral-900);
+    color: var(--white);
+    font-size: var(--text-md);
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: var(--neutral-800);
+    }
+    
+    span {
+      display: inline-block;
+    }
+  }
+`;
+
 const StyledCartContent = styled.div`
   width: 100%;
   max-height: 70vh;
   overflow: auto;
 `;
+
 const StyledCartList = styled.div`
-  /* height: 100%; */
   display: flex;
   flex-direction: column;
-  /* gap: 1rem; */
 `;
+
 const StyledDeleteButton = styled.div`
   height: max-content;
   grid-column: span 1 / span 1;
   color: var(--neutral-500);
-  display: none;
+  display: flex;
   align-items: end;
+  cursor: pointer;
   &:hover svg {
-    cursor: pointer;
     color: var(--danger-500);
   }
 `;
+
 const StyledCartListItem = styled.div`
   margin: 0 1.5rem;
   padding: 1.5rem 0;
   display: grid;
   grid-template-columns: repeat(9, 1fr);
-  /* grid-template-rows: 1fr; */
   gap: 2rem;
   border-bottom: 1px solid #00000020;
   &:last-child {
@@ -160,6 +241,7 @@ const StyledCartListItem = styled.div`
     display: flex;
   }
 `;
+
 const StyledProductImage = styled.div`
   grid-column: span 2 / span 2;
   height: 100%;
@@ -170,12 +252,14 @@ const StyledProductImage = styled.div`
     object-fit: cover;
   }
 `;
+
 const StyledProductDetails = styled.div`
   grid-column: span 6 / span 6;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 `;
+
 const StyledProductName = styled.div`
   h4 {
     font-size: var(--text-md);
@@ -183,6 +267,7 @@ const StyledProductName = styled.div`
     font-weight: 600;
   }
 `;
+
 const StyledProductDet = styled.div`
   span {
     font-size: var(--text-sm);
@@ -190,6 +275,42 @@ const StyledProductDet = styled.div`
     font-weight: 500;
   }
 `;
+
+const QuantityControls = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+  width: fit-content;
+  border: 1px solid var(--neutral-300);
+`;
+
+const QuantityButton = styled.button`
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white);
+  border: none;
+  font-size: var(--text-md);
+  cursor: pointer;
+  
+  &:hover {
+    background-color: var(--neutral-100);
+  }
+`;
+
+const QuantityValue = styled.span`
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--neutral-300);
+  border-left: 1px solid var(--neutral-300);
+  font-size: var(--text-sm);
+`;
+
 const StyledProductPrice = styled.div`
   span {
     font-size: var(--text-lg);
@@ -197,6 +318,7 @@ const StyledProductPrice = styled.div`
     font-weight: 600;
   }
 `;
+
 const StyledCheckoutContent = styled.div`
   background-color: var(--white);
   position: absolute;
@@ -209,6 +331,7 @@ const StyledCheckoutContent = styled.div`
   gap: 2rem;
   border-top: 1px solid #00000030;
 `;
+
 const StyledTotalPrice = styled.div`
   display: flex;
   justify-content: space-between;
@@ -224,6 +347,7 @@ const StyledTotalPrice = styled.div`
     font-weight: 600;
   }
 `;
+
 const StyledCheckoutButton = styled.div`
   button {
     width: 100%;

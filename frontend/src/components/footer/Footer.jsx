@@ -1,3 +1,251 @@
+
+const Footer = () => {
+  const [darkMode, setDarkMode] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('العربية');
+
+  const toggleLanguage = () => setLanguageOpen(!languageOpen);
+  
+  const changeLanguage = (lang) => {
+    setCurrentLanguage(lang);
+    setLanguageOpen(false);
+  };
+
+  useEffect(() => {
+    // Check if dark mode is stored in localStorage
+    const savedMode = localStorage.getItem('darkMode');
+    if (savedMode) {
+      setDarkMode(JSON.parse(savedMode));
+    } else {
+      // Check user's preferred color scheme
+      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDarkMode(prefersDarkMode);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply dark mode to document
+    if (darkMode) {
+      document.documentElement.classList.add('dark-theme');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+    }
+    // Save the preference
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => !prevMode);
+  };
+  return (
+    <StyledFooter>
+      <FooterContainer>
+        <FooterColumn>
+          <ColumnTitle>القائمة الرئيسية</ColumnTitle>
+          <FooterLink to="/collection/kuftan">قفطان</FooterLink>
+          <FooterLink to="/collection/jewelry">مجوهرات</FooterLink>
+          <FooterLink to="/collection/jlaba">جلابة</FooterLink>
+          <FooterLink to="/collections/bestseller">الأكثر مبيعاً</FooterLink>
+          <FooterLink to="/collections/new">وصل حديثاً</FooterLink>
+        </FooterColumn>
+
+        <FooterColumn>
+          <ColumnTitle>الدعم والمساعدة</ColumnTitle>
+          <FooterLink to="/faq">الأسئلة الشائعة</FooterLink>
+          <FooterLink to="/shipping">الشحن والتوصيل</FooterLink>
+          <FooterLink to="/returns">سياسة الإرجاع</FooterLink>
+          <FooterLink to="/size-guide">دليل المقاسات</FooterLink>
+          <FooterLink to="/contact">اتصل بنا</FooterLink>
+        </FooterColumn>
+
+        <FooterColumn>
+          <ColumnTitle>عن سهام</ColumnTitle>
+          <FooterText>
+            تجمع تصاميمنا بين التقاليد العريقة والروح المعاصرة، وتعكس الثقافة المغربية الغنية مع لمسة من الأناقة العصرية. كل قطعة تُصنع يدوياً لتكون فريدة من نوعها.
+          </FooterText>
+          <FooterText>
+            نحرص على اختيار أفضل الأقمشة والخامات، ويتم التطريز والتفصيل بواسطة حرفيين موهوبين يستلهمون من التراث المغربي العريق مع إضافة لمسات عصرية تلبي احتياجات المرأة المعاصرة.
+          </FooterText>
+        </FooterColumn>
+
+        <FooterColumn>
+          <ColumnTitle>تواصل معنا</ColumnTitle>
+          <FooterText>
+            الرباط، المغرب<br />
+            هاتف: +212 520 123456<br />
+            البريد الإلكتروني: info@siham-kuftan.com
+          </FooterText>
+          
+          <SocialIcons>
+            <SocialIconLink to="#" aria-label="Instagram">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+              </svg>
+            </SocialIconLink>
+            
+            <SocialIconLink to="#" aria-label="Pinterest">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M8 12a4 4 0 1 0 8 0 4 4 0 0 0-8 0z" />
+                <path d="M12 2v1" />
+                <path d="M12 21v1" />
+                <path d="M4.93 4.93l.7.7" />
+                <path d="M18.37 18.37l.7.7" />
+                <path d="M2 12h1" />
+                <path d="M21 12h1" />
+                <path d="M4.93 19.07l.7-.7" />
+                <path d="M18.37 5.63l.7-.7" />
+              </svg>
+            </SocialIconLink>
+            
+            <SocialIconLink to="#" aria-label="Facebook">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+              </svg>
+            </SocialIconLink>
+            
+            <SocialIconLink to="#" aria-label="TikTok">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 8v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5Z" />
+                <path d="M10 12a3 3 0 1 1-3 3V9m3 3V9m3-3v10a3 3 0 0 1-3 3H9" />
+              </svg>
+            </SocialIconLink>
+          </SocialIcons>
+          
+          <ColumnTitle style={{ marginTop: '2rem' }}>طرق الدفع</ColumnTitle>
+          <PaymentIcons>
+            <img src="/assets/images/pay/visa.svg" alt="Visa" />
+            <img src="/assets/images/pay/mastercard.svg" alt="Mastercard" />
+            <img src="/assets/images/pay/american-ex.svg" alt="American Express" />
+            <img src="/assets/images/pay/discover.svg" alt="Discover" />
+            <img src="/assets/images/pay/d-club.svg" alt="D-Club" />
+          </PaymentIcons>
+        </FooterColumn>
+      </FooterContainer>
+      
+      <FooterBottom>
+        <Copyright>© {new Date().getFullYear()} سهام قفطان. جميع الحقوق محفوظة</Copyright>
+        <FooterNav>
+          <FooterNavLink to="/privacy">سياسة الخصوصية</FooterNavLink>
+          <FooterNavLink to="/terms">الشروط والأحكام</FooterNavLink>
+          <FooterNavLink to="/sitemap">خريطة الموقع</FooterNavLink>
+          <StyledLanguageDropdown>
+            <StyledLanguageToggle onClick={toggleLanguage} type="button">
+              <span>{currentLanguage}</span>
+              <ChevronDownIcon 
+                width={16} 
+                height={16} 
+                style={{ 
+                  transform: languageOpen ? 'rotate(180deg)' : 'rotate(0)'
+                }} 
+              />
+            </StyledLanguageToggle>
+            <StyledLanguageList isOpen={languageOpen}>
+              <StyledLanguageItem 
+                className={currentLanguage === 'العربية' ? 'active' : ''}
+                onClick={() => changeLanguage('العربية')}
+                type="button"
+              >
+                العربية
+              </StyledLanguageItem>
+              <StyledLanguageItem 
+                className={currentLanguage === 'English' ? 'active' : ''}
+                onClick={() => changeLanguage('English')}
+                type="button"
+              >
+                English
+              </StyledLanguageItem>
+            </StyledLanguageList>
+          </StyledLanguageDropdown>
+          <ThemeToggleButton 
+            onClick={toggleDarkMode} 
+            className={darkMode ? 'dark-mode' : ''}
+            aria-label={darkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+          >
+            {darkMode ? (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="22" 
+                height="22" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 1v2" />
+                <path d="M12 21v2" />
+                <path d="M4.22 4.22l1.42 1.42" />
+                <path d="M18.36 18.36l1.42 1.42" />
+                <path d="M1 12h2" />
+                <path d="M21 12h2" />
+                <path d="M4.22 19.78l1.42-1.42" />
+                <path d="M18.36 5.64l1.42-1.42" />
+              </svg>
+            ) : (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="22" 
+                height="22" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            )}
+          </ThemeToggleButton>
+        </FooterNav>
+      </FooterBottom>
+    </StyledFooter>
+  );
+};
+
+export default Footer;
+
 const StyledLanguageDropdown = styled.div`
   position: relative;
   display: inline-block;
@@ -250,250 +498,3 @@ const FooterNavLink = styled(Link)`
 `;
 
 
-
-const Footer = () => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [languageOpen, setLanguageOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('العربية');
-
-  const toggleLanguage = () => setLanguageOpen(!languageOpen);
-  
-  const changeLanguage = (lang) => {
-    setCurrentLanguage(lang);
-    setLanguageOpen(false);
-  };
-
-  useEffect(() => {
-    // Check if dark mode is stored in localStorage
-    const savedMode = localStorage.getItem('darkMode');
-    if (savedMode) {
-      setDarkMode(JSON.parse(savedMode));
-    } else {
-      // Check user's preferred color scheme
-      const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDarkMode(prefersDarkMode);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Apply dark mode to document
-    if (darkMode) {
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-    }
-    // Save the preference
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
-  }, [darkMode]);
-
-  const toggleDarkMode = () => {
-    setDarkMode(prevMode => !prevMode);
-  };
-  return (
-    <StyledFooter>
-      <FooterContainer>
-        <FooterColumn>
-          <ColumnTitle>القائمة الرئيسية</ColumnTitle>
-          <FooterLink to="/collection/kuftan">قفطان</FooterLink>
-          <FooterLink to="/collection/jewelry">مجوهرات</FooterLink>
-          <FooterLink to="/collection/jlaba">جلابة</FooterLink>
-          <FooterLink to="/collections/bestseller">الأكثر مبيعاً</FooterLink>
-          <FooterLink to="/collections/new">وصل حديثاً</FooterLink>
-        </FooterColumn>
-
-        <FooterColumn>
-          <ColumnTitle>الدعم والمساعدة</ColumnTitle>
-          <FooterLink to="/faq">الأسئلة الشائعة</FooterLink>
-          <FooterLink to="/shipping">الشحن والتوصيل</FooterLink>
-          <FooterLink to="/returns">سياسة الإرجاع</FooterLink>
-          <FooterLink to="/size-guide">دليل المقاسات</FooterLink>
-          <FooterLink to="/contact">اتصل بنا</FooterLink>
-        </FooterColumn>
-
-        <FooterColumn>
-          <ColumnTitle>عن سهام</ColumnTitle>
-          <FooterText>
-            تجمع تصاميمنا بين التقاليد العريقة والروح المعاصرة، وتعكس الثقافة المغربية الغنية مع لمسة من الأناقة العصرية. كل قطعة تُصنع يدوياً لتكون فريدة من نوعها.
-          </FooterText>
-          <FooterText>
-            نحرص على اختيار أفضل الأقمشة والخامات، ويتم التطريز والتفصيل بواسطة حرفيين موهوبين يستلهمون من التراث المغربي العريق مع إضافة لمسات عصرية تلبي احتياجات المرأة المعاصرة.
-          </FooterText>
-        </FooterColumn>
-
-        <FooterColumn>
-          <ColumnTitle>تواصل معنا</ColumnTitle>
-          <FooterText>
-            الرباط، المغرب<br />
-            هاتف: +212 520 123456<br />
-            البريد الإلكتروني: info@siham-kuftan.com
-          </FooterText>
-          
-          <SocialIcons>
-            <SocialIconLink to="#" aria-label="Instagram">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-              </svg>
-            </SocialIconLink>
-            
-            <SocialIconLink to="#" aria-label="Pinterest">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M8 12a4 4 0 1 0 8 0 4 4 0 0 0-8 0z" />
-                <path d="M12 2v1" />
-                <path d="M12 21v1" />
-                <path d="M4.93 4.93l.7.7" />
-                <path d="M18.37 18.37l.7.7" />
-                <path d="M2 12h1" />
-                <path d="M21 12h1" />
-                <path d="M4.93 19.07l.7-.7" />
-                <path d="M18.37 5.63l.7-.7" />
-              </svg>
-            </SocialIconLink>
-            
-            <SocialIconLink to="#" aria-label="Facebook">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-              </svg>
-            </SocialIconLink>
-            
-            <SocialIconLink to="#" aria-label="TikTok">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 8v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5Z" />
-                <path d="M10 12a3 3 0 1 1-3 3V9m3 3V9m3-3v10a3 3 0 0 1-3 3H9" />
-              </svg>
-            </SocialIconLink>
-          </SocialIcons>
-          
-          <ColumnTitle style={{ marginTop: '2rem' }}>طرق الدفع</ColumnTitle>
-          <PaymentIcons>
-            <img src="/assets/images/pay/visa.svg" alt="Visa" />
-            <img src="/assets/images/pay/mastercard.svg" alt="Mastercard" />
-            <img src="/assets/images/pay/american-ex.svg" alt="American Express" />
-            <img src="/assets/images/pay/discover.svg" alt="Discover" />
-            <img src="/assets/images/pay/d-club.svg" alt="D-Club" />
-          </PaymentIcons>
-        </FooterColumn>
-      </FooterContainer>
-      
-      <FooterBottom>
-        <Copyright>© {new Date().getFullYear()} سهام قفطان. جميع الحقوق محفوظة</Copyright>
-        <FooterNav>
-          <FooterNavLink to="/privacy">سياسة الخصوصية</FooterNavLink>
-          <FooterNavLink to="/terms">الشروط والأحكام</FooterNavLink>
-          <FooterNavLink to="/sitemap">خريطة الموقع</FooterNavLink>
-          <StyledLanguageDropdown>
-            <StyledLanguageToggle onClick={toggleLanguage} type="button">
-              <span>{currentLanguage}</span>
-              <ChevronDownIcon 
-                width={16} 
-                height={16} 
-                style={{ 
-                  transform: languageOpen ? 'rotate(180deg)' : 'rotate(0)'
-                }} 
-              />
-            </StyledLanguageToggle>
-            <StyledLanguageList isOpen={languageOpen}>
-              <StyledLanguageItem 
-                className={currentLanguage === 'العربية' ? 'active' : ''}
-                onClick={() => changeLanguage('العربية')}
-                type="button"
-              >
-                العربية
-              </StyledLanguageItem>
-              <StyledLanguageItem 
-                className={currentLanguage === 'English' ? 'active' : ''}
-                onClick={() => changeLanguage('English')}
-                type="button"
-              >
-                English
-              </StyledLanguageItem>
-            </StyledLanguageList>
-          </StyledLanguageDropdown>
-          <ThemeToggleButton 
-            onClick={toggleDarkMode} 
-            className={darkMode ? 'dark-mode' : ''}
-            aria-label={darkMode ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
-          >
-            {darkMode ? (
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="22" 
-                height="22" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="5" />
-                <path d="M12 1v2" />
-                <path d="M12 21v2" />
-                <path d="M4.22 4.22l1.42 1.42" />
-                <path d="M18.36 18.36l1.42 1.42" />
-                <path d="M1 12h2" />
-                <path d="M21 12h2" />
-                <path d="M4.22 19.78l1.42-1.42" />
-                <path d="M18.36 5.64l1.42-1.42" />
-              </svg>
-            ) : (
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="22" 
-                height="22" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-              >
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-            )}
-          </ThemeToggleButton>
-        </FooterNav>
-      </FooterBottom>
-    </StyledFooter>
-  );
-};
-
-export default Footer;

@@ -3,6 +3,135 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
+
+const Menu = ({ open, onClose }) => {
+  const menuRef = useRef(null);
+  const [shopOpen, setShopOpen] = useState(false);
+  const [bestSellerOpen, setBestSellerOpen] = useState(false);
+
+  const toggleShop = () => setShopOpen(!shopOpen);
+  const toggleBestSeller = () => setBestSellerOpen(!bestSellerOpen);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open, onClose]);
+
+  return (
+    <StyledMenu ref={menuRef} open={open}>
+      <StyledTopSection>
+        <StyledMenuHeader>
+          <div>
+            <h6>القائمة</h6>
+          </div>
+          <div className="menu_chevron-close" onClick={onClose}>
+            <XMarkIcon width={25} height={25} />
+          </div>
+        </StyledMenuHeader>
+        <StyledPagesLinks>
+          <StyledPagesList>
+            <StyledLinkItem>
+              <div>
+                <span>تسوق</span>
+              </div>
+              <div className="menu_chevron-toggle" onClick={toggleShop}>
+                {shopOpen ? (
+                  <MinusIcon width={22} height={22} />
+                ) : (
+                  <PlusIcon width={22} height={22} />
+                )}
+              </div>
+            </StyledLinkItem>
+            
+            <StyledDropdownContent isOpen={shopOpen}>
+              <StyledNestedLinks>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/collection/kuftan">قفطان</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/collection/jewelry">مجوهرات</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/collection/jlaba">جلابة</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/collection/all">كل التصنيفات</Link>
+                </StyledNestedLinkItem>
+              </StyledNestedLinks>
+            </StyledDropdownContent>
+            
+            <StyledLinkItem>
+              <div>
+                <span>الاكثر مبيعا</span>
+              </div>
+              <div className="menu_chevron-toggle" onClick={toggleBestSeller}>
+                {bestSellerOpen ? (
+                  <MinusIcon width={22} height={22} />
+                ) : (
+                  <PlusIcon width={22} height={22} />
+                )}
+              </div>
+            </StyledLinkItem>
+            
+            <StyledDropdownContent isOpen={bestSellerOpen}>
+              <StyledNestedLinks>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/bestseller/women">للنساء</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/bestseller/men">للرجال</Link>
+                </StyledNestedLinkItem>
+                <StyledNestedLinkItem>
+                  <Link onClick={onClose} to="/bestseller/accessories">اكسسوارات</Link>
+                </StyledNestedLinkItem>
+              </StyledNestedLinks>
+            </StyledDropdownContent>
+          </StyledPagesList>
+        </StyledPagesLinks>
+      </StyledTopSection>
+      <StyledBottomSection>
+        <StyledBottomSectionLinks>
+          <li>
+            <Link to={"/account/login"}>
+              <span>الحساب</span>
+            </Link>
+          </li>
+          <li>
+            <Link to={"/faq"}>
+              <span>الأسئلة الشائعة</span>
+            </Link>
+          </li>
+          <li>
+            <Link to={"/shipping"}>
+              <span>الشحن</span>
+            </Link>
+          </li>
+          <li>
+            <Link to={"/contact"}>
+              <span>إتصل بنا</span>
+            </Link>
+          </li>
+        </StyledBottomSectionLinks>
+      </StyledBottomSection>
+    </StyledMenu>
+  );
+};
+
+export default Menu;
+
+
+
 const StyledMenu = styled.div`
   position: fixed;
   z-index: 2345674567;
@@ -144,129 +273,3 @@ const StyledBottomSectionLinks = styled.ul`
     }
   }
 `;
-
-const Menu = ({ open, onClose }) => {
-  const menuRef = useRef(null);
-  const [shopOpen, setShopOpen] = useState(false);
-  const [bestSellerOpen, setBestSellerOpen] = useState(false);
-
-  const toggleShop = () => setShopOpen(!shopOpen);
-  const toggleBestSeller = () => setBestSellerOpen(!bestSellerOpen);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        onClose();
-      }
-    };
-
-    if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open, onClose]);
-
-  return (
-    <StyledMenu ref={menuRef} open={open}>
-      <StyledTopSection>
-        <StyledMenuHeader>
-          <div>
-            <h6>القائمة</h6>
-          </div>
-          <div className="menu_chevron-close" onClick={onClose}>
-            <XMarkIcon width={25} height={25} />
-          </div>
-        </StyledMenuHeader>
-        <StyledPagesLinks>
-          <StyledPagesList>
-            <StyledLinkItem>
-              <div>
-                <span>تسوق</span>
-              </div>
-              <div className="menu_chevron-toggle" onClick={toggleShop}>
-                {shopOpen ? (
-                  <MinusIcon width={22} height={22} />
-                ) : (
-                  <PlusIcon width={22} height={22} />
-                )}
-              </div>
-            </StyledLinkItem>
-            
-            <StyledDropdownContent isOpen={shopOpen}>
-              <StyledNestedLinks>
-                <StyledNestedLinkItem>
-                  <Link to="/collection/kuftan">قفطان</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link to="/collection/jewelry">مجوهرات</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link to="/collection/jlaba">جلابة</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link to="/collection/all">كل التصنيفات</Link>
-                </StyledNestedLinkItem>
-              </StyledNestedLinks>
-            </StyledDropdownContent>
-            
-            <StyledLinkItem>
-              <div>
-                <span>الاكثر مبيعا</span>
-              </div>
-              <div className="menu_chevron-toggle" onClick={toggleBestSeller}>
-                {bestSellerOpen ? (
-                  <MinusIcon width={22} height={22} />
-                ) : (
-                  <PlusIcon width={22} height={22} />
-                )}
-              </div>
-            </StyledLinkItem>
-            
-            <StyledDropdownContent isOpen={bestSellerOpen}>
-              <StyledNestedLinks>
-                <StyledNestedLinkItem>
-                  <Link to="/bestseller/women">للنساء</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link to="/bestseller/men">للرجال</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link to="/bestseller/accessories">اكسسوارات</Link>
-                </StyledNestedLinkItem>
-              </StyledNestedLinks>
-            </StyledDropdownContent>
-          </StyledPagesList>
-        </StyledPagesLinks>
-      </StyledTopSection>
-      <StyledBottomSection>
-        <StyledBottomSectionLinks>
-          <li>
-            <Link to={"/account/login"}>
-              <span>الحساب</span>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/faq"}>
-              <span>الأسئلة الشائعة</span>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/shipping"}>
-              <span>الشحن</span>
-            </Link>
-          </li>
-          <li>
-            <Link to={"/contact"}>
-              <span>إتصل بنا</span>
-            </Link>
-          </li>
-        </StyledBottomSectionLinks>
-      </StyledBottomSection>
-    </StyledMenu>
-  );
-};
-
-export default Menu;

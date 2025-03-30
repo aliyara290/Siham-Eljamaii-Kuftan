@@ -11,20 +11,38 @@ import styled from "styled-components";
 import Menu from "./Menu";
 import Cart from "./Cart";
 import Search from "./Search";
+import { useCart } from "../../context/CartContext";
 
 const Header = () => {
   const location = useLocation();
   const { pathname } = location;
+  const { cart, toggleCart } = useCart();
+  const { totalItems } = cart;
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
-  const [openCart, setOpenCart] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+
   const closeMenu = () => setOpenMenu(false);
-  const closeCart = () => setOpenCart(false);
   const closeSearch = () => setOpenSearch(false);
 
+  // Reset scroll state when navigating to home page
   useEffect(() => {
-    if (openSearch || openCart || openMenu) {
+    if (pathname === "/") {
+      // Check current scroll position when navigating to home
+      if (window.scrollY < window.innerHeight - 100) {
+        setIsScrolled(false);
+      } else {
+        setIsScrolled(true);
+      }
+    } else {
+      // Always scrolled for non-home pages
+      setIsScrolled(true);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (openSearch || cart.isOpen || openMenu) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -32,7 +50,7 @@ const Header = () => {
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [openSearch, openCart, openMenu]);
+  }, [openSearch, cart.isOpen, openMenu]);
 
   useEffect(() => {
     const ChangeHeaderStyle = () => {
@@ -50,10 +68,8 @@ const Header = () => {
     };
     window.addEventListener("scroll", ChangeHeaderStyle);
 
-    // Initial check for non-home pages
-    if (pathname !== "/") {
-      setIsScrolled(true);
-    }
+    // Initial check when component mounts
+    ChangeHeaderStyle();
 
     return () => {
       window.removeEventListener("scroll", ChangeHeaderStyle);
@@ -88,16 +104,19 @@ const Header = () => {
                 <UserIcon width={25} height={25} />
               </Link>
             </li>
-            <li onClick={() => setOpenCart(true)}>
-              <ShoppingBagIcon width={25} height={25} />
+            <li onClick={toggleCart}>
+              <CartIconWrapper>
+                <ShoppingBagIcon width={25} height={25} />
+                {totalItems > 0 && <CartBadge>{totalItems}</CartBadge>}
+              </CartIconWrapper>
             </li>
           </StyledIconsList>
         </StyledRightPart>
       </StyledHeaderContent>
       <Menu onClose={closeMenu} open={openMenu} />
-      <Cart openCart={openCart} onCloseCart={closeCart} />
+      <Cart />
       <Search onClose={closeSearch} open={openSearch} />
-      {(openCart || openMenu) && <StyledBlur></StyledBlur>}
+      {(cart.isOpen || openMenu) && <StyledBlur></StyledBlur>}
     </>
   );
 };
@@ -139,21 +158,27 @@ const StyledHeaderContent = styled.header`
 const StyledLeftPart = styled.div`
   width: max-content;
 `;
+
 const StyledHamburger = styled.div`
   cursor: pointer;
 `;
+
 const StyledLogo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   img {
     width: 200px;
+    height: auto;
+    transition: opacity 0.3s ease;
   }
 `;
+
 const StyledRightPart = styled.div`
   display: flex;
   justify-content: end;
 `;
+
 const StyledIconsList = styled.ul`
   display: flex;
   align-items: center;
@@ -165,4 +190,27 @@ const StyledIconsList = styled.ul`
       transform: translateY(-3px);
     }
   }
+`;
+
+const CartIconWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CartBadge = styled.span`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: var(--neutral-900);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
 `;

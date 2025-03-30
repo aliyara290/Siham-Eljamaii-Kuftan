@@ -4,15 +4,28 @@ import styled from "styled-components";
 import { HeartIcon, ShoppingBagIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Heading from "../heading/Heading";
+import { useCart } from "../../context/CartContext";
 
 const ProductDetails = () => {
   const { slug } = useParams();
-  const [selectedColor, setSelectedColor] = useState("black");
+  const { addToCart } = useCart();
+  const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(false);
   const thumbnailsRef = useRef(null);
+
+  // Reset "Added to Cart" message after 3 seconds
+  useEffect(() => {
+    if (addedToCart) {
+      const timer = setTimeout(() => {
+        setAddedToCart(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [addedToCart]);
 
   // Mock product data - would be fetched from API
   const product = {
@@ -42,7 +55,6 @@ const ProductDetails = () => {
       "يفضل استخدام علاقة واسعة",
     ],
     images: [
-      "https://ma.bouchrafilalilahlou.com/cdn/shop/files/116_b8f51dc8-acf4-40e7-9c3f-fd77dd6e1f60.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1704551622&width=720",
       "https://ma.bouchrafilalilahlou.com/cdn/shop/files/djellaba_femme_dor.jpg?crop=region&crop_height=1200&crop_left=120&crop_top=0&crop_width=960&v=1742610117&width=720",
       "https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720",
       "https://ma.bouchrafilalilahlou.com/cdn/shop/files/105_0a4b7901-6aa1-4edb-ad59-94fb58dfa720.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1724375971&width=720",
@@ -106,13 +118,27 @@ const ProductDetails = () => {
       return;
     }
     
-    // Add to cart logic would go here
-    console.log("Added to cart:", {
-      productId: product.id,
-      quantity,
-      color: selectedColor,
-      size: selectedSize,
-    });
+    if (!selectedColor) {
+      alert("الرجاء اختيار اللون");
+      return;
+    }
+    
+    // Get selected color name
+    const colorName = product.colors.find(color => color.id === selectedColor)?.name || selectedColor;
+    
+    // Create product object for cart
+    const productForCart = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0], // Use first image
+    };
+    
+    // Add to cart
+    addToCart(productForCart, quantity, colorName, selectedSize);
+    
+    // Show added to cart message
+    setAddedToCart(true);
   };
 
   // Scroll to current thumbnail
@@ -122,6 +148,13 @@ const ProductDetails = () => {
       thumbnailsRef.current.scrollLeft = currentImageIndex * thumbnailWidth;
     }
   }, [currentImageIndex]);
+
+  // Set default color on component mount
+  useEffect(() => {
+    if (product.colors && product.colors.length > 0) {
+      setSelectedColor(product.colors[0].id);
+    }
+  }, []);
 
   return (
     <ProductPageContainer>
@@ -202,9 +235,9 @@ const ProductDetails = () => {
           <ActionButtons>
             <AddToCartButton onClick={handleAddToCart}>
               <ShoppingBagIcon width={20} height={20} />
-              <span>أضف إلى السلة</span>
+              <span>{addedToCart ? "تمت الإضافة!" : "أضف إلى السلة"}</span>
             </AddToCartButton>
-            <BuyNowButton>شراء الآن</BuyNowButton>
+            <BuyNowButton onClick={handleAddToCart}>شراء الآن</BuyNowButton>
           </ActionButtons>
 
           <ProductDescription>{product.description}</ProductDescription>
@@ -280,7 +313,7 @@ const ProductGallery = styled.div`
 const MainImageContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 80vh;
+  height: 80rem;
   max-height: 80rem;
   overflow: hidden;
   

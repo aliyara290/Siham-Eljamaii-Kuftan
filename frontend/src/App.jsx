@@ -1,12 +1,12 @@
 import { useState } from "react";
-import HomePage from "./pages/home/Home";
 import AppRoutes from "./routes/AppRoutes";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
-    <>
-        <AppRoutes />
-    </>
+    <CartProvider>
+      <AppRoutes />
+    </CartProvider>
   );
 }
 
