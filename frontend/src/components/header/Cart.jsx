@@ -3,12 +3,13 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import styled from "styled-components";
 import { useCart } from "../../context/CartContext";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, closeCart } = useCart();
   const { items, totalPrice, isOpen } = cart;
   const cartRef = useRef(null);
-
+  const navigate = useNavigate(); 
   useEffect(() => {
     const handleCloseCart = (e) => {
       if (cartRef.current && !cartRef.current.contains(e.target)) {
@@ -38,6 +39,11 @@ const Cart = () => {
     if (item.quantity > 1) {
       updateQuantity(item.cartItemId, item.quantity - 1);
     }
+  };
+
+  const handleCheckout = () => {
+    closeCart(); // Close the cart sidebar first
+    navigate('/checkout'); // Then navigate to the checkout page
   };
   
   return (
@@ -112,7 +118,7 @@ const Cart = () => {
               <h4>{formatPrice(totalPrice)} درهم</h4>
             </StyledTotalPrice>
             <StyledCheckoutButton>
-              <button>إتمام الطلب</button>
+              <button onClick={handleCheckout}>إتمام الطلب</button>
             </StyledCheckoutButton>
           </StyledCheckoutContent>
         </>

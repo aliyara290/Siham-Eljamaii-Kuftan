@@ -22,15 +22,23 @@ const Login = () => {
   
   // If user is already authenticated, redirect to the previous page or homepage
   useEffect(() => {
-    if (isAuthenticated) {
+    let isMounted = true;
+    
+    if (isMounted && isAuthenticated) {
       navigate(from, { replace: true });
     }
+    
+    return () => {
+      isMounted = false;
+    };
   }, [isAuthenticated, navigate, from]);
   
   // Clear auth errors when component unmounts
   useEffect(() => {
     return () => {
-      clearError();
+      if (clearError) {
+        clearError();
+      }
     };
   }, [clearError]);
   
@@ -146,7 +154,7 @@ const Login = () => {
 
 export default Login;
 
-// Styled Components (reusing existing styles)
+// Styled Components
 const StyledAuthContent = styled.div`
   width: 100%;
   background-color: var(--neutral-100);

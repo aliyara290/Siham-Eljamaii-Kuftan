@@ -2,7 +2,7 @@ import { createGlobalStyle } from "styled-components";
 import { Fonts, Variables } from "./index";
 
 const GlobalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap');
+
 
 * {
     font-family: "Almarai", sans-serif;

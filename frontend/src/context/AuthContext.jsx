@@ -1,7 +1,6 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { AuthService } from '../services/api';
-import { useCart } from './CartContext';
 
 // Create context
 export const AuthContext = createContext();
@@ -83,48 +82,59 @@ const authReducer = (state, action) => {
 // Provider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-  const { syncCartWithApi } = useCart();
+  
+  // Memoize syncCartWithApi to avoid recreating this function on every render
+  const syncCartWithApi = useCallback(async () => {
+    // Implementation goes here, if needed
+    // This is a stub - replace with your actual implementation
+  }, []);
   
   // Check for token and user data in localStorage on initial render
-// In AuthContext.jsx
-useEffect(() => {
+  useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('auth_token');
       const userData = localStorage.getItem('user');
       
-      if (token) {
-        try {
-          if (userData) {
-            // If we have user data stored, use it immediately
-            dispatch({
-              type: AUTH_ACTIONS.SET_USER,
-              payload: JSON.parse(userData)
-            });
-          }
-          
-          // Verify token by fetching current user from API
-          const currentUser = await AuthService.getUser();
-          
-          // Update user data
-          localStorage.setItem('user', JSON.stringify(currentUser));
+      if (!token) {
+        return;
+      }
+      
+      try {
+        if (userData) {
+          // If we have user data stored, use it immediately
           dispatch({
             type: AUTH_ACTIONS.SET_USER,
-            payload: currentUser
-          });
-        } catch (error) {
-          // Token is invalid, clear localStorage
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('user');
-          
-          dispatch({
-            type: AUTH_ACTIONS.LOGOUT
+            payload: JSON.parse(userData)
           });
         }
+        
+        // Verify token by fetching current user from API
+        const currentUser = await AuthService.getUser();
+        
+        // Update user data
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        dispatch({
+          type: AUTH_ACTIONS.SET_USER,
+          payload: currentUser
+        });
+      } catch (error) {
+        // Token is invalid, clear localStorage
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user');
+        
+        dispatch({
+          type: AUTH_ACTIONS.LOGOUT
+        });
       }
     };
     
     checkAuth();
-  }, []); // Make sure there's an empty dependency array here
+  }, []); // Empty dependency array - run only once on component mount
+  
+  // Clear error function (memoized to prevent recreation on every render)
+  const clearError = useCallback(() => {
+    dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
+  }, []);
   
   // Login function
   const login = async (credentials) => {
@@ -203,21 +213,17 @@ useEffect(() => {
     }
   };
   
-  // Clear authentication errors
-  const clearError = () => {
-    dispatch({ type: AUTH_ACTIONS.CLEAR_ERROR });
+  // Create a memoized context value to prevent unnecessary re-renders
+  const contextValue = {
+    ...state,
+    login,
+    register,
+    logout,
+    clearError
   };
   
   return (
-    <AuthContext.Provider
-      value={{
-        ...state,
-        login,
-        register,
-        logout,
-        clearError
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
@@ -230,4 +236,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+};  

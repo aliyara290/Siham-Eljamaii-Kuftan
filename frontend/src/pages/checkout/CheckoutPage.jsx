@@ -10,7 +10,7 @@ import SubHeading from '../../components/heading/SubHeading';
 import { createPaymentIntent, processPayment } from '../../services/stripeService';
 
 // You should replace this with your actual Stripe publishable key
-const stripePromise = loadStripe('pk_test_YOUR_PUBLISHABLE_KEY');
+const stripePromise = loadStripe('pk_test_51LD5WRCy79QTCK5xftENUau7DL8Y4VzLEgSe0vF4PaCtLoZBhmGnWCZAmymqPvXRAExDbueXRmRClGKnhKZp20Nj00SDb3HI9M');
 
 // Card Element styling options
 const cardElementOptions = {
