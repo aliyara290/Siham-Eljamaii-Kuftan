@@ -3,8 +3,11 @@
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Auth\ForgetPasswordController;
 use App\Http\Controllers\V1\Auth\ResetPasswordController;
+use App\Http\Controllers\V1\ColorController;
+use App\Http\Controllers\V1\OrderController;
 use App\Http\Controllers\V1\ProductController;
 use App\Http\Controllers\V1\PaymentController;
+use App\Http\Controllers\V1\SizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,8 +38,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/filters/price', [ProductController::class, 'getByPrice']);
     });
     
-    // Product resource routes
-    // Public routes (read operations)
+    Route::get('/colors', [ColorController::class, 'index']);
+    Route::get('/sizes', [SizeController::class, 'index']);
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{id}', [ProductController::class, 'show']);
     Route::get('products/{id}/details', [ProductController::class, 'getDetails']);
@@ -44,12 +47,37 @@ Route::prefix('v1')->group(function () {
     Route::get('products/{id}/colors', [ProductController::class, 'getColors']);
     Route::get('products/{id}/images', [ProductController::class, 'getImages']);
     Route::get('products/{id}/category', [ProductController::class, 'getCategory']);
+
     // Payment routes
-Route::prefix('v1/payments')->middleware('auth:sanctum')->group(function () {
-    Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
-    Route::post('/process', [PaymentController::class, 'processPayment']);
-    Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
-});
+    Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {
+        Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
+        Route::post('/process', [PaymentController::class, 'processPayment']);
+        Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
+    });
+
+    // Payment routes
+    Route::prefix('payments')->group(function () {
+        // Public webhook endpoint (no auth)
+        Route::post('/webhook', [PaymentController::class, 'handleWebhook']);
+        
+        // Protected routes
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
+            Route::post('/process', [PaymentController::class, 'processPayment']);
+            Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
+        });
+    });
+    
+    // Order routes (all protected)
+    Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
+        Route::post('/', [OrderController::class, 'store']);
+        Route::get('/my-orders', [OrderController::class, 'myOrders']);
+        Route::get('/{id}', [OrderController::class, 'show']);
+        Route::patch('/{id}/status', [OrderController::class, 'updateStatus']);
+        
+        // Admin routes (would need admin middleware in a real app)
+        Route::get('/user/{userId}', [OrderController::class, 'userOrders']);
+    });
     
     // Protected routes (write operations)
     Route::middleware('auth:sanctum')->group(function () {
