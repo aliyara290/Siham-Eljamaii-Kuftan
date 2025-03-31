@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Create an Axios instance with default configuration
 const api = axios.create({
-  baseURL: import.meta.env.REACT_APP_API_URL || 'http://localhost:8000/api',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -31,63 +31,68 @@ api.interceptors.request.use(
 );
 
 // Response interceptor - runs after each response
+// Enhanced error handling
 api.interceptors.response.use(
-  (response) => {
-    // Any status code within the range of 2xx causes this function to trigger
-    return response.data;
-  },
-  (error) => {
-    // Handle 401 Unauthorized errors (e.g., token expired)
-    if (error.response && error.response.status === 401) {
-      // Clear local storage and redirect to login
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
-      
-      // If not already on the login page, redirect to login
-      if (!window.location.pathname.includes('/account/login')) {
-        window.location.href = '/account/login';
+    (response) => response.data,
+    (error) => {
+      // Handle specific error codes
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            // Authentication error
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user');
+            if (!window.location.pathname.includes('/account/login')) {
+              window.location.href = '/account/login';
+            }
+            break;
+          case 403:
+            // Forbidden - user doesn't have permission
+            console.error('Permission denied');
+            break;
+          case 422:
+            // Validation errors
+            return Promise.reject({
+              message: 'Validation error',
+              errors: error.response.data.errors
+            });
+          case 500:
+            // Server error
+            console.error('Server error occurred');
+            break;
+        }
       }
-    }
-    
-    // Handle 422 Validation errors
-    if (error.response && error.response.status === 422) {
+      
       return Promise.reject({
-        message: 'Validation error',
-        errors: error.response.data.errors
+        message: error.response?.data?.message || 'Something went wrong',
+        status: error.response?.status,
+        data: error.response?.data
       });
     }
-    
-    // General error handling
-    return Promise.reject({
-      message: error.response?.data?.message || 'Something went wrong',
-      status: error.response?.status,
-      data: error.response?.data
-    });
-  }
-);
+  );
 
 // Export API services grouped by functionality
 export const AuthService = {
-  // User authentication services
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  logout: () => api.post('/auth/logout'),
-  getUser: () => api.get('/auth/user'),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (data) => api.post('/auth/reset-password', data)
-};
+    login: (credentials) => api.post('/v1/auth/login', credentials),
+    register: (userData) => api.post('/v1/auth/register', userData),
+    logout: () => api.post('/v1/auth/logout'),
+    getUser: () => api.get('/user'), // This matches your sanctum route
+    forgotPassword: (email) => api.post('/v1/auth/forgot-password', { email }),
+    resetPassword: (data) => api.post('/v1/auth/reset-password', data)
+  };
 
-export const ProductService = {
-  // Product related services
-  getProducts: (params) => api.get('/products', { params }),
-  getProduct: (id) => api.get(`/products/${id}`),
-  getFeaturedProducts: () => api.get('/products/featured'),
-  getNewArrivals: () => api.get('/products/new-arrivals'),
-  getBestSellers: () => api.get('/products/best-sellers'),
-  searchProducts: (query) => api.get('/products/search', { params: { query } }),
-  getProductsByCategory: (categoryId, params) => 
-    api.get(`/categories/${categoryId}/products`, { params })
-};
+  export const ProductService = {
+    getProducts: (params) => api.get('/v1/products', { params }),
+    getProduct: (id) => api.get(`/v1/products/${id}`),
+    getProductDetails: (id) => api.get(`/v1/products/${id}/details`),
+    getProductSizes: (id) => api.get(`/v1/products/${id}/sizes`),
+    getProductColors: (id) => api.get(`/v1/products/${id}/colors`),
+    getProductImages: (id) => api.get(`/v1/products/${id}/images`),
+    getProductsByCategory: (categoryId) => api.get(`/v1/products/filters/category/${categoryId}`),
+    getProductsBySize: (sizeId) => api.get(`/v1/products/filters/size/${sizeId}`),
+    getProductsByColor: (colorId) => api.get(`/v1/products/filters/color/${colorId}`),
+    getProductsByPrice: (params) => api.get('/v1/products/filters/price', { params })
+  };
 
 export const CategoryService = {
   // Category related services
@@ -96,13 +101,12 @@ export const CategoryService = {
 };
 
 export const CartService = {
-  // Cart related services
-  getCart: () => api.get('/cart'),
-  addToCart: (productData) => api.post('/cart/add', productData),
-  updateCartItem: (id, quantity) => api.put(`/cart/items/${id}`, { quantity }),
-  removeCartItem: (id) => api.delete(`/cart/items/${id}`),
-  clearCart: () => api.delete('/cart/clear')
-};
+    getCart: () => api.get('/v1/cart'),
+    addToCart: (productData) => api.post('/v1/cart/add', productData),
+    updateCartItem: (id, quantity) => api.put(`/v1/cart/items/${id}`, { quantity }),
+    removeCartItem: (id) => api.delete(`/v1/cart/items/${id}`),
+    clearCart: () => api.delete('/v1/cart/clear')
+  };
 
 export const CheckoutService = {
   // Checkout and order related services
@@ -115,11 +119,11 @@ export const CheckoutService = {
 };
 
 export const OrderService = {
-  // Order management services
-  getOrders: () => api.get('/orders'),
-  getOrder: (id) => api.get(`/orders/${id}`),
-  cancelOrder: (id) => api.post(`/orders/${id}/cancel`)
-};
+    placeOrder: (orderData) => api.post('/v1/orders', orderData),
+    getOrders: () => api.get('/v1/orders/my-orders'),
+    getOrder: (id) => api.get(`/v1/orders/${id}`),
+    updateOrderStatus: (id, status) => api.patch(`/v1/orders/${id}/status`, { status })
+  };
 
 export const UserService = {
   // User profile and address services
@@ -130,5 +134,12 @@ export const UserService = {
   deleteAddress: (id) => api.delete(`/user/addresses/${id}`),
   setDefaultAddress: (id) => api.put(`/user/addresses/${id}/default`)
 };
+
+
+export const PaymentService = {
+    createPaymentIntent: (data) => api.post('/v1/payments/create-intent', data),
+    processPayment: (data) => api.post('/v1/payments/process', data),
+    getPaymentDetails: (paymentId) => api.get(`/v1/payments/${paymentId}`)
+  };
 
 export default api;

@@ -86,7 +86,8 @@ export const AuthProvider = ({ children }) => {
   const { syncCartWithApi } = useCart();
   
   // Check for token and user data in localStorage on initial render
-  useEffect(() => {
+// In AuthContext.jsx
+useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('auth_token');
       const userData = localStorage.getItem('user');
@@ -123,7 +124,7 @@ export const AuthProvider = ({ children }) => {
     };
     
     checkAuth();
-  }, []);
+  }, []); // Make sure there's an empty dependency array here
   
   // Login function
   const login = async (credentials) => {
