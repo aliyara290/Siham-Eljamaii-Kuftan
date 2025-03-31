@@ -147,7 +147,9 @@ class AuthRepository implements AuthInterface
     public function destroy()
     {
         try {
-            $logout = Auth::user()->tokens()->delete();
+            $logout = PersonalAccessToken::where('tokenable_id', Auth::id())
+                ->where('tokenable_type', User::class)
+                ->delete();
             if (!$logout) {
                 return $this->error(
                     "",
@@ -168,3 +170,5 @@ class AuthRepository implements AuthInterface
         }
     }
 }
+
+

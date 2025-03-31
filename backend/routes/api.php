@@ -4,6 +4,7 @@ use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Auth\ForgetPasswordController;
 use App\Http\Controllers\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\V1\ProductController;
+use App\Http\Controllers\V1\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,12 @@ Route::prefix('v1')->group(function () {
     Route::get('products/{id}/colors', [ProductController::class, 'getColors']);
     Route::get('products/{id}/images', [ProductController::class, 'getImages']);
     Route::get('products/{id}/category', [ProductController::class, 'getCategory']);
+    // Payment routes
+Route::prefix('v1/payments')->middleware('auth:sanctum')->group(function () {
+    Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
+    Route::post('/process', [PaymentController::class, 'processPayment']);
+    Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
+});
     
     // Protected routes (write operations)
     Route::middleware('auth:sanctum')->group(function () {
