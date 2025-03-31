@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Repositories;
-
-use App\Http\Resources\ProductCollectionResource;
-use App\Http\Resources\ProductResource;
-use App\Http\Resources\ProductDetailResource;
-use App\Http\Resources\ProductCareInstructionResource;
-use App\Http\Resources\ProductImageResource;
-use App\Http\Resources\ColorResource;
-use App\Http\Resources\SizeResource;
+use App\Http\Resources\V1\ProductCollectionResource;
+use App\Http\Resources\V1\ProductResource;
+use App\Http\Resources\V1\ProductDetailResource;
+use App\Http\Resources\V1\ProductCareInstructionResource;
+use App\Http\Resources\V1\ProductImageResource;
+use App\Http\Resources\V1\ColorResource;
+use App\Http\Resources\V1\SizeResource;
 use App\Http\Resources\V1\CategoryResource;
 use App\Interfaces\ProductInterface;
 use App\Models\Product;

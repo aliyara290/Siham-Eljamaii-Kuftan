@@ -14,7 +14,7 @@ return new class extends Migration
         // Create products table
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('slug')->unique();
+            $table->string('slug')->unique()->nullable();
             $table->string('sku')->unique()->nullable();
             $table->string('name_ar')->nullable();
             $table->string('name_en')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('quantity')->default(0);
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->enum('featured', ['yes', 'no'])->default('no');
-            $table->foreignUuid('category_id')->constrained('categories')->onDelete('cascade');
+            $table->foreignUuid('category_id')->constrained('categories')->onDelete('cascade')->nullable(); 
             $table->timestamps();
         });
 

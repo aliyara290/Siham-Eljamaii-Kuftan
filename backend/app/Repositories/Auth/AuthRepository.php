@@ -81,7 +81,7 @@ class AuthRepository implements AuthInterface
             return $this->error(
                 "",
                 500,
-                $e
+                $e->getMessage()
             );
         }
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +16,11 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
             SizeSeeder::class,
             ProductSeeder::class,
+        ]);
+        User::create([
+            'name' => 'ali',
+            'email' => 'ali@gmail.com',
+            'password' => bcrypt('Yara2001'),
         ]);
     }
 }
