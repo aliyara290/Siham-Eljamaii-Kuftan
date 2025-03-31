@@ -299,9 +299,8 @@ class ProductRepository implements ProductInterface
 
     public function getProductCategories($productId) {
         try {
-            $product = Product::findOrFail($productId);
+            $product = Product::with('category')->findOrFail($productId);
             
-            // Based on your database structure, assuming there's a category relationship
             if ($product->category) {
                 return $this->success([
                     'category' => new CategoryResource($product->category),

@@ -25,7 +25,8 @@ return new class extends Migration
             $table->integer('quantity')->default(0);
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->enum('featured', ['yes', 'no'])->default('no');
-            $table->foreignUuid('category_id')->constrained('categories')->onDelete('cascade')->nullable(); 
+            $table->uuid('category_id')->nullable(); 
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             $table->timestamps();
         });
 

@@ -13,10 +13,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            CategorySeeder::class,
             ColorSeeder::class,
             SizeSeeder::class,
             ProductSeeder::class,
         ]);
+        
         User::create([
             'name' => 'ali',
             'email' => 'ali@gmail.com',

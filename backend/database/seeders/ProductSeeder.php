@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\ProductCareInstruction;
@@ -9,6 +10,7 @@ use App\Models\ProductDetail;
 use App\Models\ProductImage;
 use App\Models\Size;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
@@ -20,9 +22,34 @@ class ProductSeeder extends Seeder
         // Get all colors and sizes
         $colors = Color::all();
         $sizes = Size::all();
+        
+        // Create a default category if none exists
+        if (Category::count() == 0) {
+            $category = Category::create([
+                'name' => 'Default Category',
+                'icon' => 'default-icon'
+            ]);
+        }
+        
+        $categories = Category::all();
 
         // Create 20 products with their relationships
-        Product::factory(20)->create()->each(function (Product $product) use ($colors, $sizes) {
+        Product::factory(20)->make()->each(function ($product) use ($colors, $sizes, $categories) {
+            // Assign a random category
+            $product->category_id = $categories->random()->id;
+            
+            // Generate slug from name_en if not already set
+            if (!$product->slug) {
+                $product->slug = Str::slug($product->name_en);
+            }
+            
+            // Generate a unique SKU if not already set
+            if (!$product->sku) {
+                $product->sku = 'SKU-' . strtoupper(Str::random(8));
+            }
+            
+            $product->save();
+
             // Add 2-4 product details
             ProductDetail::factory(rand(2, 4))->create([
                 'product_id' => $product->id

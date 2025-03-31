@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -19,12 +20,26 @@ class Product extends Model
         'old_price',
         'description_ar',
         'description_en',
+        'category_id',
+        'slug',
+        'sku',
+        'quantity',
+        'status',
+        'featured'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'old_price' => 'decimal:2',
     ];
+
+    /**
+     * Get the category that owns the product.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     /**
      * Get the product details for the product.
