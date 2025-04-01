@@ -1,6 +1,0 @@
-{
-    "require": {
-        "stripe/stripe-php": "^16.6",
-        "laravel/socialite": "^5.18"
-    }
-}
