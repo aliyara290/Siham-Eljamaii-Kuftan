@@ -81,7 +81,10 @@ const Cart = () => {
                     <StyledProductName>
                       <h4>{item.name}</h4>
                     </StyledProductName>
-                    
+                    <div className="flex justify-between">
+
+                    <div>
+
                     {item.selectedColor && (
                       <StyledProductDet>
                         <span>اللون: {item.selectedColor}</span>
@@ -93,12 +96,14 @@ const Cart = () => {
                         <span>المقاس: {item.selectedSize}</span>
                       </StyledProductDet>
                     )}
+                    </div>
                     
                     <QuantityControls>
                       <QuantityButton onClick={() => handleDecreaseQuantity(item)}>-</QuantityButton>
                       <QuantityValue>{item.quantity}</QuantityValue>
                       <QuantityButton onClick={() => handleIncreaseQuantity(item)}>+</QuantityButton>
                     </QuantityControls>
+                    </div>
                     
                     <StyledProductPrice>
                       <span>{formatPrice(item.price)} درهم</span>
@@ -237,7 +242,7 @@ const StyledCartListItem = styled.div`
   margin: 0 1.5rem;
   padding: 1.5rem 0;
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(12, 1fr);
   gap: 2rem;
   border-bottom: 1px solid #00000020;
   &:last-child {
@@ -249,7 +254,7 @@ const StyledCartListItem = styled.div`
 `;
 
 const StyledProductImage = styled.div`
-  grid-column: span 2 / span 2;
+  grid-column: span 3 / span 3;
   height: 100%;
   overflow: hidden;
   img {
@@ -260,7 +265,7 @@ const StyledProductImage = styled.div`
 `;
 
 const StyledProductDetails = styled.div`
-  grid-column: span 6 / span 6;
+  grid-column: span 8 / span 8;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -268,7 +273,7 @@ const StyledProductDetails = styled.div`
 
 const StyledProductName = styled.div`
   h4 {
-    font-size: var(--text-md);
+    font-size: var(--text-sm);
     color: var(--neutral-800);
     font-weight: 600;
   }
@@ -319,7 +324,7 @@ const QuantityValue = styled.span`
 
 const StyledProductPrice = styled.div`
   span {
-    font-size: var(--text-lg);
+    font-size: var(--text-md);
     color: var(--neutral-700);
     font-weight: 600;
   }
