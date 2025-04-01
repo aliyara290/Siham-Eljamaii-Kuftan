@@ -49,13 +49,6 @@ Route::prefix('v1')->group(function () {
     Route::get('products/{id}/category', [ProductController::class, 'getCategory']);
 
     // Payment routes
-    Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {
-        Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
-        Route::post('/process', [PaymentController::class, 'processPayment']);
-        Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
-    });
-
-    // Payment routes
     Route::prefix('payments')->group(function () {
         // Public webhook endpoint (no auth)
         Route::post('/webhook', [PaymentController::class, 'handleWebhook']);
