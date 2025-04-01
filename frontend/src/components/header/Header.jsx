@@ -77,7 +77,7 @@ const Header = () => {
   }, [pathname]);
 
   return (
-    <>
+    <StyledHeaderLayout>
       <StyledHeaderContent scrolled={isScrolled} isHomePage={pathname === "/"}>
         <StyledLeftPart>
           <StyledHamburger onClick={() => setOpenMenu(true)}>
@@ -117,11 +117,15 @@ const Header = () => {
       <Cart />
       <Search onClose={closeSearch} open={openSearch} />
       {(cart.isOpen || openMenu) && <StyledBlur></StyledBlur>}
-    </>
+    </StyledHeaderLayout>
   );
 };
 
 export default Header;
+
+const StyledHeaderLayout = styled.div`
+  position: relative;
+`;
 
 const StyledBlur = styled.div`
   width: 100%;

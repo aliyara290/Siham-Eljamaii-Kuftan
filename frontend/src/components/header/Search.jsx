@@ -1,14 +1,13 @@
+
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Heading from "../heading/Heading";
 
-
-
 const Search = ({open, onClose}) => {
   return (
-    <StyledSearch open={open}>
+    <StyledSearch $open={open}>
       <StyledHeader>
         <StyledLogo onClick={onClose}>
           <Link to={"/"}>
@@ -58,17 +57,20 @@ const Search = ({open, onClose}) => {
 
 export default Search;
 
-
 const StyledSearch = styled.div`
   position: fixed;
-  top: ${({open}) => (open ? "0" : "-100%")};
+  top: 0;
   left: 0;
   width: 100%;
-  height: 100svh;
+  min-height: 100svh;
   background-color: var(--white);
   z-index: 2345678456;
-  transition: all .2s ease-in;
+  opacity: ${({$open}) => ($open ? 1 : 0)};
+  visibility: ${({$open}) => ($open ? 'visible' : 'hidden')};
+  transition: opacity 0.2s ease-in, visibility 0.2s ease-in;
+  pointer-events: ${({$open}) => ($open ? 'auto' : 'none')};
 `;
+
 const StyledHeader = styled.div`
   width: 100%;
   height: 10rem;
@@ -147,7 +149,7 @@ const StyledSearchBtn = styled.div`
 const StyledDefaultResult = styled.div`
   width: 100%;
   max-width: 100rem;
-  padding-top: 2rem;
+  padding: 2rem 0;
 `;
 const StyledDefaultResultList = styled.ul`
 padding-top: 3rem;
