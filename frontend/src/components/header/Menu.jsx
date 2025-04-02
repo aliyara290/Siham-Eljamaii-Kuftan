@@ -136,7 +136,7 @@ const StyledMenu = styled.div`
   position: fixed;
   z-index: 2345674567;
   top: 0;
-  right: ${({ open }) => (open ? "0" : "-100%")};
+  right: ${({ open }) => (open ? "0" : "-120%")};
   width: 40rem;
   height: 100dvh;
   background-color: var(--bg-primary, var(--white));

@@ -17,11 +17,11 @@ const StyledBestSeller = styled.section`
     width: 30rem !important;
   }
   
-  @media (max-width: 768px) {
+  /* @media (max-width: 768px) {
     .swiper-slide {
-      width: 22rem !important;
+      width: 29rem !important;
     }
-  }
+  } */
 `;
 
 const StyledCarouselContent = styled.div`

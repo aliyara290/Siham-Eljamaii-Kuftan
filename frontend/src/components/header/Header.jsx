@@ -140,8 +140,14 @@ const StyledBlur = styled.div`
 
 const StyledHeaderContent = styled.header`
   width: 100%;
-  padding: ${({ scrolled, isHomePage }) =>
-    isHomePage ? (scrolled ? "2rem 3rem" : "3rem 4rem") : "2rem 3rem"};
+  @media (min-width: 768px) {
+    padding: ${({ scrolled, isHomePage }) =>
+      isHomePage ? (scrolled ? "2rem 3rem" : "3rem 3rem") : "2rem 3rem"};
+  }
+  @media (max-width: 768px) {
+    padding: ${({ scrolled, isHomePage }) =>
+      isHomePage ? (scrolled ? "1rem 1rem" : "2rem 2rem") : "1rem 1rem"};
+  }
   position: fixed;
   top: 0;
   left: 0;

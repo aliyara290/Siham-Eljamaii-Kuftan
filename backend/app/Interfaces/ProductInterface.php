@@ -17,5 +17,6 @@ interface ProductInterface
     public function getProductByCategory($productId);
     public function getProductBySize($productId);
     public function getProductByColor($productId);
-    public function getProductByPrice($productId);
+    // public function getProductByPrice($productId);
+    public function getProductByPrice($priceFilter);
 }

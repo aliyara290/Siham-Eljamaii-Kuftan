@@ -8,4 +8,5 @@ interface AuthInterface
     public function login($request);
     public function handleGoogleCallback();
     public function destroy();
+    public function refreshToken($request);
 }

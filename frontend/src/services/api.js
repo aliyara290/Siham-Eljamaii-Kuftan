@@ -14,7 +14,7 @@ const api = axios.create({
 
 // Request interceptor - runs before each request
 api.interceptors.request.use(
-  (config) => {
+  (config) => {``
     // Get the token from localStorage
     const token = localStorage.getItem('auth_token');
     

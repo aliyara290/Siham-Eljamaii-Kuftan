@@ -11,10 +11,10 @@ const HomePage = () => {
   return (
     <>
       <Hero />
-      <Collections />
       <BestSeller />  
-      <Banner />
+      <Collections />
       <Testimonials />
+      <Banner />
       <Gallery />
       <Cta />
     </>

@@ -2,12 +2,13 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledHeadingContent = styled.div`
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
   display: flex;
   justify-content: ${({ justify }) => (justify ? justify : "center")};
   align-items: center;
   padding-top: 1.5rem;
-`;
+  `;
 
 const StyledHeadingTitle = styled.p`
   max-width: 65rem;

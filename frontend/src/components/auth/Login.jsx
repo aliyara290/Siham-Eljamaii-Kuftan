@@ -158,6 +158,7 @@ export default Login;
 const StyledAuthContent = styled.div`
   width: 100%;
   background-color: var(--neutral-100);
+  padding: 2rem;
   padding-top: 13rem;
   padding-bottom: 6rem;
   display: flex;

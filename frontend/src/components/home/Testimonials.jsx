@@ -13,7 +13,7 @@ import { UserIcon } from "@heroicons/react/24/outline";
 
 const StyledTestimonials = styled.section`
   width: 100%;
-  padding: 9rem 0;
+  padding: 5rem 0;
   background-color: #f7f5f2;
   position: relative;
   overflow: hidden;
@@ -68,11 +68,11 @@ const StyledHeader = styled.div`
 `;
 
 const StyledCarouselContent = styled.div`
-  padding: 4rem 8rem;
+  /* padding: 4rem 8rem; */
   position: relative;
   
   .swiper {
-    padding: 5rem 0;
+    padding: 5rem 0 0;
   }
   
   .swiper-pagination {
@@ -361,9 +361,9 @@ const Testimonials = () => {
               modifier: 2,
               slideShadows: false,
             }}
-            pagination={{
-              clickable: true,
-            }}
+            // pagination={{
+            //   clickable: true,
+            // }}
             autoplay={{
               delay: 7000,
               disableOnInteraction: false,

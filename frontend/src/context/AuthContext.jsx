@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
         // Token is invalid, clear localStorage
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user');
-        
+        b
         dispatch({
           type: AUTH_ACTIONS.LOGOUT
         });

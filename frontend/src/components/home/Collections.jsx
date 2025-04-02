@@ -5,21 +5,31 @@ import Heading from "../heading/Heading";
 
 const StyledCollection = styled.section`
   width: 100%;
-  padding-top: 7rem;
+  /* padding-top: 7rem; */
 `;
 const StyledCollList = styled.div`
-width: 100%;
-display: grid;
-  grid-template-columns: repeat(3, 1fr);
-`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
 const StyledCollectionItem = styled.div`
   width: 100%;
-  height: 55rem;
-
+  height: 90vh;
+@media (max-width: 768px) {
+  height: 50rem;
+}
   position: relative;
-  &:nth-child(2) {
+  &:nth-child(1) {
     border-left: 6px solid white;
-    border-right: 6px solid white;
+    @media (max-width: 768px) {
+      border-bottom: 6px solid white;
+      border-left: none;
+    }
+    /* border-right: 6px solid white; */
   }
   &::before {
     content: "";
@@ -112,7 +122,7 @@ const Collections = () => {
             </StyledCollLink>
           </StyledDetails>
         </StyledCollectionItem>
-        <StyledCollectionItem>
+        {/* <StyledCollectionItem>
           <StyledCollItemImg>
             <img
               src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/17_fc0e4dee-66b2-4b95-9c63-9a24459efc9b.jpg?crop=region&crop_height=2048&crop_left=204&crop_top=0&crop_width=1638&v=1705111629&width=720"
@@ -129,7 +139,7 @@ const Collections = () => {
               </Link>
             </StyledCollLink>
           </StyledDetails>
-        </StyledCollectionItem>
+        </StyledCollectionItem> */}
         <StyledCollectionItem>
           <StyledCollItemImg>
             <img

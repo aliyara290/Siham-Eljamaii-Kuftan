@@ -13,6 +13,7 @@ const StyledBanner = styled.div`
   justify-content: center;
   align-items: center;
 `;
+
 const StyledBannerBackground = styled.div`
   width: 100%;
   height: 100%;
@@ -41,6 +42,7 @@ const StyledBannerContent = styled.div`
   flex-direction: column;
   gap: 1rem;
 `;
+
 const StyledHeading = styled.div`
   padding-bottom: 3rem;
 `;

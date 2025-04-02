@@ -37,7 +37,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ColorInterface::class, ColorRepository::class);
         $this->app->bind(SizeInterface::class, SizeRepository::class);
         $this->app->bind(ForgetPasswordInterface::class, ForgetPasswordRepository::class);
-        $this->app->bind(ResetPasswordRequest::class, ResetPasswordRequest::class);
+        // In AppServiceProvider.php
+$this->app->bind(\App\Interfaces\Auth\ResetPasswordInterface::class, \App\Repositories\Auth\ResetPasswordRepository::class);
 
     }
 

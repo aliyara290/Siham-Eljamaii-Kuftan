@@ -60,12 +60,24 @@ img {
 }
 .swiper-slide {
     
-    &:first-child {
-        margin-left: 2rem;
-    } 
-    &:last-child {
-        margin-right: 2rem;
-    } 
+    @media (min-width: 800px) {
+        
+        &:first-child {
+            margin-left: 2rem;
+        } 
+        &:last-child {
+            margin-right: 2rem;
+        } 
+    }
+    @media (max-width: 800px) {
+        
+        &:first-child {
+            margin-left: 1rem;
+        } 
+        &:last-child {
+            margin-right: 1rem;
+        } 
+    }
   }
 
 `;
