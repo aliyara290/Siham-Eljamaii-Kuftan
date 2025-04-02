@@ -47,18 +47,10 @@ const CartPage = () => {
         ) : (
           <>
             <CartContentSection>
-              <CartHeader>
-                <HeaderColumn>المنتج</HeaderColumn>
-                <HeaderColumn>السعر</HeaderColumn>
-                <HeaderColumn>الكمية</HeaderColumn>
-                <HeaderColumn>المجموع</HeaderColumn>
-                <HeaderColumn></HeaderColumn>
-              </CartHeader>
-              
               <CartItemsList>
                 {items.map((item) => (
-                  <CartItem key={item.cartItemId}>
-                    <ProductInfoColumn>
+                  <CartItemCard key={item.cartItemId}>
+                    <ProductHeader>
                       <ProductImage src={item.image} alt={item.name} />
                       <ProductDetails>
                         <ProductName>{item.name}</ProductName>
@@ -69,38 +61,42 @@ const CartPage = () => {
                           <ProductOption>المقاس: {item.selectedSize}</ProductOption>
                         )}
                       </ProductDetails>
-                    </ProductInfoColumn>
-                    
-                    <PriceColumn>{formatPrice(item.price)} د.م</PriceColumn>
-                    
-                    <QuantityColumn>
-                      <QuantityControls>
-                        <QuantityButton onClick={() => handleDecreaseQuantity(item)}>-</QuantityButton>
-                        <QuantityValue>{item.quantity}</QuantityValue>
-                        <QuantityButton onClick={() => handleIncreaseQuantity(item)}>+</QuantityButton>
-                      </QuantityControls>
-                    </QuantityColumn>
-                    
-                    <TotalColumn>
-                      {formatPrice(item.price * item.quantity)} د.م
-                    </TotalColumn>
-                    
-                    <RemoveColumn>
                       <RemoveButton onClick={() => removeFromCart(item.cartItemId)}>
-                        <TrashIcon width={20} height={20} />
+                        <TrashIcon width={18} height={18} />
                       </RemoveButton>
-                    </RemoveColumn>
-                  </CartItem>
+                    </ProductHeader>
+                    
+                    <ProductInfo>
+                      <InfoRow>
+                        <InfoLabel>السعر:</InfoLabel>
+                        <InfoValue>{formatPrice(item.price)} د.م</InfoValue>
+                      </InfoRow>
+                      
+                      <InfoRow>
+                        <InfoLabel>الكمية:</InfoLabel>
+                        <QuantityControls>
+                          <QuantityButton onClick={() => handleDecreaseQuantity(item)}>-</QuantityButton>
+                          <QuantityValue>{item.quantity}</QuantityValue>
+                          <QuantityButton onClick={() => handleIncreaseQuantity(item)}>+</QuantityButton>
+                        </QuantityControls>
+                      </InfoRow>
+                      
+                      <InfoRow>
+                        <InfoLabel>المجموع:</InfoLabel>
+                        <TotalValue>{formatPrice(item.price * item.quantity)} د.م</TotalValue>
+                      </InfoRow>
+                    </ProductInfo>
+                  </CartItemCard>
                 ))}
               </CartItemsList>
               
               <CartActions>
-                <ClearCartButton onClick={clearCart}>
+                <ActionButton onClick={clearCart}>
                   إفراغ السلة
-                </ClearCartButton>
-                <ContinueShoppingButton to="/collections">
+                </ActionButton>
+                <ActionButton as={Link} to="/collections">
                   متابعة التسوق
-                </ContinueShoppingButton>
+                </ActionButton>
               </CartActions>
             </CartContentSection>
             
@@ -153,23 +149,37 @@ export default CartPage;
 const CartPageContainer = styled.div`
   width: 100%;
   background-color: var(--white);
-  padding-top: 12rem;
-  padding-bottom: 6rem;
+  padding-top: 6rem;
+  padding-bottom: 4rem;
+  
+  @media (min-width: 768px) {
+    padding-top: 12rem;
+    padding-bottom: 6rem;
+  }
 `;
 
 const CartContentWrapper = styled.div`
   max-width: 120rem;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
+  
+  @media (min-width: 768px) {
+    padding: 0 2rem;
+  }
 `;
 
 const EmptyCartSection = styled.div`
   text-align: center;
-  padding: 6rem 0;
+  padding: 4rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
+  
+  @media (min-width: 768px) {
+    padding: 6rem 0;
+    gap: 2rem;
+  }
 `;
 
 const EmptyCartMessage = styled.p`
@@ -181,7 +191,7 @@ const EmptyCartMessage = styled.p`
 
 const ShopNowButton = styled(Link)`
   display: inline-block;
-  padding: 1.5rem 3rem;
+  padding: 1.2rem 2.5rem;
   background-color: var(--neutral-900);
   color: var(--white);
   font-size: var(--text-md);
@@ -192,66 +202,55 @@ const ShopNowButton = styled(Link)`
   &:hover {
     background-color: var(--neutral-800);
   }
+  
+  @media (min-width: 768px) {
+    padding: 1.5rem 3rem;
+  }
 `;
 
 const CartContentSection = styled.section`
-  margin-top: 4rem;
-  margin-bottom: 4rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
   
-  @media (max-width: 768px) {
-    overflow-x: auto;
-  }
-`;
-
-const CartHeader = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--neutral-200);
-  
-  @media (max-width: 768px) {
-    width: 100rem;
-  }
-`;
-
-const HeaderColumn = styled.div`
-  font-weight: 600;
-  font-size: var(--text-md);
-  color: var(--neutral-800);
-  text-align: center;
-  
-  &:first-child {
-    text-align: right;
+  @media (min-width: 768px) {
+    margin-top: 4rem;
+    margin-bottom: 4rem;
   }
 `;
 
 const CartItemsList = styled.div`
-  @media (max-width: 768px) {
-    width: 100rem;
-  }
-`;
-
-const CartItem = styled.div`
-  display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 0.5fr;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--neutral-200);
-  align-items: center;
-`;
-
-const ProductInfoColumn = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const CartItemCard = styled.div`
+  border: 1px solid var(--neutral-200);
+  border-radius: 0.5rem;
+  overflow: hidden;
+`;
+
+const ProductHeader = styled.div`
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
   align-items: center;
-  gap: 2rem;
+  border-bottom: 1px solid var(--neutral-100);
 `;
 
 const ProductImage = styled.img`
-  width: 10rem;
-  height: 10rem;
+  width: 8rem;
+  height: 8rem;
   object-fit: cover;
+  
+  @media (min-width: 768px) {
+    width: 10rem;
+    height: 10rem;
+  }
 `;
 
 const ProductDetails = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -268,15 +267,42 @@ const ProductOption = styled.span`
   color: var(--neutral-600);
 `;
 
-const PriceColumn = styled.div`
-  text-align: center;
+const RemoveButton = styled.button`
+  background: none;
+  border: none;
+  color: var(--neutral-500);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:hover {
+    color: var(--danger-500);
+  }
+`;
+
+const ProductInfo = styled.div`
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const InfoRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const InfoLabel = styled.span`
   font-size: var(--text-md);
   color: var(--neutral-700);
 `;
 
-const QuantityColumn = styled.div`
-  display: flex;
-  justify-content: center;
+const InfoValue = styled.span`
+  font-size: var(--text-md);
+  color: var(--neutral-800);
 `;
 
 const QuantityControls = styled.div`
@@ -312,77 +338,56 @@ const QuantityValue = styled.span`
   font-size: var(--text-md);
 `;
 
-const TotalColumn = styled.div`
-  text-align: center;
+const TotalValue = styled.span`
   font-size: var(--text-md);
   font-weight: 600;
   color: var(--neutral-800);
 `;
 
-const RemoveColumn = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const RemoveButton = styled.button`
-  background: none;
-  border: none;
-  color: var(--neutral-500);
-  cursor: pointer;
-  
-  &:hover {
-    color: var(--danger-500);
-  }
-`;
-
 const CartActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
   
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1.5rem;
+  @media (min-width: 768px) {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
   }
 `;
 
-const ClearCartButton = styled.button`
-  padding: 1.2rem 2.5rem;
+const ActionButton = styled.button`
+  padding: 1rem;
+  text-align: center;
   background-color: var(--white);
   color: var(--neutral-800);
   border: 1px solid var(--neutral-300);
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none;
   
   &:hover {
     background-color: var(--neutral-100);
   }
-`;
-
-const ContinueShoppingButton = styled(Link)`
-  padding: 1.2rem 2.5rem;
-  background-color: var(--neutral-100);
-  color: var(--neutral-800);
-  border: 1px solid var(--neutral-300);
-  font-size: var(--text-md);
-  text-decoration: none;
-  transition: all 0.3s ease;
   
-  &:hover {
-    background-color: var(--neutral-200);
+  @media (min-width: 768px) {
+    padding: 1.2rem 2.5rem;
+    font-size: var(--text-md);
   }
 `;
 
 const CartSummarySection = styled.section`
   background-color: var(--neutral-50);
-  padding: 3rem;
+  padding: 2rem;
   border: 1px solid var(--neutral-200);
-  max-width: 40rem;
-  margin-right: auto;
+  width: 100%;
   
-  @media (max-width: 768px) {
-    max-width: 100%;
+  @media (min-width: 768px) {
+    padding: 3rem;
+    max-width: 40rem;
+    margin-right: auto;
   }
 `;
 
@@ -390,15 +395,24 @@ const SummaryTitle = styled.h3`
   font-size: var(--text-lg);
   font-weight: 600;
   color: var(--neutral-900);
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.2rem;
   border-bottom: 1px solid var(--neutral-200);
+  
+  @media (min-width: 768px) {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+  }
 `;
 
 const SummaryRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
+  
+  @media (min-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const SummaryLabel = styled.span`
@@ -414,10 +428,16 @@ const SummaryValue = styled.span`
 const SummaryTotal = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
+  margin-top: 2rem;
+  padding-top: 1.2rem;
   border-top: 1px solid var(--neutral-200);
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
+  
+  @media (min-width: 768px) {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
 `;
 
 const SummaryTotalLabel = styled.span`
@@ -434,7 +454,7 @@ const SummaryTotalValue = styled.span`
 
 const CheckoutButton = styled.button`
   width: 100%;
-  padding: 1.5rem 0;
+  padding: 1.2rem 0;
   background-color: var(--neutral-900);
   color: var(--white);
   font-size: var(--text-md);
@@ -442,10 +462,15 @@ const CheckoutButton = styled.button`
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   
   &:hover {
     background-color: var(--neutral-800);
+  }
+  
+  @media (min-width: 768px) {
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
   }
 `;
 
@@ -454,9 +479,13 @@ const SecureCheckoutNotice = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: var(--neutral-600);
   font-size: var(--text-sm);
+  
+  @media (min-width: 768px) {
+    margin-bottom: 2rem;
+  }
 `;
 
 const PaymentMethodsIcons = styled.div`
@@ -465,7 +494,11 @@ const PaymentMethodsIcons = styled.div`
   gap: 1.5rem;
   
   img {
-    height: 2.5rem;
+    height: 2rem;
     object-fit: contain;
+    
+    @media (min-width: 768px) {
+      height: 2.5rem;
+    }
   }
 `;

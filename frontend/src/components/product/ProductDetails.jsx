@@ -597,7 +597,7 @@ const AddToCartButton = styled.button`
   justify-content: center;
   gap: 1rem;
   transition: background-color 0.3s ease;
-  
+  padding: 1.2rem 2rem;
   &:hover {
     background-color: var(--neutral-800);
   }
@@ -612,7 +612,7 @@ const BuyNowButton = styled.button`
   border: 1px solid var(--neutral-900);
   cursor: pointer;
   transition: background-color 0.3s ease;
-  
+  padding: 1rem 2rem;
   &:hover {
     background-color: var(--neutral-100);
   }

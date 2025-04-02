@@ -16,17 +16,11 @@ class ProductController extends Controller
         $this->productInterface = $productInterface;
     }
 
-    /**
-     * Display a listing of all products.
-     */
     public function index()
     {
         return $this->productInterface->all();
     }
 
-    /**
-     * Store a newly created product in storage.
-     */
     public function store(ProductRequest $request)
     {
         return $this->productInterface->createProduct($request);

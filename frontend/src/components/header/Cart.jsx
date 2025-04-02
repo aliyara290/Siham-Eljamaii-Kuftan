@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import styled from "styled-components";
 import { useCart } from "../../context/CartContext";
-import { Link } from "react-router-dom";
+import { Link, Links } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -122,9 +122,17 @@ const Cart = () => {
               <span>المجموع</span>
               <h4>{formatPrice(totalPrice)} درهم</h4>
             </StyledTotalPrice>
+            <div className="flex flex-col gap-3">
+
             <StyledCheckoutButton>
               <button onClick={handleCheckout}>إتمام الطلب</button>
             </StyledCheckoutButton>
+            <StyledCheckoutButton outlined={true}>
+              <Link to="/cart">
+              <button onClick={handleCheckout}>السلة</button>
+              </Link>
+            </StyledCheckoutButton>
+            </div>
           </StyledCheckoutContent>
         </>
       )}
@@ -363,8 +371,9 @@ const StyledCheckoutButton = styled.div`
   button {
     width: 100%;
     height: 4.5rem;
-    background-color: var(--neutral-900);
-    color: var(--white);
+    background-color: ${({ outlined }) => (outlined ? "transparent" : "var(--neutral-900)")};
+    color: ${({ outlined }) => (outlined ? "var(--neutral-900)" : "var(--white)")};
+    border: 1px solid ${({ outlined }) => (outlined ? "var(--neutral-900)" : "transparent")};
     font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;

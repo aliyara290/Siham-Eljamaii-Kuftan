@@ -90,9 +90,6 @@ const Menu = ({ open, onClose }) => {
                   <Link onClick={onClose} to="/bestseller/women">للنساء</Link>
                 </StyledNestedLinkItem>
                 <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/bestseller/men">للرجال</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
                   <Link onClick={onClose} to="/bestseller/accessories">اكسسوارات</Link>
                 </StyledNestedLinkItem>
               </StyledNestedLinks>
@@ -102,22 +99,22 @@ const Menu = ({ open, onClose }) => {
       </StyledTopSection>
       <StyledBottomSection>
         <StyledBottomSectionLinks>
-          <li>
+          <li onClick={onClose}>
             <Link to={"/account/login"}>
               <span>الحساب</span>
             </Link>
           </li>
-          <li>
+          <li onClick={onClose}>
             <Link to={"/faq"}>
               <span>الأسئلة الشائعة</span>
             </Link>
           </li>
-          <li>
+          <li onClick={onClose}>
             <Link to={"/shipping"}>
               <span>الشحن</span>
             </Link>
           </li>
-          <li>
+          <li onClick={onClose}>
             <Link to={"/contact"}>
               <span>إتصل بنا</span>
             </Link>

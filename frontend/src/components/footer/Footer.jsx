@@ -95,7 +95,7 @@ const Footer = () => {
               </svg>
             </SocialIconLink>
             
-            <SocialIconLink to="#" aria-label="Pinterest">
+            {/* <SocialIconLink to="#" aria-label="Pinterest">
               <svg
                 width="22"
                 height="22"
@@ -116,7 +116,7 @@ const Footer = () => {
                 <path d="M4.93 19.07l.7-.7" />
                 <path d="M18.37 5.63l.7-.7" />
               </svg>
-            </SocialIconLink>
+            </SocialIconLink> */}
             
             <SocialIconLink to="#" aria-label="Facebook">
               <svg

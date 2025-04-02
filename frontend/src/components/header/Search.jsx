@@ -1,11 +1,10 @@
-
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Heading from "../heading/Heading";
 
-const Search = ({open, onClose}) => {
+const Search = ({ open, onClose }) => {
   return (
     <StyledSearch $open={open}>
       <StyledHeader>
@@ -31,7 +30,11 @@ const Search = ({open, onClose}) => {
           </StyledSearchBtn>
         </StyledSearchInputForm>
         <StyledDefaultResult>
-          <Heading weight={500} size={"xl"} title={"أخـر  ماغنـت أم كلثـوم 💫"} />
+          <Heading
+            weight={500}
+            size={"xl"}
+            title={"أخـر  ماغنـت أم كلثـوم 💫"}
+          />
           <StyledDefaultResultList>
             {[...Array(4)].map((_, index) => (
               <StyledDefaultResultListCard key={index}>
@@ -65,10 +68,10 @@ const StyledSearch = styled.div`
   min-height: 100svh;
   background-color: var(--white);
   z-index: 2345678456;
-  opacity: ${({$open}) => ($open ? 1 : 0)};
-  visibility: ${({$open}) => ($open ? 'visible' : 'hidden')};
+  opacity: ${({ $open }) => ($open ? 1 : 0)};
+  visibility: ${({ $open }) => ($open ? "visible" : "hidden")};
   transition: opacity 0.2s ease-in, visibility 0.2s ease-in;
-  pointer-events: ${({$open}) => ($open ? 'auto' : 'none')};
+  pointer-events: ${({ $open }) => ($open ? "auto" : "none")};
 `;
 
 const StyledHeader = styled.div`
@@ -77,7 +80,13 @@ const StyledHeader = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 2rem;
+  @media (max-width: 768px) {
+    justify-content: end;
+    height: 7rem;
+  }
 `;
+
 const StyledLogo = styled.div`
   display: flex;
   justify-content: center;
@@ -85,7 +94,14 @@ const StyledLogo = styled.div`
   img {
     width: 200px;
   }
+  @media (max-width: 768px) {
+    justify-content: start;
+    img {
+      width: 130px;
+    }
+  }
 `;
+
 const StyledCloseSearch = styled.div`
   position: absolute;
   top: 2.2rem;
@@ -97,6 +113,10 @@ const StyledCloseSearch = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  @media (max-width: 768px) {
+    top: 1.2rem;
+    right: 1rem;
+  }
   &:hover {
     background-color: var(--neutral-200);
   }
@@ -113,7 +133,8 @@ const StyledMainContent = styled.div`
   /* direction: ltr; */
 `;
 const StyledSearchInputForm = styled.div`
-  width: 60rem;
+  width: 90%;
+  max-width: 60rem;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   border: 1px solid var(--neutral-300);
@@ -147,14 +168,16 @@ const StyledSearchBtn = styled.div`
   }
 `;
 const StyledDefaultResult = styled.div`
-  width: 100%;
+  width: 90%;
   max-width: 100rem;
   padding: 2rem 0;
-`;
+  `;
 const StyledDefaultResultList = styled.ul`
-padding-top: 3rem;
+height: 65vh;
+overflow: auto;
+  padding-top: 3rem;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   gap: 3rem;
 `;
 const StyledDefImage = styled.div`

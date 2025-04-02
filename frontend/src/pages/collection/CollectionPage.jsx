@@ -196,7 +196,6 @@ const CollectionPage = () => {
         // Keep original order for featured
         break;
     }
-    
     setProducts(sortedProducts);
   };
 
@@ -354,7 +353,7 @@ const CollectionPage = () => {
           <ToolbarContainer>
             <FilterToggle onClick={toggleFilters}>
               <FunnelIcon width={20} height={20} />
-              <span>تصفية</span>
+              {/* <span>تصفية</span> */}
             </FilterToggle>
             
             <SortContainer>
@@ -373,7 +372,7 @@ const CollectionPage = () => {
               </SortIcon>
             </SortContainer>
             
-            <ViewToggle>
+            {/* <ViewToggle>
               <ViewButton 
                 active={viewMode === 'grid'} 
                 onClick={() => setViewMode('grid')}
@@ -386,7 +385,7 @@ const CollectionPage = () => {
               >
                 <ListBulletIcon width={20} height={20} />
               </ViewButton>
-            </ViewToggle>
+            </ViewToggle> */}
           </ToolbarContainer>
           
           {filteredProducts.length === 0 ? (
