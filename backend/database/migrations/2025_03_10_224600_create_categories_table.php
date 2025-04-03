@@ -10,7 +10,9 @@ return new class extends Migration {
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('name_ar')->nullable();
+            $table->string('name_en')->nullable();
+            $table->string('slug');
             $table->string('icon')->nullable();
             $table->uuid("parent_id")->nullable();
             $table->timestamps();

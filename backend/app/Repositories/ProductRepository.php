@@ -23,7 +23,7 @@ class ProductRepository implements ProductInterface
     
     public function all() {
         try {
-            $products = Product::with(['details', 'careInstructions', 'images', 'colors', 'sizes'])->paginate(10);
+            $products = Product::with(['images', 'colors', 'sizes'])->paginate(10);
             return new ProductCollectionResource($products);
         } catch (Exception $e) {
             return $this->error(
@@ -324,7 +324,7 @@ class ProductRepository implements ProductInterface
     public function getProductByCategory($categoryId) {
         try {
             $products = Product::where('category_id', $categoryId)
-                ->with(['details', 'careInstructions', 'images', 'colors', 'sizes'])
+                ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
             
             return new ProductCollectionResource($products);
@@ -342,7 +342,7 @@ class ProductRepository implements ProductInterface
             $products = Product::whereHas('sizes', function($query) use ($sizeId) {
                     $query->where('sizes.id', $sizeId);
                 })
-                ->with(['details', 'careInstructions', 'images', 'colors', 'sizes'])
+                ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
             
             return new ProductCollectionResource($products);
@@ -360,7 +360,7 @@ class ProductRepository implements ProductInterface
             $products = Product::whereHas('colors', function($query) use ($colorId) {
                     $query->where('colors.id', $colorId);
                 })
-                ->with(['details', 'careInstructions', 'images', 'colors', 'sizes'])
+                ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
             
             return new ProductCollectionResource($products);

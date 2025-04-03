@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    /** @use HasFactory<\Database\Factories\V1\CategoryFactory> */
     use HasFactory, HasUuid;
 
     protected $table = 'categories';
@@ -16,7 +15,9 @@ class Category extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        "name",
+        "name_ar",
+        "name_en",
+        "slug",
         "icon",
         "parent_id"
     ];

@@ -1,16 +1,106 @@
-import { MinusIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-
 const Menu = ({ open, onClose }) => {
   const menuRef = useRef(null);
-  const [shopOpen, setShopOpen] = useState(false);
-  const [bestSellerOpen, setBestSellerOpen] = useState(false);
+  const [openCollections, setOpenCollections] = useState({});
 
-  const toggleShop = () => setShopOpen(!shopOpen);
-  const toggleBestSeller = () => setBestSellerOpen(!bestSellerOpen);
+  // Static collection data
+  const collections = [
+    {
+      id: "kaftan",
+      nameArr: "قفطان",
+      nameEn: "Kaftan",
+      icon: "kaftan",
+      children: [
+        {
+          id: "moroccan-kaftan",
+          name_ar: "قفطان مغربي",
+          name_en: "Moroccan Kaftan",
+          icon: "moroccan-kaftan"
+        },
+        {
+          id: "modern-kaftan",
+          name_ar: "قفطان عصري",
+          name_en: "Modern Kaftan",
+          icon: "modern-kaftan"
+        },
+        {
+          id: "traditional-kaftan",
+          name_ar: "قفطان تقليدي",
+          name_en: "Traditional Kaftan",
+          icon: "traditional-kaftan"
+        }
+      ]
+    },
+    {
+      id: "jelaba",
+      nameArr: "جلابة",
+      nameEn: "Jelaba",
+      icon: "jelaba",
+      children: [
+        {
+          id: "embroidered-jelaba",
+          name_ar: "جلابة مطرزة",
+          name_en: "Embroidered Jelaba",
+          icon: "embroidered-jelaba"
+        },
+        {
+          id: "modern-jelaba",
+          name_ar: "جلابة عصرية",
+          name_en: "Modern Jelaba",
+          icon: "modern-jelaba"
+        },
+        {
+          id: "traditional-jelaba",
+          name_ar: "جلابة تقليدية",
+          name_en: "Traditional Jelaba",
+          icon: "traditional-jelaba"
+        }
+      ]
+    },
+    {
+      id: "accessories",
+      nameArr: "إكسسوارات",
+      nameEn: "Accessories",
+      icon: "accessories",
+      children: [
+        {
+          id: "headwear",
+          name_ar: "غطاء الرأس",
+          name_en: "Headwear",
+          icon: "headwear"
+        },
+        {
+          id: "belts",
+          name_ar: "أحزمة",
+          name_en: "Belts",
+          icon: "belt"
+        },
+        {
+          id: "shoes",
+          name_ar: "أحذية",
+          name_en: "Shoes",
+          icon: "shoes"
+        },
+        {
+          id: "jewelry",
+          name_ar: "مجوهرات",
+          name_en: "Jewelry",
+          icon: "jewelry"
+        }
+      ]
+    }
+  ];
+
+  const toggleCollection = (collectionId) => {
+    setOpenCollections(prev => ({
+      ...prev,
+      [collectionId]: !prev[collectionId]
+    }));
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -29,244 +119,257 @@ const Menu = ({ open, onClose }) => {
   }, [open, onClose]);
 
   return (
-    <StyledMenu ref={menuRef} open={open}>
-      <StyledTopSection>
-        <StyledMenuHeader>
-          <div>
-            <h6>القائمة</h6>
-          </div>
-          <div className="menu_chevron-close" onClick={onClose}>
-            <XMarkIcon width={25} height={25} />
-          </div>
-        </StyledMenuHeader>
-        <StyledPagesLinks>
-          <StyledPagesList>
-            <StyledLinkItem>
-              <div>
-                <span>تسوق</span>
-              </div>
-              <div className="menu_chevron-toggle" onClick={toggleShop}>
-                {shopOpen ? (
-                  <MinusIcon width={22} height={22} />
-                ) : (
-                  <PlusIcon width={22} height={22} />
-                )}
-              </div>
-            </StyledLinkItem>
-            
-            <StyledDropdownContent isOpen={shopOpen}>
-              <StyledNestedLinks>
-                <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/collection/kuftan">قفطان</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/collection/jewelry">مجوهرات</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/collection/jlaba">جلابة</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/collection/all">كل التصنيفات</Link>
-                </StyledNestedLinkItem>
-              </StyledNestedLinks>
-            </StyledDropdownContent>
-            
-            <StyledLinkItem>
-              <div>
-                <span>الاكثر مبيعا</span>
-              </div>
-              <div className="menu_chevron-toggle" onClick={toggleBestSeller}>
-                {bestSellerOpen ? (
-                  <MinusIcon width={22} height={22} />
-                ) : (
-                  <PlusIcon width={22} height={22} />
-                )}
-              </div>
-            </StyledLinkItem>
-            
-            <StyledDropdownContent isOpen={bestSellerOpen}>
-              <StyledNestedLinks>
-                <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/bestseller/women">للنساء</Link>
-                </StyledNestedLinkItem>
-                <StyledNestedLinkItem>
-                  <Link onClick={onClose} to="/bestseller/accessories">اكسسوارات</Link>
-                </StyledNestedLinkItem>
-              </StyledNestedLinks>
-            </StyledDropdownContent>
-          </StyledPagesList>
-        </StyledPagesLinks>
-      </StyledTopSection>
-      <StyledBottomSection>
-        <StyledBottomSectionLinks>
-          <li onClick={onClose}>
-            <Link to={"/account/login"}>
-              <span>الحساب</span>
-            </Link>
-          </li>
-          <li onClick={onClose}>
-            <Link to={"/faq"}>
-              <span>الأسئلة الشائعة</span>
-            </Link>
-          </li>
-          <li onClick={onClose}>
-            <Link to={"/shipping"}>
-              <span>الشحن</span>
-            </Link>
-          </li>
-          <li onClick={onClose}>
-            <Link to={"/contact"}>
-              <span>إتصل بنا</span>
-            </Link>
-          </li>
-        </StyledBottomSectionLinks>
-      </StyledBottomSection>
-    </StyledMenu>
+    
+      <StyledMenu ref={menuRef} open={open}>
+        <StyledHeader>
+         <span>القائمة</span>
+          <CloseButton onClick={onClose}>
+            <XMarkIcon width={24} height={24} />
+          </CloseButton>
+        </StyledHeader>
+
+        <StyledContent>
+          <StyledCategories>
+            {collections.map(collection => (
+              <CategoryItem key={collection.id}>
+                <CategoryHeader onClick={() => toggleCollection(collection.id)}>
+                  <CategoryName>{collection.nameArr}</CategoryName>
+                  <CategoryIcon isOpen={openCollections[collection.id]}>
+                    <ChevronDownIcon width={18} height={18} />
+                  </CategoryIcon>
+                </CategoryHeader>
+                
+                <SubcategoryList isOpen={openCollections[collection.id]}>
+                  {collection.children.map(child => (
+                    <SubcategoryItem key={child.id}>
+                      <Link to={`/collection/${child.id}`} onClick={onClose}>
+                        {child.name_ar}
+                      </Link>
+                    </SubcategoryItem>
+                  ))}
+                </SubcategoryList>
+              </CategoryItem>
+            ))}
+          </StyledCategories>
+          
+          {/* <MenuDivider /> */}
+          
+          {/* <StyledLinks>
+            <MenuItem>
+              <Link to="/account/login" onClick={onClose}>الحساب</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to="/faq" onClick={onClose}>الأسئلة الشائعة</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to="/shipping" onClick={onClose}>الشحن</Link>
+            </MenuItem>
+            <MenuItem>
+              <Link to="/contact" onClick={onClose}>إتصل بنا</Link>
+            </MenuItem>
+          </StyledLinks> */}
+        </StyledContent>
+        
+        <StyledFooter>
+          <SocialLinks>
+            <SocialLink href="#" target="_blank" rel="noopener noreferrer">Instagram</SocialLink>
+            <SocialLink href="#" target="_blank" rel="noopener noreferrer">Facebook</SocialLink>
+            <SocialLink href="#" target="_blank" rel="noopener noreferrer">Twitter</SocialLink>
+          </SocialLinks>
+        </StyledFooter>
+      </StyledMenu>
   );
 };
 
 export default Menu;
 
 
-
 const StyledMenu = styled.div`
   position: fixed;
-  z-index: 2345674567;
   top: 0;
-  right: ${({ open }) => (open ? "0" : "-120%")};
-  width: 40rem;
-  height: 100dvh;
-  background-color: var(--bg-primary, var(--white));
+  right: ${({ open }) => (open ? '0' : '-100%')};
+  width: 420px;
+  height: 100vh;
+  background-color: #fff;
+  transition: right 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding-bottom: 2rem;
-  transition: right 0.4s ease;
-  color: var(--text-primary, var(--neutral-900));
-`;
-
-const StyledTopSection = styled.div`
-  width: 100%;
-`;
-
-const StyledMenuHeader = styled.header`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  padding-left: 1.3rem;
-  border-bottom: 1px solid var(--border-color, var(--neutral-300));
-  color: var(--text-primary, var(--neutral-700));
+  box-shadow: -4px 0 25px rgba(0, 0, 0, 0.1);
+  z-index: 20000;
   
-  h6 {
-    font-size: var(--text-xl);
-    font-weight: 500;
-  }
-  
-  .menu_chevron-close {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    cursor: pointer;
-    &:hover {
-      background-color: var(--neutral-200);
-    }
+  @media (max-width: 520px) {
+    width: 90vw;
   }
 `;
 
-const StyledPagesLinks = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 0 2rem;
+const StyledHeader = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  overflow-y: auto;
-`;
-
-const StyledPagesList = styled.ul`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledLinkItem = styled.li`
-  padding: 1.6rem 0;
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border-color, var(--neutral-300));
-  
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
   span {
-    color: var(--text-primary, var(--neutral-700));
-    font-size: var(--text-md);
-    font-weight: 500;
+    font-size: var(--text-lg);
+  }
+`;
+
+const StyledLogo = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #333;
+`;
+
+const CloseButton = styled.button`
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+`;
+
+const StyledContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 0;
+  
+  &::-webkit-scrollbar {
+    width: 5px;
   }
   
-  .menu_chevron-toggle {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    
-    &:hover {
-      background-color: var(--neutral-200);
-      border-radius: 50%;
-    }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 10px;
   }
 `;
 
-const StyledDropdownContent = styled.div`
-  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
-  overflow: hidden;
-  transition: max-height 0.3s ease;
+const StyledCategories = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
 `;
 
-const StyledNestedLinks = styled.ul`
-  padding: 0.5rem 0 1rem 2rem;
+const CategoryItem = styled.li`
+  margin-bottom: 6px;
+`;
+
+const CategoryHeader = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #f9f9f9;
+  }
 `;
 
-const StyledNestedLinkItem = styled.li`
+const CategoryName = styled.span`
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--neutral-700);
+`;
+
+const CategoryIcon = styled.div`
+  transition: transform 0.3s ease;
+  transform: ${({ isOpen }) => isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+  color: #888;
+`;
+
+const SubcategoryList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: ${({ isOpen }) => isOpen ? '500px' : '0'};
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background-color: #f9f9f9;
+`;
+
+const SubcategoryItem = styled.li`
+  margin: 5px 0;
+  
   a {
-    color: var(--text-primary, var(--neutral-600));
+    display: block;
+    padding: 12px 30px 12px 50px;
+    color: #666;
     text-decoration: none;
-    font-size: var(--text-md);
-    transition: all 0.3s ease;
+    font-size: 15px;
+    transition: all 0.2s ease;
+    position: relative;
     
     &:hover {
-      color: var(--neutral-900);
-      transform: translateX(-5px);
+      color: #333;
+      background-color: #f1f1f1;
     }
   }
 `;
 
-const StyledBottomSection = styled.div`
-  padding: 0 2rem;
+const MenuDivider = styled.div`
+  height: 1px;
+  background-color: #f0f0f0;
+  margin: 20px 15px;
 `;
 
-const StyledBottomSectionLinks = styled.ul`
-  li {
-    padding: 0.5rem 0;
-    width: max-content;
+const StyledLinks = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const MenuItem = styled.li`
+  margin: 5px 0;
+  
+  a {
+    display: block;
+    padding: 12px 30px;
+    color: #666;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.2s ease;
     
-    &:hover span {
-      cursor: pointer;
-      color: #800080;
+    &:hover {
+      color: #333;
+      background-color: #f9f9f9;
     }
-    
-    span {
-      color: var(--text-primary, var(--neutral-700));
-      font-size: var(--text-md);
-      font-weight: 500;
-    }
+  }
+`;
+
+const StyledFooter = styled.div`
+  padding: 20px 30px;
+  border-top: 1px solid #f0f0f0;
+`;
+
+const SocialLinks = styled.div`
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+`;
+
+const SocialLink = styled.a`
+  color: #888;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: #333;
   }
 `;
