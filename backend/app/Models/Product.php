@@ -20,7 +20,7 @@ class Product extends Model
         'old_price',
         'description_ar',
         'description_en',
-        'category_id',
+        'category_slug',
         'slug',
         'sku',
         'quantity',

@@ -93,9 +93,9 @@ class ProductController extends Controller
     /**
      * Get products by category.
      */
-    public function getByCategory($categoryId)
+    public function getByCategory($slug)
     {
-        return $this->productInterface->getProductByCategory($categoryId);
+        return $this->productInterface->getProductByCategory($slug);
     }
 
     /**

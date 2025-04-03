@@ -1,3 +1,4 @@
+// src/pages/collection/CollectionsPage.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
@@ -74,15 +75,50 @@ const CollectionsPage = () => {
                   <ViewCollection>استعرض المجموعة</ViewCollection>
                 </CollectionOverlay>
               </CollectionImageContainer>
-              <CollectionInfo>
+              <CollectionDetails>
                 <CollectionName>{collection.name}</CollectionName>
-                <CollectionDescription>{collection.description}</CollectionDescription>
+                <CollectionSummary>{collection.description}</CollectionSummary>
                 <CollectionCount>{collection.items} منتج</CollectionCount>
-              </CollectionInfo>
+              </CollectionDetails>
             </Link>
           </CollectionCard>
         ))}
       </CollectionsGrid>
+      
+      <SpecialCollections>
+        <Heading title="مجموعات مميزة" weight={500} />
+        <SubHeading 
+          title="تصفح مجموعاتنا المميزة المختارة بعناية لتناسب احتياجاتك"
+          size="lg" 
+        />
+        <SpecialCollectionsGrid>
+          <SpecialCollectionCard>
+            <Link to="/collections/bestseller">
+              <SpecialCollectionImage 
+                src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/105_0a4b7901-6aa1-4edb-ad59-94fb58dfa720.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1724375971&width=720" 
+                alt="الأكثر مبيعاً" 
+              />
+              <SpecialCollectionOverlay>
+                <SpecialCollectionName>الأكثر مبيعاً</SpecialCollectionName>
+                <SpecialCollectionButton>استعرض المجموعة</SpecialCollectionButton>
+              </SpecialCollectionOverlay>
+            </Link>
+          </SpecialCollectionCard>
+          
+          <SpecialCollectionCard>
+            <Link to="/collections/new">
+              <SpecialCollectionImage 
+                src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720" 
+                alt="وصل حديثاً" 
+              />
+              <SpecialCollectionOverlay>
+                <SpecialCollectionName>وصل حديثاً</SpecialCollectionName>
+                <SpecialCollectionButton>استعرض المجموعة</SpecialCollectionButton>
+              </SpecialCollectionOverlay>
+            </Link>
+          </SpecialCollectionCard>
+        </SpecialCollectionsGrid>
+      </SpecialCollections>
     </PageContainer>
   );
 };
@@ -116,6 +152,19 @@ const CollectionHeroOverlay = styled.div`
   align-items: center;
 `;
 
+const CollectionInfo = styled.div`
+  text-align: center;
+  max-width: 80rem;
+  padding: 0 2rem;
+  color: var(--white);
+`;
+
+const CollectionDescription = styled.p`
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  margin: 2rem 0;
+  color: var(--white);
+`;
 
 const CollectionsGrid = styled.div`
   display: grid;
@@ -135,6 +184,19 @@ const CollectionCard = styled.article`
   display: flex;
   flex-direction: column;
   height: 100%;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
+  }
+  
+  &:hover div:first-of-type {
+    opacity: 1;
+  }
 `;
 
 const CollectionImageContainer = styled.div`
@@ -176,7 +238,7 @@ const ViewCollection = styled.span`
   padding-bottom: 0.5rem;
 `;
 
-const CollectionInfo = styled.div`
+const CollectionDetails = styled.div`
   padding: 2.5rem 0;
   display: flex;
   flex-direction: column;
@@ -189,7 +251,7 @@ const CollectionName = styled.h2`
   color: var(--neutral-900);
 `;
 
-const CollectionDescription = styled.p`
+const CollectionSummary = styled.p`
   font-size: var(--text-md);
   color: var(--neutral-600);
   line-height: 1.6;
@@ -202,19 +264,81 @@ const CollectionCount = styled.span`
   margin-top: 1rem;
 `;
 
-CollectionCard.defaultProps = {
-  theme: {
-    main: 'var(--white)'
-  }
-};
+const SpecialCollections = styled.section`
+  margin-top: 8rem;
+  padding: 0 2rem;
+  max-width: 140rem;
+  margin-left: auto;
+  margin-right: auto;
+`;
 
-// Add hover effects using the styled-components &
-const StyledCollectionCard = styled(CollectionCard)`
-  &:hover ${CollectionImage} {
-    transform: scale(1.05);
+const SpecialCollectionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem;
+  margin-top: 4rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SpecialCollectionCard = styled.div`
+  position: relative;
+  height: 40rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  
+  &:hover img {
+    transform: scale(1.1);
   }
   
-  &:hover ${CollectionOverlay} {
-    opacity: 1;
+  &:hover div {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%);
+  }
+`;
+
+const SpecialCollectionImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+`;
+
+const SpecialCollectionOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.2) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  padding: 2rem;
+`;
+
+const SpecialCollectionName = styled.h3`
+  font-size: var(--text-xxl);
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const SpecialCollectionButton = styled.span`
+  padding: 1.2rem 2.5rem;
+  background-color: var(--white);
+  color: var(--neutral-900);
+  font-size: var(--text-md);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: var(--neutral-900);
+    color: var(--white);
   }
 `;

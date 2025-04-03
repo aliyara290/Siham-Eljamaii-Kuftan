@@ -48,7 +48,7 @@ const AppRoutes = () => {
         <Route path="/account/register" element={<RegisterPage />} />
         <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/collections" element={<CollectionsPage />} />
-        <Route path="/collection/:id" element={<CollectionPage />} />
+        <Route path="/collection/:slug" element={<CollectionPage />} />
         <Route path="/collections/bestseller" element={<BestSellerPage />} />
         <Route path="/collections/new" element={<NewArrivalsPage />} />
         <Route path="/faq" element={<FAQPage />} />

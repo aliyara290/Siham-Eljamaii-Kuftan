@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->string('name_ar')->nullable();
             $table->string('name_en')->nullable();
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->string('icon')->nullable();
             $table->uuid("parent_id")->nullable();
             $table->timestamps();

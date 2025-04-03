@@ -26,7 +26,7 @@ class ProductSeeder extends Seeder
         // Create a default category if none exists
         if (Category::count() == 0) {
             $category = Category::create([
-                'name' => 'Default Category',
+                'name_ar' => 'Default Category',
                 'icon' => 'default-icon'
             ]);
         }
@@ -36,7 +36,7 @@ class ProductSeeder extends Seeder
         // Create 20 products with their relationships
         Product::factory(60)->make()->each(function ($product) use ($colors, $sizes, $categories) {
             // Assign a random category
-            $product->category_id = $categories->random()->id;
+            $product->category_slug = $categories->random()->slug;
             
             // Generate slug from name_en if not already set
             if (!$product->slug) {

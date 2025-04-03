@@ -17,6 +17,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
 Route::prefix('v1')->group(function () {
     // Auth routes
     Route::prefix('auth')->group(function () {
@@ -33,7 +34,7 @@ Route::prefix('v1')->group(function () {
     
     // Product filter routes - these come first to avoid route conflicts
     Route::prefix('products')->group(function () {
-        Route::get('/filters/category/{categoryId}', [ProductController::class, 'getByCategory']);
+        Route::get('/filters/category/{slug}', [ProductController::class, 'getByCategory']);
         Route::get('/filters/size/{sizeId}', [ProductController::class, 'getBySize']);
         Route::get('/filters/color/{colorId}', [ProductController::class, 'getByColor']);
         Route::get('/filters/price', [ProductController::class, 'getByPrice']);

@@ -321,9 +321,9 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductByCategory($categoryId) {
+    public function getProductByCategory($categorySlug) {
         try {
-            $products = Product::where('category_id', $categoryId)
+            $products = Product::where('category_slug', $categorySlug)
                 ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
             
