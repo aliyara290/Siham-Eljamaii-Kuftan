@@ -23,7 +23,7 @@ class ProductImageFactory extends Factory
     public function definition(): array
     {
         return [
-            'url' => $this->faker->imageUrl(640, 480, 'products', true),
+            'url' => 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720',
             'sort_order' => $this->faker->numberBetween(0, 10),
             'product_id' => Product::factory(),
         ];

@@ -5,7 +5,7 @@ const CardNumberWrapper = styled.div`
   background-color: var(--white);
   transition: all 0.3s ease;
   position: relative;
-  
+
   &:focus-within {
     border-color: var(--neutral-600);
     box-shadow: 0 0 0 1px var(--neutral-300);
@@ -18,54 +18,60 @@ const CardBrandIcon = styled.div`
   left: 1rem;
   transform: translateY(-50%);
   height: 24px;
-  
-  img, span {
+
+  img,
+  span {
     height: 100%;
     display: block;
   }
-  
+
   span {
     font-size: var(--text-sm);
     font-weight: 600;
     line-height: 24px;
     color: var(--neutral-700);
   }
-`;// src/pages/checkout/CheckoutPage.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { loadStripe } from '@stripe/stripe-js';
-import { 
-  Elements, 
-  CardNumberElement, 
-  CardExpiryElement, 
+`; // src/pages/checkout/CheckoutPage.jsx
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardNumberElement,
+  CardExpiryElement,
   CardCvcElement,
-  useStripe, 
-  useElements 
-} from '@stripe/react-stripe-js';
-import { useCart } from '../../context/CartContext';
-import Heading from '../../components/heading/Heading';
-import SubHeading from '../../components/heading/SubHeading';
-import { createPaymentIntent, processPayment } from '../../services/stripeService';
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useCart } from "../../context/CartContext";
+import Heading from "../../components/heading/Heading";
+import SubHeading from "../../components/heading/SubHeading";
+import {
+  createPaymentIntent,
+  processPayment,
+} from "../../services/stripeService";
 
 // You should replace this with your actual Stripe publishable key
-const stripePromise = loadStripe('pk_test_51LD5WRCy79QTCK5xftENUau7DL8Y4VzLEgSe0vF4PaCtLoZBhmGnWCZAmymqPvXRAExDbueXRmRClGKnhKZp20Nj00SDb3HI9M');
+const stripePromise = loadStripe(
+  "pk_test_51LD5WRCy79QTCK5xftENUau7DL8Y4VzLEgSe0vF4PaCtLoZBhmGnWCZAmymqPvXRAExDbueXRmRClGKnhKZp20Nj00SDb3HI9M"
+);
 
 // Card Element styling options
 const cardElementStyle = {
   style: {
     base: {
-      color: '#32325d',
+      color: "#32325d",
       fontFamily: '"Almarai", sans-serif',
-      fontSmoothing: 'antialiased',
-      fontSize: '16px',
-      '::placeholder': {
-        color: '#aab7c4',
+      fontSmoothing: "antialiased",
+      fontSize: "16px",
+      "::placeholder": {
+        color: "#aab7c4",
       },
     },
     invalid: {
-      color: '#fa755a',
-      iconColor: '#fa755a',
+      color: "#fa755a",
+      iconColor: "#fa755a",
     },
   },
 };
@@ -76,44 +82,49 @@ const CheckoutForm = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
-  
-  const [clientSecret, setClientSecret] = useState('');
+
+  const [clientSecret, setClientSecret] = useState("");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [billingDetails, setBillingDetails] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: 'MA', // Default to Morocco
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "MA", // Default to Morocco
   });
-  const [shippingMethod, setShippingMethod] = useState('standard');
+  const [shippingMethod, setShippingMethod] = useState("standard");
   const [currentStep, setCurrentStep] = useState(1); // 1: Shipping, 2: Payment
   const [cardBrand, setCardBrand] = useState(null);
 
   // Handle card brand change
   const handleCardBrandChange = (event) => {
-    if (event.brand && event.brand !== 'unknown') {
+    if (event.brand && event.brand !== "unknown") {
       setCardBrand(event.brand);
     } else {
       setCardBrand(null);
     }
   };
-  
+
   // Calculate shipping cost based on the selected method
-  const shippingCost = shippingMethod === 'express' ? 150 : shippingMethod === 'nextDay' ? 250 : 50;
-  
+  const shippingCost =
+    shippingMethod === "express"
+      ? 150
+      : shippingMethod === "nextDay"
+      ? 250
+      : 50;
+
   // Total cost including shipping
   const totalAmount = cart.totalPrice + shippingCost;
-  
+
   // Format price with commas
   const formatPrice = (price) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
-  
+
   // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -122,12 +133,27 @@ const CheckoutForm = () => {
       [name]: value,
     }));
   };
-  
+
   // Fetch shipping methods
   const [shippingMethods, setShippingMethods] = useState([
-    { id: 'standard', name: 'شحن قياسي', price: 50, deliveryTime: '3-5 أيام عمل' },
-    { id: 'express', name: 'شحن سريع', price: 150, deliveryTime: '1-2 يوم عمل' },
-    { id: 'nextDay', name: 'توصيل في اليوم التالي', price: 250, deliveryTime: 'يوم عمل واحد (المدن الرئيسية فقط)' }
+    {
+      id: "standard",
+      name: "شحن قياسي",
+      price: 50,
+      deliveryTime: "3-5 أيام عمل",
+    },
+    {
+      id: "express",
+      name: "شحن سريع",
+      price: 150,
+      deliveryTime: "1-2 يوم عمل",
+    },
+    {
+      id: "nextDay",
+      name: "توصيل في اليوم التالي",
+      price: 250,
+      deliveryTime: "يوم عمل واحد (المدن الرئيسية فقط)",
+    },
   ]);
 
   // Fetch available shipping methods
@@ -140,7 +166,7 @@ const CheckoutForm = () => {
           setShippingMethod(methods[0].id); // Set first method as default
         }
       } catch (error) {
-        console.error('Error fetching shipping methods:', error);
+        console.error("Error fetching shipping methods:", error);
         // Keep using the default shipping methods defined above
       }
     };
@@ -153,32 +179,32 @@ const CheckoutForm = () => {
     const fetchPaymentIntent = async () => {
       try {
         if (cart.items.length === 0) {
-          navigate('/cart');
+          navigate("/cart");
           return;
         }
-        
+
         const response = await createPaymentIntent(cart.items, {
           amount: totalAmount,
-          currency: 'mad', // Moroccan Dirham
-          shipping_method: shippingMethod
+          currency: "mad", // Moroccan Dirham
+          shipping_method: shippingMethod,
         });
-        
+
         if (response && response.clientSecret) {
           setClientSecret(response.clientSecret);
         } else {
-          throw new Error('No client secret returned');
+          throw new Error("No client secret returned");
         }
       } catch (error) {
-        console.error('Error creating payment intent:', error);
-        setError('حدث خطأ أثناء تجهيز عملية الدفع. يرجى المحاولة مرة أخرى.');
+        console.error("Error creating payment intent:", error);
+        setError("حدث خطأ أثناء تجهيز عملية الدفع. يرجى المحاولة مرة أخرى.");
       }
     };
-    
+
     if (cart.items.length > 0) {
       fetchPaymentIntent();
     }
   }, [cart.items, totalAmount, shippingMethod, navigate]);
-  
+
   const goToNextStep = () => {
     if (
       !billingDetails.name ||
@@ -189,40 +215,45 @@ const CheckoutForm = () => {
       !billingDetails.postalCode ||
       !billingDetails.country
     ) {
-      setError('يرجى ملء جميع الحقول المطلوبة.');
+      setError("يرجى ملء جميع الحقول المطلوبة.");
       return;
     }
-    
+
     setError(null);
     setCurrentStep(2);
-    
+
     // Scroll to top on mobile
     window.scrollTo(0, 0);
   };
-  
+
   const goToPreviousStep = () => {
     setCurrentStep(1);
     setError(null);
-    
+
     // Scroll to top on mobile
     window.scrollTo(0, 0);
   };
-  
+
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     if (!stripe || !elements) {
       return;
     }
-    
+
     setProcessing(true);
     setError(null);
-    
+
     try {
       // Process payment with Stripe
-      const result = await processPayment(stripe, elements, clientSecret, billingDetails);
-      
+      const result = await processPayment(
+        stripe,
+        elements,
+        clientSecret,
+        billingDetails
+      );
+
       // NOTE: The processPayment function needs to be updated to handle the separate card elements
       // instead of a single CardElement. For example:
       /*
@@ -233,73 +264,72 @@ const CheckoutForm = () => {
         }
       });
       */
-      
+
       if (result.error) {
         setError(result.error.message);
       } else if (result.success) {
         // Create order in our database
         const orderData = {
           payment_intent_id: result.paymentIntent.id,
-          payment_method: 'card',
+          payment_method: "card",
           shipping_method: shippingMethod,
           subtotal: cart.totalPrice,
           shipping_cost: shippingCost,
           total: totalAmount,
           customer_info: billingDetails,
-          items: cart.items.map(item => ({
+          items: cart.items.map((item) => ({
             product_id: item.id,
             quantity: item.quantity,
             price: item.price,
             options: {
               color: item.selectedColor,
-              size: item.selectedSize
-            }
-          }))
+              size: item.selectedSize,
+            },
+          })),
         };
-        
+
         try {
           // Create order in our backend
           const order = await createOrder(orderData);
-          
+
           setSuccess(true);
           clearCart();
-          
+
           // Navigate to confirmation page
           setTimeout(() => {
-            navigate('/order-confirmation', { 
-              state: { 
+            navigate("/order-confirmation", {
+              state: {
                 orderId: order.id || result.paymentIntent.id,
                 orderNumber: order.order_number,
-                amount: totalAmount 
-              } 
+                amount: totalAmount,
+              },
             });
           }, 1500);
         } catch (orderError) {
-          console.error('Error creating order:', orderError);
-          
+          console.error("Error creating order:", orderError);
+
           // Even if there's an error creating the order in our database,
           // the payment was successful with Stripe, so redirect to confirmation
           setTimeout(() => {
-            navigate('/order-confirmation', { 
-              state: { 
+            navigate("/order-confirmation", {
+              state: {
                 orderId: result.paymentIntent.id,
-                amount: totalAmount 
-              } 
+                amount: totalAmount,
+              },
             });
           }, 2000);
         }
       }
     } catch (err) {
-      console.error('Payment error:', err);
-      setError('حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى.');
+      console.error("Payment error:", err);
+      setError("حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى.");
     } finally {
       setProcessing(false);
     }
   };
-  
+
   return (
     <CheckoutFormContainer onSubmit={handleSubmit}>
-      
       <CheckoutSteps>
         <StepsTracker>
           <StepIndicator active={currentStep === 1}>
@@ -313,13 +343,13 @@ const CheckoutForm = () => {
           </StepIndicator>
         </StepsTracker>
       </CheckoutSteps>
-      
+
       {currentStep === 1 ? (
         // Step 1: Shipping information
         <ShippingSection>
           <CheckoutSection>
             <SectionTitle>معلومات الفوترة والشحن</SectionTitle>
-            
+
             <FormGroup>
               <FormLabel htmlFor="name">الاسم الكامل *</FormLabel>
               <FormInput
@@ -331,7 +361,7 @@ const CheckoutForm = () => {
                 required
               />
             </FormGroup>
-            
+
             <FormGroup>
               <FormLabel htmlFor="email">البريد الإلكتروني *</FormLabel>
               <FormInput
@@ -343,7 +373,7 @@ const CheckoutForm = () => {
                 required
               />
             </FormGroup>
-            
+
             <FormGroup>
               <FormLabel htmlFor="phone">رقم الهاتف *</FormLabel>
               <FormInput
@@ -355,7 +385,7 @@ const CheckoutForm = () => {
                 required
               />
             </FormGroup>
-            
+
             <FormGroup>
               <FormLabel htmlFor="address">العنوان *</FormLabel>
               <FormInput
@@ -367,7 +397,7 @@ const CheckoutForm = () => {
                 required
               />
             </FormGroup>
-            
+
             <FormRow>
               <FormGroup>
                 <FormLabel htmlFor="city">المدينة *</FormLabel>
@@ -380,7 +410,7 @@ const CheckoutForm = () => {
                   required
                 />
               </FormGroup>
-              
+
               <FormGroup>
                 <FormLabel htmlFor="postalCode">الرمز البريدي *</FormLabel>
                 <FormInput
@@ -393,7 +423,7 @@ const CheckoutForm = () => {
                 />
               </FormGroup>
             </FormRow>
-            
+
             <FormGroup>
               <FormLabel htmlFor="country">البلد *</FormLabel>
               <FormSelect
@@ -413,9 +443,9 @@ const CheckoutForm = () => {
                 <option value="US">الولايات المتحدة</option>
               </FormSelect>
             </FormGroup>
-            
+
             <SectionTitle>طريقة الشحن</SectionTitle>
-            
+
             <ShippingOptions>
               {shippingMethods.map((method) => (
                 <ShippingOption key={method.id}>
@@ -432,22 +462,24 @@ const CheckoutForm = () => {
                       <ShippingName>{method.name}</ShippingName>
                       <ShippingTime>{method.deliveryTime}</ShippingTime>
                     </div>
-                    <ShippingPrice>{formatPrice(method.price)} د.م</ShippingPrice>
+                    <ShippingPrice>
+                      {formatPrice(method.price)} د.م
+                    </ShippingPrice>
                   </ShippingLabel>
                 </ShippingOption>
               ))}
             </ShippingOptions>
-            
+
             {error && <ErrorMessage>{error}</ErrorMessage>}
-            
+
             <ContinueButton type="button" onClick={goToNextStep}>
               المتابعة إلى الدفع
             </ContinueButton>
           </CheckoutSection>
-          
+
           <MobileOrderSummary>
             <SectionTitle>ملخص الطلب</SectionTitle>
-            
+
             <SummaryItems>
               {cart.items.map((item) => (
                 <SummaryItem key={item.cartItemId}>
@@ -457,28 +489,36 @@ const CheckoutForm = () => {
                   </ItemImageContainer>
                   <ItemDetails>
                     <ItemName>{item.name}</ItemName>
-                    {item.selectedSize && <ItemOption>المقاس: {item.selectedSize}</ItemOption>}
-                    {item.selectedColor && <ItemOption>اللون: {item.selectedColor}</ItemOption>}
-                    <ItemPrice>{formatPrice(item.price * item.quantity)} د.م</ItemPrice>
+                    {item.selectedSize && (
+                      <ItemOption>المقاس: {item.selectedSize}</ItemOption>
+                    )}
+                    {item.selectedColor && (
+                      <ItemOption>اللون: {item.selectedColor}</ItemOption>
+                    )}
+                    <ItemPrice>
+                      {formatPrice(item.price * item.quantity)} د.م
+                    </ItemPrice>
                   </ItemDetails>
                 </SummaryItem>
               ))}
             </SummaryItems>
-            
+
             <SummaryTotals>
               <SummaryRow>
                 <SummaryLabel>المجموع الفرعي:</SummaryLabel>
                 <SummaryValue>{formatPrice(cart.totalPrice)} د.م</SummaryValue>
               </SummaryRow>
-              
+
               <SummaryRow>
                 <SummaryLabel>الشحن:</SummaryLabel>
                 <SummaryValue>{formatPrice(shippingCost)} د.م</SummaryValue>
               </SummaryRow>
-              
+
               <SummaryTotal>
                 <SummaryTotalLabel>الإجمالي:</SummaryTotalLabel>
-                <SummaryTotalValue>{formatPrice(totalAmount)} د.م</SummaryTotalValue>
+                <SummaryTotalValue>
+                  {formatPrice(totalAmount)} د.م
+                </SummaryTotalValue>
               </SummaryTotal>
             </SummaryTotals>
           </MobileOrderSummary>
@@ -488,48 +528,65 @@ const CheckoutForm = () => {
         <PaymentSection>
           <CheckoutSection>
             <SectionTitle>طريقة الدفع</SectionTitle>
-            
+
             <OrderSummaryCard>
               <SummaryRow>
                 <SummaryLabel>المجموع الفرعي:</SummaryLabel>
                 <SummaryValue>{formatPrice(cart.totalPrice)} د.م</SummaryValue>
               </SummaryRow>
-              
+
               <SummaryRow>
-                <SummaryLabel>الشحن ({shippingMethods.find(m => m.id === shippingMethod)?.name}):</SummaryLabel>
+                <SummaryLabel>
+                  الشحن (
+                  {shippingMethods.find((m) => m.id === shippingMethod)?.name}):
+                </SummaryLabel>
                 <SummaryValue>{formatPrice(shippingCost)} د.م</SummaryValue>
               </SummaryRow>
-              
+
               <SummaryTotal>
                 <SummaryTotalLabel>الإجمالي:</SummaryTotalLabel>
-                <SummaryTotalValue>{formatPrice(totalAmount)} د.م</SummaryTotalValue>
+                <SummaryTotalValue>
+                  {formatPrice(totalAmount)} د.م
+                </SummaryTotalValue>
               </SummaryTotal>
             </OrderSummaryCard>
-            
+
             <PaymentMethod>
               <CardSectionTitle>تفاصيل البطاقة</CardSectionTitle>
-              
+
               <CardInputGroup>
                 <CardInputLabel>رقم البطاقة</CardInputLabel>
                 <CardNumberWrapper>
-                  <CardNumberElement 
-                    options={cardElementStyle} 
+                  <CardNumberElement
+                    options={cardElementStyle}
                     onChange={handleCardBrandChange}
                   />
                   {cardBrand && (
                     <CardBrandIcon>
-                      {cardBrand === 'visa' && <img src="/assets/images/pay/visa.svg" alt="Visa" />}
-                      {cardBrand === 'mastercard' && <img src="/assets/images/pay/mastercard.svg" alt="Mastercard" />}
-                      {cardBrand === 'amex' && <img src="/assets/images/pay/american-ex.svg" alt="American Express" />}
-                      {cardBrand === 'discover' && <span>Discover</span>}
-                      {cardBrand === 'diners' && <span>Diners</span>}
-                      {cardBrand === 'jcb' && <span>JCB</span>}
-                      {cardBrand === 'unionpay' && <span>UnionPay</span>}
+                      {cardBrand === "visa" && (
+                        <img src="/assets/images/pay/visa.svg" alt="Visa" />
+                      )}
+                      {cardBrand === "mastercard" && (
+                        <img
+                          src="/assets/images/pay/mastercard.svg"
+                          alt="Mastercard"
+                        />
+                      )}
+                      {cardBrand === "amex" && (
+                        <img
+                          src="/assets/images/pay/american-ex.svg"
+                          alt="American Express"
+                        />
+                      )}
+                      {cardBrand === "discover" && <span>Discover</span>}
+                      {cardBrand === "diners" && <span>Diners</span>}
+                      {cardBrand === "jcb" && <span>JCB</span>}
+                      {cardBrand === "unionpay" && <span>UnionPay</span>}
                     </CardBrandIcon>
                   )}
                 </CardNumberWrapper>
               </CardInputGroup>
-              
+
               <CardInputRow>
                 <CardInputGroup>
                   <CardInputLabel>تاريخ الانتهاء</CardInputLabel>
@@ -537,7 +594,7 @@ const CheckoutForm = () => {
                     <CardExpiryElement options={cardElementStyle} />
                   </CardInputWrapper>
                 </CardInputGroup>
-                
+
                 <CardInputGroup>
                   <CardInputLabel>رمز الأمان (CVC)</CardInputLabel>
                   <CardInputWrapper>
@@ -545,31 +602,55 @@ const CheckoutForm = () => {
                   </CardInputWrapper>
                 </CardInputGroup>
               </CardInputRow>
-              
+
               {error && <ErrorMessage>{error}</ErrorMessage>}
-              {success && <SuccessMessage>تمت عملية الدفع بنجاح!</SuccessMessage>}
-              
+              {success && (
+                <SuccessMessage>تمت عملية الدفع بنجاح!</SuccessMessage>
+              )}
+
               <PaymentActions>
                 <BackButton type="button" onClick={goToPreviousStep}>
                   العودة
                 </BackButton>
                 <PayButton type="submit" disabled={processing || !stripe}>
-                  {processing ? 'جاري المعالجة...' : `إتمام الدفع - ${formatPrice(totalAmount)} د.م`}
+                  {processing
+                    ? "جاري المعالجة..."
+                    : `إتمام الدفع - ${formatPrice(totalAmount)} د.م`}
                 </PayButton>
               </PaymentActions>
-              
+
               <SecurePaymentNotice>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect
+                    x="3"
+                    y="11"
+                    width="18"
+                    height="11"
+                    rx="2"
+                    ry="2"
+                  ></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
                 <span>جميع المعاملات مشفرة وآمنة</span>
               </SecurePaymentNotice>
-              
+
               <PaymentLogos>
                 <img src="/assets/images/pay/visa.svg" alt="Visa" />
                 <img src="/assets/images/pay/mastercard.svg" alt="Mastercard" />
-                <img src="/assets/images/pay/american-ex.svg" alt="American Express" />
+                <img
+                  src="/assets/images/pay/american-ex.svg"
+                  alt="American Express"
+                />
               </PaymentLogos>
             </PaymentMethod>
           </CheckoutSection>
@@ -585,8 +666,11 @@ const CheckoutPage = () => {
     <CheckoutPageContainer>
       <CheckoutContentWrapper>
         <Heading title="إتمام الطلب" weight={500} />
-        <SubHeading title="أكمل معلومات الشحن والدفع لإتمام عملية الشراء" size="lg" />
-        
+        <SubHeading
+          title="أكمل معلومات الشحن والدفع لإتمام عملية الشراء"
+          size="lg"
+        />
+
         <Elements stripe={stripePromise}>
           <CheckoutForm />
         </Elements>
@@ -603,7 +687,7 @@ const CheckoutPageContainer = styled.div`
   background-color: var(--white);
   padding-top: 6rem;
   padding-bottom: 4rem;
-  
+
   @media (min-width: 768px) {
     padding-top: 12rem;
     padding-bottom: 6rem;
@@ -614,7 +698,7 @@ const CheckoutContentWrapper = styled.div`
   max-width: 120rem;
   margin: 0 auto;
   padding: 0 1.5rem;
-  
+
   @media (min-width: 768px) {
     padding: 0 2rem;
   }
@@ -622,7 +706,7 @@ const CheckoutContentWrapper = styled.div`
 
 const CheckoutFormContainer = styled.form`
   margin-top: 3rem;
-  
+
   @media (min-width: 768px) {
     margin-top: 4rem;
   }
@@ -634,7 +718,7 @@ const CheckoutSummaryPreview = styled.div`
 
 const CheckoutSteps = styled.div`
   margin: 2rem 0;
-  
+
   @media (min-width: 768px) {
     margin: 2rem 0 3rem;
   }
@@ -652,9 +736,9 @@ const StepIndicator = styled.div`
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  opacity: ${props => props.active ? 1 : 0.6};
-  
-  ${props => props.active ? 'transform: scale(1.05);' : ''}
+  opacity: ${(props) => (props.active ? 1 : 0.6)};
+
+  ${(props) => (props.active ? "transform: scale(1.05);" : "")}
 `;
 
 const StepNumber = styled.div`
@@ -664,15 +748,16 @@ const StepNumber = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.active ? 'var(--neutral-900)' : 'var(--neutral-300)'};
-  color: ${props => props.active ? 'var(--white)' : 'var(--neutral-700)'};
+  background-color: ${(props) =>
+    props.active ? "var(--neutral-900)" : "var(--neutral-300)"};
+  color: ${(props) => (props.active ? "var(--white)" : "var(--neutral-700)")};
   font-weight: 600;
 `;
 
 const StepName = styled.span`
   font-size: var(--text-sm);
   color: var(--neutral-700);
-  
+
   @media (min-width: 768px) {
     font-size: var(--text-md);
   }
@@ -681,16 +766,16 @@ const StepName = styled.span`
 const StepDivider = styled.div`
   height: 1px;
   width: 5rem;
-  background-color: ${props => props.completed ? 'var(--neutral-900)' : 'var(--neutral-300)'};
+  background-color: ${(props) =>
+    props.completed ? "var(--neutral-900)" : "var(--neutral-300)"};
   margin: 0 1rem;
-  
+
   @media (min-width: 768px) {
     width: 8rem;
   }
 `;
 
 const ShippingSection = styled.div`
-
   @media (min-width: 1024px) {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -706,7 +791,7 @@ const PaymentSection = styled.div`
     margin: 0 auto;
     height: max-content;
   }
-  
+
   @media (max-width: 1023px) {
     padding-top: 1rem;
   }
@@ -718,7 +803,7 @@ const CheckoutSection = styled.section`
   border: 1px solid var(--neutral-200);
   border-radius: 0.5rem;
   margin-bottom: 2rem;
-  
+
   @media (min-width: 768px) {
     padding: 3rem;
     margin-bottom: 3rem;
@@ -732,14 +817,14 @@ const SectionTitle = styled.h3`
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--neutral-200);
-  
+
   &:not(:first-child) {
     margin-top: 3rem;
   }
-  
+
   @media (min-width: 768px) {
     margin-bottom: 2.5rem;
-    
+
     &:not(:first-child) {
       margin-top: 4rem;
     }
@@ -751,7 +836,7 @@ const FormGroup = styled.div`
   flex-direction: column;
   gap: 0.8rem;
   margin-bottom: 1.5rem;
-  
+
   @media (min-width: 768px) {
     margin-bottom: 2rem;
   }
@@ -762,13 +847,12 @@ const FormRow = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
-  
+
   @media (min-width: 768px) {
     gap: 2rem;
     margin-bottom: 2rem;
   }
   @media (max-width: 768px) {
-   
     grid-template-columns: 1fr;
   }
 `;
@@ -787,7 +871,7 @@ const FormInput = styled.input`
   background-color: var(--neutral-50);
   border: 1px solid var(--neutral-300);
   border-radius: 0.3rem;
-  
+
   &:focus {
     outline: none;
     border-color: var(--neutral-600);
@@ -803,7 +887,7 @@ const FormSelect = styled.select`
   background-color: var(--neutral-50);
   border: 1px solid var(--neutral-300);
   border-radius: 0.3rem;
-  
+
   &:focus {
     outline: none;
     border-color: var(--neutral-600);
@@ -826,7 +910,7 @@ const ShippingOption = styled.div`
   border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     border-color: var(--neutral-600);
   }
@@ -845,7 +929,7 @@ const ShippingLabel = styled.label`
   justify-content: space-between;
   align-items: flex-start;
   cursor: pointer;
-  
+
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 0.8rem;
@@ -878,12 +962,12 @@ const MobileOrderSummary = styled.div`
   border: 1px solid var(--neutral-200);
   border-radius: 0.5rem;
   margin-bottom: 2rem;
-  
+
   @media (min-width: 768px) {
     padding: 3rem;
     margin-bottom: 0;
   }
-  
+
   @media (max-width: 1023px) {
     display: none;
   }
@@ -904,7 +988,7 @@ const SummaryItems = styled.div`
   max-height: 20rem;
   overflow-y: auto;
   margin-bottom: 2rem;
-  
+
   @media (min-width: 768px) {
     gap: 2rem;
     max-height: 30rem;
@@ -921,7 +1005,7 @@ const ItemImageContainer = styled.div`
   position: relative;
   width: 6rem;
   height: 6rem;
-  
+
   @media (min-width: 768px) {
     width: 7rem;
     height: 7rem;
@@ -949,7 +1033,7 @@ const ItemQuantity = styled.span`
   justify-content: center;
   font-size: var(--text-xs);
   font-weight: 600;
-  
+
   @media (min-width: 768px) {
     width: 2.2rem;
     height: 2.2rem;
@@ -987,7 +1071,7 @@ const SummaryTotals = styled.div`
   gap: 1.2rem;
   border-top: 1px solid var(--neutral-200);
   padding-top: 1.5rem;
-  
+
   @media (min-width: 768px) {
     gap: 1.5rem;
     padding-top: 2rem;
@@ -1015,7 +1099,7 @@ const SummaryTotal = styled.div`
   margin-top: 0.5rem;
   padding-top: 1.2rem;
   border-top: 1px solid var(--neutral-200);
-  
+
   @media (min-width: 768px) {
     margin-top: 1rem;
     padding-top: 1.5rem;
@@ -1046,11 +1130,11 @@ const ContinueButton = styled.button`
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 2rem;
-  
+
   &:hover:not(:disabled) {
     background-color: var(--neutral-800);
   }
-  
+
   @media (min-width: 768px) {
     padding: 1.5rem 0;
   }
@@ -1082,7 +1166,7 @@ const CardInputWrapper = styled.div`
   border-radius: 0.3rem;
   background-color: var(--white);
   transition: all 0.3s ease;
-  
+
   &:focus-within {
     border-color: var(--neutral-600);
     box-shadow: 0 0 0 1px var(--neutral-300);
@@ -1094,7 +1178,7 @@ const CardInputRow = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin: 1rem 0;
-  
+
   @media (min-width: 768px) {
     gap: 2rem;
   }
@@ -1104,7 +1188,7 @@ const PaymentMethod = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  
+
   @media (min-width: 768px) {
     gap: 2rem;
   }
@@ -1123,7 +1207,7 @@ const PaymentActions = styled.div`
   grid-template-columns: 1fr 2fr;
   gap: 1rem;
   margin-top: 1rem;
-  
+
   @media (min-width: 768px) {
     gap: 1.5rem;
     margin-top: 1.5rem;
@@ -1140,11 +1224,11 @@ const BackButton = styled.button`
   border-radius: 0.3rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: var(--neutral-100);
   }
-  
+
   @media (min-width: 768px) {
     padding: 1.5rem 0;
   }
@@ -1160,16 +1244,16 @@ const PayButton = styled.button`
   border-radius: 0.3rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  
+
   &:hover:not(:disabled) {
     background-color: var(--neutral-800);
   }
-  
+
   &:disabled {
     background-color: var(--neutral-400);
     cursor: not-allowed;
   }
-  
+
   @media (min-width: 768px) {
     padding: 1.5rem 0;
   }
@@ -1207,11 +1291,11 @@ const PaymentLogos = styled.div`
   justify-content: center;
   gap: 1.2rem;
   margin-top: 0.5rem;
-  
+
   img {
     height: 2rem;
     object-fit: contain;
-    
+
     @media (min-width: 768px) {
       height: 2.5rem;
       gap: 1.5rem;

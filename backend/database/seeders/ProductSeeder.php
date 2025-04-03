@@ -34,7 +34,7 @@ class ProductSeeder extends Seeder
         $categories = Category::all();
 
         // Create 20 products with their relationships
-        Product::factory(20)->make()->each(function ($product) use ($colors, $sizes, $categories) {
+        Product::factory(60)->make()->each(function ($product) use ($colors, $sizes, $categories) {
             // Assign a random category
             $product->category_id = $categories->random()->id;
             
