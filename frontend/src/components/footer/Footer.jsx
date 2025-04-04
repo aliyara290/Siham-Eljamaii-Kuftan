@@ -285,7 +285,7 @@ import styled from "styled-components";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const StyledFooter = styled.footer`
-  background-color: var(--bg-secondary, var(--neutral-50));
+  background-color: #F4C2C2:;
   padding: 5rem 4rem 0;
   border-top: 1px solid var(--border-color, var(--neutral-200));
   color: var(--text-primary, var(--neutral-900));
