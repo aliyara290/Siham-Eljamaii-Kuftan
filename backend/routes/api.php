@@ -87,10 +87,10 @@ Route::prefix('v1')->group(function () {
      Route::post('/contact', [ContactController::class, 'store']);
     
      // Admin contact routes (protected)
-     Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
+    //  Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
          Route::get('/contacts', [ContactController::class, 'index']);
          Route::get('/contacts/{id}', [ContactController::class, 'show']);
          Route::patch('/contacts/{id}/status', [ContactController::class, 'updateStatus']);
          Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
-     });
+    //  });
 });

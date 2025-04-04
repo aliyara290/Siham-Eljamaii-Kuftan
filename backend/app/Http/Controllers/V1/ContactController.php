@@ -26,12 +26,7 @@ class ContactController extends Controller
         return $this->contactInterface->all();
     }
 
-    /**
-     * Store a newly created contact in storage.
-     * 
-     * @param \App\Http\Requests\V1\ContactRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+   
     public function store(ContactRequest $request)
     {
         return $this->contactInterface->store($request->validated());

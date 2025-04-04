@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Heading from "../../components/heading/Heading";
 import SubHeading from "../../components/heading/SubHeading";
+import { postRequest } from "../../api/contact";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -59,12 +60,28 @@ const ContactPage = () => {
     if (validateForm()) {
       setIsSubmitting(true);
       
-      // Simulate API call
-      setTimeout(() => {
+      // setTimeout(() => {
+      //   setIsSubmitting(false);
+      //   setSubmitSuccess(true);
+        
+      //   setFormData({
+      //     name: "",
+      //     email: "",
+      //     phone: "",
+      //     subject: "",
+      //     message: "",
+      //   });
+        
+      //   setTimeout(() => {
+      //     setSubmitSuccess(false);
+      //   }, 5000);
+      // }, 1500);
+
+      postRequest(formData)
+      .then((res) => {
         setIsSubmitting(false);
         setSubmitSuccess(true);
         
-        // Reset form
         setFormData({
           name: "",
           email: "",
@@ -73,11 +90,14 @@ const ContactPage = () => {
           message: "",
         });
         
-        // Reset success message after 5 seconds
         setTimeout(() => {
           setSubmitSuccess(false);
         }, 5000);
-      }, 1500);
+      })
+      .catch((err) => {
+        setIsSubmitting(false);
+        console.error("Error submitting form:", err);
+      });
     }
   };
 
@@ -243,13 +263,13 @@ const ContactPage = () => {
                   value={formData.subject}
                   onChange={handleChange}
                 >
-                  <option value="">اختر الموضوع</option>
-                  <option value="استفسار عام">استفسار عام</option>
-                  <option value="طلب خاص">طلب خاص</option>
-                  <option value="استفسار عن المنتجات">استفسار عن المنتجات</option>
-                  <option value="استفسار عن الطلب">استفسار عن الطلب</option>
-                  <option value="استفسار عن الشحن">استفسار عن الشحن</option>
-                  <option value="موضوع آخر">موضوع آخر</option>
+                  <option disabled selected>اختر الموضوع</option>
+                  <option value="general">استفسار عام</option>
+                  <option value="personal">طلب خاص</option>
+                  <option value="orders">استفسار عن المنتجات</option>
+                  <option value="products">استفسار عن الطلب</option>
+                  <option value="shipping">استفسار عن الشحن</option>
+                  <option value="other">موضوع آخر</option>
                 </FormSelect>
               </FormGroup>
               
