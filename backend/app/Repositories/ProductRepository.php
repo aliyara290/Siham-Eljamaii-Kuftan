@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Http\Resources\V1\ProductCollectionResource;
 use App\Http\Resources\V1\ProductResource;
 use App\Http\Resources\V1\ProductDetailResource;
@@ -20,10 +21,10 @@ use Illuminate\Support\Str;
 class ProductRepository implements ProductInterface
 {
     use HttpResponses;
-    
-    public function all() {
+    public function all()
+    {
         try {
-            $products = Product::with(['images', 'colors', 'sizes'])->paginate(10);
+            $products = Product::with(['images'])->paginate(10);
             return new ProductCollectionResource($products);
         } catch (Exception $e) {
             return $this->error(
@@ -34,7 +35,22 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function createProduct($request) {
+    public function recentProducts()
+    {
+        try {
+            $products = Product::orderBy("created_at", "desc")->with(['images'])->limit(15)->paginate(15);
+            return new ProductCollectionResource($products);
+        } catch (Exception $e) {
+            return $this->error(
+                '',
+                500,
+                $e->getMessage()
+            );
+        }
+    }
+
+    public function createProduct($request)
+    {
         try {
             $product = Product::create([
                 'name_ar' => $request->name_ar,
@@ -51,7 +67,6 @@ class ProductRepository implements ProductInterface
                 'category_id' => $request->category_id,
             ]);
 
-            // Handle product details
             if ($request->has('details') && is_array($request->details)) {
                 foreach ($request->details as $detail) {
                     $product->details()->create([
@@ -104,10 +119,11 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function updateProduct($request, $productId) {
+    public function updateProduct($request, $productId)
+    {
         try {
             $product = Product::findOrFail($productId);
-            
+
             $product->update([
                 'name_ar' => $request->name_ar ?? $product->name_ar,
                 'name_en' => $request->name_en ?? $product->name_en,
@@ -188,20 +204,21 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function deleteProduct($productId) {
+    public function deleteProduct($productId)
+    {
         try {
             $product = Product::findOrFail($productId);
-            
+
             // Delete related records
             $product->details()->delete();
             $product->careInstructions()->delete();
             $product->images()->delete();
             $product->colors()->detach();
             $product->sizes()->detach();
-            
+
             // Delete the product
             $product->delete();
-            
+
             return $this->success([
                 'message' => 'Product deleted successfully'
             ]);
@@ -214,11 +231,13 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductById($productId) {
+    public function getProductById($prdSlug)
+    {
         try {
             $product = Product::with(['details', 'careInstructions', 'images', 'colors', 'sizes'])
-                ->findOrFail($productId);
-            
+                ->where('slug', $prdSlug)
+                ->firstOrFail();
+
             return $this->success([
                 'product' => new ProductResource($product),
             ]);
@@ -231,10 +250,11 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductDetails($productId) {
+    public function getProductDetails($productId)
+    {
         try {
             $details = ProductDetail::where('product_id', $productId)->get();
-            
+
             return $this->success([
                 'details' => ProductDetailResource::collection($details),
             ]);
@@ -247,11 +267,12 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductSizes($productId) {
+    public function getProductSizes($productId)
+    {
         try {
             $product = Product::findOrFail($productId);
             $sizes = $product->sizes;
-            
+
             return $this->success([
                 'sizes' => SizeResource::collection($sizes),
             ]);
@@ -264,11 +285,12 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductColors($productId) {
+    public function getProductColors($productId)
+    {
         try {
             $product = Product::findOrFail($productId);
             $colors = $product->colors;
-            
+
             return $this->success([
                 'colors' => ColorResource::collection($colors),
             ]);
@@ -281,10 +303,11 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductImages($productId) {
+    public function getProductImages($productId)
+    {
         try {
             $images = ProductImage::where('product_id', $productId)->get();
-            
+
             return $this->success([
                 'images' => ProductImageResource::collection($images),
             ]);
@@ -297,16 +320,17 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductCategories($productId) {
+    public function getProductCategories($productId)
+    {
         try {
             $product = Product::with('category')->findOrFail($productId);
-            
+
             if ($product->category) {
                 return $this->success([
                     'category' => new CategoryResource($product->category),
                 ]);
             }
-            
+
             return $this->error(
                 '',
                 404,
@@ -321,12 +345,13 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductByCategory($categorySlug) {
+    public function getProductByCategory($categorySlug)
+    {
         try {
             $products = Product::where('category_slug', $categorySlug)
                 ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
-            
+
             return new ProductCollectionResource($products);
         } catch (Exception $e) {
             return $this->error(
@@ -337,14 +362,15 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductBySize($sizeId) {
+    public function getProductBySize($sizeId)
+    {
         try {
-            $products = Product::whereHas('sizes', function($query) use ($sizeId) {
-                    $query->where('sizes.id', $sizeId);
-                })
+            $products = Product::whereHas('sizes', function ($query) use ($sizeId) {
+                $query->where('sizes.id', $sizeId);
+            })
                 ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
-            
+
             return new ProductCollectionResource($products);
         } catch (Exception $e) {
             return $this->error(
@@ -355,14 +381,15 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductByColor($colorId) {
+    public function getProductByColor($colorId)
+    {
         try {
-            $products = Product::whereHas('colors', function($query) use ($colorId) {
-                    $query->where('colors.id', $colorId);
-                })
+            $products = Product::whereHas('colors', function ($query) use ($colorId) {
+                $query->where('colors.id', $colorId);
+            })
                 ->with(['images', 'colors', 'sizes'])
                 ->paginate(10);
-            
+
             return new ProductCollectionResource($products);
         } catch (Exception $e) {
             return $this->error(
@@ -373,10 +400,11 @@ class ProductRepository implements ProductInterface
         }
     }
 
-    public function getProductByPrice($priceFilter) {
+    public function getProductByPrice($priceFilter)
+    {
         try {
             $query = Product::query();
-            
+
             if (is_array($priceFilter)) {
                 if (isset($priceFilter['min']) && isset($priceFilter['max'])) {
                     $query->whereBetween('price', [$priceFilter['min'], $priceFilter['max']]);
@@ -389,10 +417,10 @@ class ProductRepository implements ProductInterface
                 // If priceFilter is not an array, assume it's a maximum price value
                 $query->where('price', '<=', $priceFilter);
             }
-            
+
             $products = $query->with(['details', 'careInstructions', 'images', 'colors', 'sizes'])
                 ->paginate(10);
-            
+
             return new ProductCollectionResource($products);
         } catch (Exception $e) {
             return $this->error(

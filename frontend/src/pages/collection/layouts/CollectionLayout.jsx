@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Heading from "../../../components/heading/Heading";
 import SubHeading from "../../../components/heading/SubHeading";
+import { getColors } from "../../../api/colors";
 
 /**
  * Reusable layout component for collection pages
@@ -37,6 +38,8 @@ const CollectionLayout = ({
     sizes: [],
     priceRange: [0, 5000],
   });
+  const [availableColors, setAvailableColors] = useState([]);
+  const [sizes, setSizes] = useState([]);
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
@@ -121,6 +124,21 @@ const CollectionLayout = ({
     return true;
   });
 
+  useEffect(() => {
+    const fetchColors = async () => {
+      try {
+        const response = await getColors();
+        // Add an extra .data access
+        if (response?.data?.data?.colors?.length) {
+          setAvailableColors(response.data.data.colors);
+        }
+      } catch (error) {
+        console.error("Failed to fetch colors:", error);
+      }
+    };
+    fetchColors();
+  }, []);
+
   return (
     <PageContainer>
       <CollectionHero style={{ backgroundImage: `url(${backgroundImage})` }}>
@@ -145,33 +163,22 @@ const CollectionLayout = ({
           <FilterSection>
             <FilterSectionTitle>الألوان</FilterSectionTitle>
             <ColorOptions>
-              <ColorOption
-                color="#000000"
-                selected={selectedFilters.colors.includes("#000000")}
-                onClick={() => toggleColorFilter("#000000")}
-              />
-              <ColorOption
-                color="#0c2461"
-                selected={selectedFilters.colors.includes("#0c2461")}
-                onClick={() => toggleColorFilter("#0c2461")}
-              />
-              <ColorOption
-                color="#8e0000"
-                selected={selectedFilters.colors.includes("#8e0000")}
-                onClick={() => toggleColorFilter("#8e0000")}
-              />
-              <ColorOption
-                color="#006266"
-                selected={selectedFilters.colors.includes("#006266")}
-                onClick={() => toggleColorFilter("#006266")}
-              />
+              {availableColors.map((color) => (
+                <ColorOption
+                  key={color.value}
+                  color={color.value}
+                  selected={selectedFilters.colors.includes(color.value)}
+                  onClick={() => toggleColorFilter(color.value)}
+                  title={color.name_ar}
+                />
+              ))}
             </ColorOptions>
           </FilterSection>
 
           <FilterSection>
             <FilterSectionTitle>المقاسات</FilterSectionTitle>
             <SizeOptions>
-              {["XS", "S", "M", "L", "XL"].map((size) => (
+              {["S", "M", "L", "XL"].map((size) => (
                 <SizeOption
                   key={size}
                   selected={selectedFilters.sizes.includes(size)}
@@ -312,7 +319,6 @@ export const ProductsGrid = ({ products, viewMode }) => {
                   <OldPrice>{product.oldPrice} د.م</OldPrice>
                 )}
               </PriceContainer>
-
               <ProductColors>
                 {product.colors &&
                   product.colors.map((color, index) => (
@@ -496,10 +502,10 @@ const ColorOption = styled.button`
   border-radius: 50%;
   background-color: ${({ color }) => color};
   border: 2px solid
-    ${({ selected }) => (selected ? "var(--neutral-900)" : "transparent")};
+    ${({ selected }) => (selected ? "var(--neutral-900)" : "var(--neutral-500)")};
   cursor: pointer;
   transition: transform 0.2s ease;
-
+/* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
   &:hover {
     transform: scale(1.1);
   }
@@ -798,4 +804,16 @@ const NoProductsFound = styled.div`
 const NoProductsMessage = styled.p`
   font-size: var(--text-lg);
   color: var(--neutral-700);
+`;
+const ErrorMessageContainer = styled.div`
+  background-color: var(--neutral-100);
+  border-left: 4px solid var(--danger-500);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+`;
+
+const ErrorMessage = styled.p`
+  font-size: var(--text-md);
+  color: var(--neutral-700);
+  line-height: 1.6;
 `;

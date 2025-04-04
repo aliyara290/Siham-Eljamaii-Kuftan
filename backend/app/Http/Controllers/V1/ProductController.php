@@ -21,102 +21,81 @@ class ProductController extends Controller
         return $this->productInterface->all();
     }
 
+    public function recentProducts()
+    {
+        return $this->productInterface->recentProducts();
+    }
+
     public function store(ProductRequest $request)
     {
         return $this->productInterface->createProduct($request);
     }
-
-    /**
-     * Display the specified product.
-     */
-    public function show($id)
+ 
+    public function show($slug)
     {
-        return $this->productInterface->getProductById($id);
+        return $this->productInterface->getProductById($slug);
     }
 
-    /**
-     * Update the specified product in storage.
-     */
+     
     public function update(ProductRequest $request, $id)
     {
         return $this->productInterface->updateProduct($request, $id);
     }
 
-    /**
-     * Remove the specified product from storage.
-     */
+     
     public function destroy($id)
     {
         return $this->productInterface->deleteProduct($id);
     }
 
-    /**
-     * Get product details.
-     */
-    public function getDetails($id)
+     
+    public function getDetails($slug)
     {
-        return $this->productInterface->getProductDetails($id);
+        return $this->productInterface->getProductDetails($slug);
     }
 
-    /**
-     * Get product sizes.
-     */
-    public function getSizes($id)
+     
+    public function getSizes($slug)
     {
-        return $this->productInterface->getProductSizes($id);
+        return $this->productInterface->getProductSizes($slug);
     }
 
-    /**
-     * Get product colors.
-     */
-    public function getColors($id)
+
+    public function getColors($slug)
     {
-        return $this->productInterface->getProductColors($id);
+        return $this->productInterface->getProductColors($slug);
     }
 
-    /**
-     * Get product images.
-     */
-    public function getImages($id)
+
+    public function getImages($slug)
     {
-        return $this->productInterface->getProductImages($id);
+        return $this->productInterface->getProductImages($slug);
     }
 
-    /**
-     * Get product category.
-     */
+
     public function getCategory($id)
     {
         return $this->productInterface->getProductCategories($id);
     }
 
-    /**
-     * Get products by category.
-     */
+
     public function getByCategory($slug)
     {
         return $this->productInterface->getProductByCategory($slug);
     }
 
-    /**
-     * Get products by size.
-     */
+
     public function getBySize($sizeId)
     {
         return $this->productInterface->getProductBySize($sizeId);
     }
 
-    /**
-     * Get products by color.
-     */
+
     public function getByColor($colorId)
     {
         return $this->productInterface->getProductByColor($colorId);
     }
 
-    /**
-     * Get products by price range.
-     */
     public function getByPrice(Request $request)
     {
         $priceFilter = [

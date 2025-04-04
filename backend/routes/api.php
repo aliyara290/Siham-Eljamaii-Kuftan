@@ -44,12 +44,13 @@ Route::prefix('v1')->group(function () {
     Route::get('/sizes', [SizeController::class, 'index']);
     Route::apiResource('/categories', CategoryController::class);
     Route::get('/products', [ProductController::class, 'index']);
-    Route::get('/products/{id}', [ProductController::class, 'show']);
-    Route::get('/products/{id}/details', [ProductController::class, 'getDetails']);
-    Route::get('/products/{id}/sizes', [ProductController::class, 'getSizes']);
-    Route::get('/products/{id}/colors', [ProductController::class, 'getColors']);
-    Route::get('/products/{id}/images', [ProductController::class, 'getImages']);
-    Route::get('/products/{id}/category', [ProductController::class, 'getCategory']);
+    Route::get('/recent-products', [ProductController::class, 'recentProducts']);
+    Route::get('/products/{slug}', [ProductController::class, 'show']);
+    Route::get('/products/{slug}/details', [ProductController::class, 'getDetails']);
+    Route::get('/products/{slug}/sizes', [ProductController::class, 'getSizes']);
+    Route::get('/products/{slug}/colors', [ProductController::class, 'getColors']);
+    Route::get('/products/{slug}/images', [ProductController::class, 'getImages']);
+    Route::get('/products/{slug}/category', [ProductController::class, 'getCategory']);
 
     // Payment routes
     Route::prefix('payments')->group(function () {

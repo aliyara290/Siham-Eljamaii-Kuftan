@@ -8,6 +8,110 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Link } from "react-router-dom";
+import { getRecentProducts } from "../../api/products";
+
+const BestSeller = () => {
+  const swiperRef = useRef(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    if (swiperRef.current) {
+      swiperRef.current.on("slideChange", () => {
+        setIsBeginning(swiperRef.current.isBeginning);
+        setIsEnd(swiperRef.current.isEnd);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    getRecentProducts()
+      .then((response) => {
+        setProducts(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching recent products:", error);
+      });
+  }, []);
+
+  return (
+    <StyledBestSeller>
+      <Heading weight={500} title={"أفضــل مبيـعـاتنـا"} />
+      <StyledCarouselContent>
+        {!isBeginning && (
+          <StyledLeftArrowNavigation>
+            <button onClick={() => swiperRef.current?.slidePrev()}>
+              <ChevronLeftIcon width={30} height={30} />
+            </button>
+          </StyledLeftArrowNavigation>
+        )}
+        {!isEnd && (
+          <StyledRightArrowNavigation>
+            <button onClick={() => swiperRef.current?.slideNext()}>
+              <ChevronRightIcon width={30} height={30} />
+            </button>
+          </StyledRightArrowNavigation>
+        )}
+        <Swiper
+          effect="coverflow"
+          grabCursor={true}
+          coverflowEffect={{
+            rotate: 0,
+            stretch: 0,
+            depth: 200,
+            modifier: 1.5,
+            slideShadows: false,
+          }}
+          slidesPerView={"auto"}
+          centeredSlides={false}
+          spaceBetween={15}
+          slidesPerGroup={1}
+          navigation={false}
+          modules={[Pagination, Navigation]}
+          className="mySwiper"
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+          onSlideChange={(swiper) => {
+            setIsBeginning(swiper.isBeginning);
+            setIsEnd(swiper.isEnd);
+          }}
+        >
+          {products.map((prd, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <StyledProductCard>
+                  <Link to={`/product/${prd.slug}`}>
+                    <StyledProductImage>
+                      <img
+                        src={prd.images[0].url}
+                        alt="قفطان مغربي"
+                      />
+                    </StyledProductImage>
+                    <StyledProductDetails>
+                      <StyledProductName>
+                        <h4>{prd.name_ar}</h4>
+                      </StyledProductName>
+                      <StyledProductPrice>
+                        <span>{prd.price} د.م</span>
+                      </StyledProductPrice>
+                    </StyledProductDetails>
+                  </Link>
+                </StyledProductCard>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </StyledCarouselContent>
+      <StyledShowMore>
+        <Link to={"/collections/bestseller"}>
+          <span>إظـهـار المزيـد</span>
+        </Link>
+      </StyledShowMore>
+    </StyledBestSeller>
+  );
+};
+
+export default BestSeller;
 
 const StyledBestSeller = styled.section`
   direction: ltr;
@@ -16,7 +120,7 @@ const StyledBestSeller = styled.section`
   .swiper-slide {
     width: 30rem !important;
   }
-  
+
   /* @media (max-width: 768px) {
     .swiper-slide {
       width: 29rem !important;
@@ -41,7 +145,7 @@ const StyledProductImage = styled.div`
     transform: scale(1.02);
   }
   img {
-    transition: all .4s ease;
+    transition: all 0.4s ease;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -118,7 +222,7 @@ const StyledLeftArrowNavigation = styled.div`
       background-color: var(--neutral-200);
     }
   }
-  
+
   @media (max-width: 768px) {
     left: 1rem;
     button {
@@ -149,7 +253,7 @@ const StyledRightArrowNavigation = styled.div`
       background-color: var(--neutral-200);
     }
   }
-  
+
   @media (max-width: 768px) {
     right: 1rem;
     button {
@@ -190,103 +294,3 @@ const StyledShowMore = styled.div`
     }
   }
 `;
-
-const BestSeller = () => {
-  const swiperRef = useRef(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  useEffect(() => {
-    if (swiperRef.current) {
-      swiperRef.current.on("slideChange", () => {
-        setIsBeginning(swiperRef.current.isBeginning);
-        setIsEnd(swiperRef.current.isEnd);
-      });
-    }
-  }, []);
-
-  return (
-    <StyledBestSeller>
-      <Heading weight={500} title={"أفضــل مبيـعـاتنـا"} />
-      <StyledCarouselContent>
-        {!isBeginning && (
-          <StyledLeftArrowNavigation>
-            <button onClick={() => swiperRef.current?.slidePrev()}>
-              <ChevronLeftIcon width={30} height={30} />
-            </button>
-          </StyledLeftArrowNavigation>
-        )}
-        {!isEnd && (
-          <StyledRightArrowNavigation>
-            <button onClick={() => swiperRef.current?.slideNext()}>
-              <ChevronRightIcon width={30} height={30} />
-            </button>
-          </StyledRightArrowNavigation>
-        )}
-        <Swiper
-          effect="coverflow"
-          grabCursor={true}
-          coverflowEffect={{
-            rotate: 0,
-            stretch: 0,
-            depth: 200,
-            modifier: 1.5,
-            slideShadows: false,
-          }}
-          slidesPerView={"auto"}
-          centeredSlides={false}
-          spaceBetween={15}
-          slidesPerGroup={1}
-          navigation={false}
-          modules={[Pagination, Navigation]}
-          className="mySwiper"
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-          onSlideChange={(swiper) => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }}
-        >
-          {[...Array(10)].map((_, index) => {
-            return (
-              <SwiperSlide key={index}>
-                <StyledProductCard>
-                  <Link to={"/product/kuftan"}>
-                    <StyledProductImage>
-                      <img
-                        src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720"
-                        alt="قفطان مغربي"
-                      />
-                    </StyledProductImage>
-                    <StyledProductDetails>
-                      <StyledProductInfo>
-                        <span>قفطاني</span>
-                      </StyledProductInfo>
-                      <StyledProductName>
-                        <h4>تنورة طويلة من الفيسكوز باللون البيج</h4>
-                      </StyledProductName>
-                      <StyledProductPrice>
-                        <span>2400 د.م</span>
-                      </StyledProductPrice>
-                      <StyledProductColors>
-                        <StyledProductColorsItem color="eb2626"></StyledProductColorsItem>
-                        <StyledProductColorsItem color="000"></StyledProductColorsItem>
-                        <StyledProductColorsItem color="dfd5d0"></StyledProductColorsItem>
-                      </StyledProductColors>
-                    </StyledProductDetails>
-                  </Link>
-                </StyledProductCard>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      </StyledCarouselContent>
-      <StyledShowMore>
-        <Link to={"/collections/bestseller"}>
-          <span>إظـهـار المزيـد</span>
-        </Link>
-      </StyledShowMore>
-    </StyledBestSeller>
-  );
-};
-
-export default BestSeller;  

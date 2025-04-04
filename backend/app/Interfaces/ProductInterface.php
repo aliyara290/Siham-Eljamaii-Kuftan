@@ -5,6 +5,7 @@ namespace App\Interfaces;
 interface ProductInterface
 {
     public function all();
+    public function recentProducts();
     public function createProduct($request);
     public function updateProduct($request, $productId);
     public function deleteProduct($productId);    

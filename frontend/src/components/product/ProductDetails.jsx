@@ -5,16 +5,20 @@ import { HeartIcon, ShoppingBagIcon, ChevronLeftIcon, ChevronRightIcon } from "@
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Heading from "../heading/Heading";
 import { useCart } from "../../context/CartContext";
+import { getProductBySlug } from "../../api/products";
 
 const ProductDetails = () => {
   const { slug } = useParams();
   const { addToCart } = useCart();
+  const [product, setProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const thumbnailsRef = useRef(null);
 
   // Reset "Added to Cart" message after 3 seconds
@@ -27,60 +31,52 @@ const ProductDetails = () => {
     }
   }, [addedToCart]);
 
-  // Mock product data - would be fetched from API~
-  const product = {
-    id: "kftn-01",
-    name: "قفطان مغربي فخم لايان مرصع بجواهر سواروفسكي وزهور",
-    price: 3500,
-    oldPrice: 4200,
-    colors: [
-      { id: "black", name: "أسود", value: "#000000" },
-      { id: "navy", name: "كحلي", value: "#0c2461" },
-      { id: "burgundy", name: "عنابي", value: "#8e0000" },
-      { id: "emerald", name: "زمردي", value: "#006266" },
-    ],
-    sizes: ["XS", "S", "M", "L", "XL"],
-    description:
-      "قفطان مغربي فاخر مصنوع من أفخم القماش وأجود الخامات، مرصع بجواهر سواروفسكي ومزين بتطريز يدوي متقن. يتميز بتصميمه الأنيق الذي يجمع بين الأصالة والمعاصرة، مما يجعله خيارًا مثاليًا للمناسبات الخاصة والحفلات الراقية.",
-    details: [
-      "قماش حرير فاخر",
-      "مرصع بجواهر سواروفسكي",
-      "تطريز يدوي متقن",
-      "مصنوع بواسطة حرفيين مهرة",
-      "صناعة مغربية أصيلة",
-    ],
-    care: [
-      "تنظيف جاف فقط",
-      "يحفظ في مكان جاف",
-      "يفضل استخدام علاقة واسعة",
-    ],
-    images: [
-      "https://ma.bouchrafilalilahlou.com/cdn/shop/files/djellaba_femme_dor.jpg?crop=region&crop_height=1200&crop_left=120&crop_top=0&crop_width=960&v=1742610117&width=720",
-      "https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720",
-      "https://ma.bouchrafilalilahlou.com/cdn/shop/files/105_0a4b7901-6aa1-4edb-ad59-94fb58dfa720.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1724375971&width=720",
-      "https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720",
-    ],
-    relatedProducts: [
-      {
-        id: "kftn-02",
-        name: "قفطان مخملي بتطريز ذهبي",
-        price: 2800,
-        image: "https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720",
-      },
-      {
-        id: "kftn-03",
-        name: "قفطان بألوان الباستيل مع تطريز فضي",
-        price: 3100,
-        image: "https://ma.bouchrafilalilahlou.com/cdn/shop/files/17_fc0e4dee-66b2-4b95-9c63-9a24459efc9b.jpg?crop=region&crop_height=2048&crop_left=204&crop_top=0&crop_width=1638&v=1705111629&width=720",
-      },
-      {
-        id: "kftn-04",
-        name: "قفطان كلاسيكي بلمسة عصرية",
-        price: 2950,
-        image: "https://ma.bouchrafilalilahlou.com/cdn/shop/files/djellaba_femme_dor.jpg?crop=region&crop_height=1200&crop_left=120&crop_top=0&crop_width=960&v=1742610117&width=720",
-      },
-    ],
-  };
+  // Fetch product data
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+
+    getProductBySlug(slug)
+      .then((response) => {
+        const productData = response.data.data.product;
+        
+        // Transform the API data to match component's expected structure
+        const transformedData = {
+          id: productData.id,
+          name: productData.name.ar, // Using Arabic version
+          price: productData.price,
+          oldPrice: productData.old_price,
+          description: productData.description.ar, // Using Arabic version
+          // Transform the details array to extract just the detail text
+          details: productData.details.map(item => item.detail.ar),
+          // Transform care instructions array to extract just the instruction text
+          care: productData.care_instructions.map(item => item.instruction.ar),
+          // Transform images array to extract just the URLs and sort them
+          images: [...productData.images]
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map(img => img.url),
+          // Keep colors and transform sizes
+          colors: productData.colors,
+          sizes: productData.sizes.map(size => size.name),
+          // Add empty relatedProducts array for now
+          relatedProducts: []
+        };
+        
+        setProduct(transformedData);
+        if (transformedData.colors.length > 0) {
+          setSelectedColor(transformedData.colors[0].id);
+        }
+        if (transformedData.sizes.length > 0) {
+          setSelectedSize(transformedData.sizes[0]);
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching product data:", error);
+        setError("حدث خطأ أثناء تحميل بيانات المنتج. يرجى المحاولة مرة أخرى.");
+        setIsLoading(false);
+      });
+  }, [slug]);
 
   const handleColorSelect = (colorId) => {
     setSelectedColor(colorId);
@@ -101,11 +97,15 @@ const ProductDetails = () => {
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+    if (product && product.images) {
+      setCurrentImageIndex((prev) => (prev + 1) % product.images.length);
+    }
   };
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    if (product && product.images) {
+      setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+    }
   };
 
   const toggleFavorite = () => {
@@ -123,8 +123,9 @@ const ProductDetails = () => {
       return;
     }
     
-    // Get selected color name
-    const colorName = product.colors.find(color => color.id === selectedColor)?.name || selectedColor;
+    // Get selected color name (using Arabic name)
+    const colorObj = product.colors.find(color => color.id === selectedColor);
+    const colorName = colorObj ? colorObj.name.ar : '';
     
     // Create product object for cart
     const productForCart = {
@@ -149,44 +150,75 @@ const ProductDetails = () => {
     }
   }, [currentImageIndex]);
 
-  // Set default color on component mount
-  useEffect(() => {
-    if (product.colors && product.colors.length > 0) {
-      setSelectedColor(product.colors[0].id);
-    }
-  }, []);
+  // Show loading state
+  if (isLoading) {
+    return (
+      <ProductPageContainer>
+        <LoadingContainer>
+          <p>جاري تحميل بيانات المنتج...</p>
+        </LoadingContainer>
+      </ProductPageContainer>
+    );
+  }
+  // Show "product not found" state
+  if (!product) {
+    return (
+      <ProductPageContainer>
+        <ErrorContainer>
+          <p>لم يتم العثور على المنتج</p>
+          <Link to="/">العودة إلى المنتجات</Link>
+        </ErrorContainer>
+      </ProductPageContainer>
+    );
+  }
+  // Show error state
+  if (error) {
+    return (
+      <ProductPageContainer>
+        <ErrorContainer>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>إعادة المحاولة</button>
+        </ErrorContainer>
+      </ProductPageContainer>
+    );
+  }
 
   return (
     <ProductPageContainer>
       <ProductLayout>
         <ProductGallery>
-          <MainImageContainer>
-            <NavigationButton position="left" onClick={handlePrevImage}>
-              <ChevronLeftIcon width={24} height={24} />
-            </NavigationButton>
-            <MainImage src={product.images[currentImageIndex]} alt={product.name} />
-            <NavigationButton position="right" onClick={handleNextImage}>
-              <ChevronRightIcon width={24} height={24} />
-            </NavigationButton>
-            <FavoriteButton onClick={toggleFavorite}>
-              {isFavorite ? (
-                <HeartSolidIcon width={24} height={24} />
-              ) : (
-                <HeartIcon width={24} height={24} />
-              )}
-            </FavoriteButton>
-          </MainImageContainer>
-          <ThumbnailsContainer ref={thumbnailsRef}>
-            {product.images.map((image, index) => (
-              <ThumbnailButton
-                key={index}
-                active={index === currentImageIndex}
-                onClick={() => handleImageChange(index)}
-              >
-                <ThumbnailImage src={image} alt={`${product.name} - الصورة ${index + 1}`} />
-              </ThumbnailButton>
-            ))}
-          </ThumbnailsContainer>
+          {product.images && product.images.length > 0 && (
+            <MainImageContainer>
+              <NavigationButton position="left" onClick={handlePrevImage}>
+                <ChevronLeftIcon width={24} height={24} />
+              </NavigationButton>
+              <MainImage src={product.images[currentImageIndex]} alt={product.name} />
+              <NavigationButton position="right" onClick={handleNextImage}>
+                <ChevronRightIcon width={24} height={24} />
+              </NavigationButton>
+              <FavoriteButton onClick={toggleFavorite}>
+                {isFavorite ? (
+                  <HeartSolidIcon width={24} height={24} />
+                ) : (
+                  <HeartIcon width={24} height={24} />
+                )}
+              </FavoriteButton>
+            </MainImageContainer>
+          )}
+          
+          {product.images && product.images.length > 1 && (
+            <ThumbnailsContainer ref={thumbnailsRef}>
+              {product.images.map((image, index) => (
+                <ThumbnailButton
+                  key={index}
+                  active={index === currentImageIndex}
+                  onClick={() => handleImageChange(index)}
+                >
+                  <ThumbnailImage src={image} alt={`${product.name} - الصورة ${index + 1}`} />
+                </ThumbnailButton>
+              ))}
+            </ThumbnailsContainer>
+          )}
         </ProductGallery>
 
         <ProductInfo>
@@ -199,7 +231,7 @@ const ProductDetails = () => {
 
           <SectionTitle>اللون</SectionTitle>
           <ColorOptionsContainer>
-            {product.colors.map((color) => (
+            {product.colors && product.colors.map((color) => (
               <ColorOption
                 key={color.id}
                 color={color.value}
@@ -213,7 +245,7 @@ const ProductDetails = () => {
 
           <SectionTitle>المقاس</SectionTitle>
           <SizeOptionsContainer>
-            {product.sizes.map((size) => (
+            {product.sizes && product.sizes.map((size) => (
               <SizeOption
                 key={size}
                 selected={selectedSize === size}
@@ -246,13 +278,13 @@ const ProductDetails = () => {
             <DetailsTab>
               <DetailsList>
                 <DetailsTitle>المميزات</DetailsTitle>
-                {product.details.map((detail, index) => (
+                {product.details && product.details.map((detail, index) => (
                   <DetailItem key={index}>{detail}</DetailItem>
                 ))}
               </DetailsList>
               <DetailsList>
                 <DetailsTitle>العناية</DetailsTitle>
-                {product.care.map((item, index) => (
+                {product.care && product.care.map((item, index) => (
                   <DetailItem key={index}>{item}</DetailItem>
                 ))}
               </DetailsList>
@@ -261,22 +293,24 @@ const ProductDetails = () => {
         </ProductInfo>
       </ProductLayout>
 
-      <RelatedProductsSection>
-        <Heading title="قد يعجبك أيضاً" weight={500} />
-        <RelatedProductsContainer>
-          {product.relatedProducts.map((relatedProduct) => (
-            <RelatedProductCard key={relatedProduct.id}>
-              <Link to={`/product/${relatedProduct.id}`}>
-                <RelatedProductImage src={relatedProduct.image} alt={relatedProduct.name} />
-                <RelatedProductInfo>
-                  <RelatedProductName>{relatedProduct.name}</RelatedProductName>
-                  <RelatedProductPrice>{relatedProduct.price} د.م</RelatedProductPrice>
-                </RelatedProductInfo>
-              </Link>
-            </RelatedProductCard>
-          ))}
-        </RelatedProductsContainer>
-      </RelatedProductsSection>
+      {product.relatedProducts && product.relatedProducts.length > 0 && (
+        <RelatedProductsSection>
+          <Heading title="قد يعجبك أيضاً" weight={500} />
+          <RelatedProductsContainer>
+            {product.relatedProducts.map((relatedProduct) => (
+              <RelatedProductCard key={relatedProduct.id}>
+                <Link to={`/product/${relatedProduct.id}`}>
+                  <RelatedProductImage src={relatedProduct.image} alt={relatedProduct.name} />
+                  <RelatedProductInfo>
+                    <RelatedProductName>{relatedProduct.name}</RelatedProductName>
+                    <RelatedProductPrice>{relatedProduct.price} د.م</RelatedProductPrice>
+                  </RelatedProductInfo>
+                </Link>
+              </RelatedProductCard>
+            ))}
+          </RelatedProductsContainer>
+        </RelatedProductsSection>
+      )}
     </ProductPageContainer>
   );
 };
@@ -288,6 +322,43 @@ const ProductPageContainer = styled.div`
   padding-top: 12rem;
   padding-bottom: 6rem;
   background-color: var(--white);
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40rem;
+  font-size: var(--text-lg);
+  color: var(--neutral-600);
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 40rem;
+  gap: 2rem;
+  
+  p {
+    font-size: var(--text-lg);
+    color: var(--neutral-800);
+  }
+  
+  button, a {
+    padding: 1rem 2rem;
+    background-color: var(--neutral-800);
+    color: var(--white);
+    border: none;
+    font-size: var(--text-md);
+    cursor: pointer;
+    text-decoration: none;
+    
+    &:hover {
+      background-color: var(--neutral-700);
+    }
+  }
 `;
 
 const ProductLayout = styled.div`

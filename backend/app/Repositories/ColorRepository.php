@@ -85,7 +85,7 @@ class ColorRepository implements ColorInterface
     public function all()
     {
         try {
-            $colors = Color::all();
+            $colors = Color::get();
             
             return $this->success([
                 'colors' => new ColorCollectionResource($colors),

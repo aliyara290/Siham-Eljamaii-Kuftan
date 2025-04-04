@@ -10,48 +10,75 @@ const CollectionPage = () => {
   const [collection, setCollection] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock data for collections
-  const collectionsData = {
-    'kaftan': {
-      name: 'قفطان',
-      description: 'مجموعة متميزة من القفاطين المغربية الأصيلة بتصاميم عصرية وألوان متنوعة',
-      image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/oijkio.jpg?v=1730334214&width=2880',
-      productsCount: 24
-    },
-    'jellaba': {
-      name: 'جلابة',
-      description: 'تشكيلة راقية من الجلابات العصرية المصممة بدقة لتناسب جميع الأذواق',
-      image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/djellaba_femme_dor.jpg?crop=region&crop_height=1200&crop_left=120&crop_top=0&crop_width=960&v=1742610117&width=720',
-      productsCount: 18
-    },
-    'jewelry': {
-      name: 'مجوهرات',
-      description: 'قطع مجوهرات فريدة مصممة يدويًا لتضيف لمسة من الفخامة والأناقة',
-      image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/17_fc0e4dee-66b2-4b95-9c63-9a24459efc9b.jpg?crop=region&crop_height=2048&crop_left=204&crop_top=0&crop_width=1638&v=1705111629&width=720',
-      productsCount: 32
-    },
-    'accessories': {
-      name: 'إكسسوارات',
-      description: 'إكسسوارات متنوعة لإكمال إطلالتك بأسلوب فريد يعكس الأصالة والعصرية',
-      image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/105_0a4b7901-6aa1-4edb-ad59-94fb58dfa720.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1724375971&width=720',
-      productsCount: 15
-    },
-    'abaya': {
-      name: 'عباية',
-      description: 'عبايات أنيقة بتصاميم معاصرة مستوحاة من التراث مع لمسة من الحداثة',
-      image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720',
-      productsCount: 12
-    },
-    'special-occasions': {
-      name: 'مناسبات خاصة',
-      description: 'تشكيلة مميزة للمناسبات الخاصة والأعراس تجمع بين الفخامة والأناقة',
-      image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720',
-      productsCount: 20
-    }
-  };
+  // Fetch collection data and products
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    
+    // Fetch products from API
+    getProductsByCollection(slug)
+      .then((response) => {
+        console.log('API response:', response.data);
+        
+        if (response.data && response.data.data) {
+          // Map API products to the format expected by the ProductsGrid component
+          const mappedProducts = response.data.data.map(product => ({
+            id: product.id,
+            name: product.name_en,
+            slug: product.slug,
+            price: parseFloat(product.price),
+            oldPrice: product.old_price ? parseFloat(product.old_price) : null,
+            image: product.images && product.images.length > 0 ? product.images[0].url : null,
+            category: product.category_slug,
+            colors: product.colors?.map(color => color.value) || [],
+            sizes: product.sizes?.map(size => size.name) || []
+          }));
+          
+          // Create collection object
+          const collectionData = {
+            name: "جسور بين الأصالة والمعاصرة",
+            description: "تصاميم تحكي تراثنا وتلمس روح العصر",
+            image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/oijkio.jpg?v=1730334214&width=2880',
+            productsCount: mappedProducts.length
+          };
+          
+          setCollection(collectionData);
+          setProducts(mappedProducts);
+        } else {
+          // If API response isn't in expected format, create fallback data
+          fallbackToMockData();
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('API error:', error);
+        fallbackToMockData();
+        setLoading(false);
+      });
+      
+    // Function to use mock data as fallback
+    const fallbackToMockData = () => {
+      setError('Could not load products from API. Showing sample data instead.');
+      
+      // Get the collection data
+      const collectionData = {
+        name: slug.charAt(0).toUpperCase() + slug.slice(1),
+        description: 'Explore our collection of beautifully crafted items.',
+        image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/oijkio.jpg?v=1730334214&width=2880',
+        productsCount: 6
+      };
+      
+      // Generate mock products
+      const mockProducts = generateMockProducts(6);
+      
+      setCollection(collectionData);
+      setProducts(mockProducts);
+    };
+  }, [slug]);
 
-  // Mock products data
+  // Mock products generator function (used only if API fails)
   const generateMockProducts = (count) => {
     const mockProducts = [];
     const images = [
@@ -59,124 +86,40 @@ const CollectionPage = () => {
       'https://ma.bouchrafilalilahlou.com/cdn/shop/files/djellaba_femme_dor.jpg?crop=region&crop_height=1200&crop_left=120&crop_top=0&crop_width=960&v=1742610117&width=720',
       'https://ma.bouchrafilalilahlou.com/cdn/shop/files/1_bbd9b5db-1e17-469e-94bf-81e33a09f52a.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1696787030&width=720',
       'https://ma.bouchrafilalilahlou.com/cdn/shop/files/105_0a4b7901-6aa1-4edb-ad59-94fb58dfa720.jpg?crop=region&crop_height=1080&crop_left=108&crop_top=0&crop_width=864&v=1724375971&width=720',
-      'https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720',
     ];
     
-    const names = {
-      'kaftan': [
-        'قفطان مغربي فخم مطرز',
-        'قفطان كلاسيكي بألوان مبهجة',
-        'قفطان عصري بتطريز فضي',
-        'قفطان تقليدي بلمسة حديثة',
-        'قفطان مخملي بتصميم أنيق'
-      ],
-      'jellaba': [
-        'جلابة نسائية مطرزة',
-        'جلابة تقليدية بلمسة عصرية',
-        'جلابة فاخرة للمناسبات',
-        'جلابة مغربية بتطريز يدوي',
-        'جلابة كاجوال للاستخدام اليومي'
-      ],
-      'jewelry': [
-        'أقراط فضية بأحجار كريمة',
-        'عقد مطلي بالذهب بتصميم عربي',
-        'خاتم فضة بنقوش تقليدية',
-        'إسورة مرصعة بالأحجار الكريمة',
-        'طقم مجوهرات كامل للعروس'
-      ],
-      'accessories': [
-        'حزام جلدي مطرز للقفطان',
-        'حقيبة يد مغربية تقليدية',
-        'وشاح حريري بنقوش شرقية',
-        'إكسسوار شعر مرصع بالأحجار',
-        'قلادة تقليدية بتصميم فاخر'
-      ],
-      'abaya': [
-        'عباية مطرزة بتصميم أنيق',
-        'عباية عصرية بلمسات شرقية',
-        'عباية سوداء بتطريز ذهبي',
-        'عباية فاخرة للمناسبات',
-        'عباية كاجوال للاستخدام اليومي'
-      ],
-      'special-occasions': [
-        'فستان سهرة مطرز بالخرز',
-        'قفطان فاخر للأعراس',
-        'طقم عروس تقليدي',
-        'جلابة مطرزة للمناسبات',
-        'فستان سهرة بتطريز يدوي'
-      ]
-    };
-
-    const getRandomPrice = () => Math.floor(Math.random() * (5000 - 800) + 800);
-    const getRandomDiscount = () => Math.random() > 0.7; // 30% chance of having a discount
+    const names = [
+      'Elegant Kaftan',
+      'Traditional Jellaba',
+      'Modern Design Kaftan',
+      'Embroidered Piece',
+      'Formal Occasion Kaftan',
+      'Premium Collection Item'
+    ];
 
     for (let i = 1; i <= count; i++) {
       const imageIndex = Math.floor(Math.random() * images.length);
-      const nameList = names[slug] || names['kaftan']; // Fallback to kaftan if no matching names
-      const nameIndex = i % nameList.length;
+      const nameIndex = Math.floor(Math.random() * names.length);
       
-      const price = getRandomPrice();
-      const hasDiscount = getRandomDiscount();
+      const price = Math.floor(Math.random() * (5000 - 800) + 800);
+      const hasDiscount = Math.random() > 0.7;
       const oldPrice = hasDiscount ? price + Math.floor(Math.random() * 1000) : null;
       
       mockProducts.push({
         id: `${slug}-${i}`,
-        name: nameList[nameIndex],
+        name: names[nameIndex],
         slug: `${slug}-product-${i}`,
         price: price,
         oldPrice: oldPrice,
         image: images[imageIndex],
-        colors: ['#000000', '#0c2461', '#8e0000', '#006266'].slice(0, Math.floor(Math.random() * 4) + 1),
+        category: slug,
+        colors: ['#000000', '#0c2461', '#8e0000'].slice(0, Math.floor(Math.random() * 3) + 1),
         sizes: ['XS', 'S', 'M', 'L', 'XL'].slice(0, Math.floor(Math.random() * 5) + 1)
       });
     }
     
     return mockProducts;
   };
-
-  // Fetch collection data and products
-  useEffect(() => {
-    setLoading(true);
-    
-    // Try to fetch products from API first
-    getProductsByCollection(slug)
-      .then((response) => {
-        console.log('API response:', response.data);
-        
-        // If we have real collection data from API
-        if (response.data && response.data.collection) {
-          setCollection(response.data.collection);
-          setProducts(response.data.products || []);
-        } else {
-          // Fallback to mock data if API doesn't return expected format
-          fallbackToMockData();
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log('API error:', error);
-        // Fallback to mock data on error
-        fallbackToMockData();
-        setLoading(false);
-      });
-      
-    // Function to use mock data as fallback
-    const fallbackToMockData = () => {
-      // Get the collection data
-      const collectionData = collectionsData[slug] || {
-        name: 'مجموعة',
-        description: 'استكشف مجموعتنا المميزة من المنتجات المختارة',
-        image: 'https://ma.bouchrafilalilahlou.com/cdn/shop/files/oijkio.jpg?v=1730334214&width=2880',
-        productsCount: 12
-      };
-      
-      // Generate mock products
-      const mockProducts = generateMockProducts(collectionData.productsCount);
-      
-      setCollection(collectionData);
-      setProducts(mockProducts);
-    };
-  }, [slug]);
 
   if (loading) {
     return (
@@ -188,11 +131,12 @@ const CollectionPage = () => {
 
   return (
     <CollectionLayout
-      title={collection.name}
-      description={collection.description}
-      backgroundImage={collection.image}
+      title={collection?.name || slug}
+      description={collection?.description || ''}
+      backgroundImage={collection?.image || ''}
       products={products}
       setProducts={setProducts}
+      error={error}
     >
       <ProductsGrid />
     </CollectionLayout>
@@ -207,6 +151,7 @@ const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 12rem;
 `;
 
 const LoadingSpinner = styled.div`
