@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Models\Gallery;
-use App\Http\Requests\StoreGalleryRequest;
-use App\Http\Requests\UpdateGalleryRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreGalleryRequest;
+use App\Http\Requests\V1\UpdateGalleryRequest;
+use App\Interfaces\GalleryInterface;
+use App\Models\Gallery;
+use Illuminate\Http\Request;
 
 class GalleryController extends Controller
 {
+    private $galleryInterface;
+
+    public function __construct(GalleryInterface $galleryInterface)
+    {
+        $this->galleryInterface = $galleryInterface;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return $this->galleryInterface->all();
     }
 
     /**
@@ -30,7 +31,7 @@ class GalleryController extends Controller
      */
     public function store(StoreGalleryRequest $request)
     {
-        //
+        return $this->galleryInterface->store($request);
     }
 
     /**
@@ -38,15 +39,7 @@ class GalleryController extends Controller
      */
     public function show(Gallery $gallery)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Gallery $gallery)
-    {
-        //
+        return $this->galleryInterface->find($gallery);
     }
 
     /**
@@ -54,7 +47,7 @@ class GalleryController extends Controller
      */
     public function update(UpdateGalleryRequest $request, Gallery $gallery)
     {
-        //
+        return $this->galleryInterface->update($request, $gallery);
     }
 
     /**
@@ -62,6 +55,6 @@ class GalleryController extends Controller
      */
     public function destroy(Gallery $gallery)
     {
-        //
+        return $this->galleryInterface->destroy($gallery);
     }
 }

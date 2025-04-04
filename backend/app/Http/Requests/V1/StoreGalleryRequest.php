@@ -11,7 +11,7 @@ class StoreGalleryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true; // We will handle this with middleware
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreGalleryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:5120'], // 5MB
+            'title' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'is_featured' => ['nullable', 'boolean'],
         ];
     }
 }

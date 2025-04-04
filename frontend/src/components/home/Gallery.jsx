@@ -7,6 +7,98 @@ import { Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { getGalleryPics } from "../../api/gallery/index.js";
+
+
+
+const Gallery = () => {
+  const swiperRef = useRef(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
+  const [gallery, setGallery] = useState([]);
+
+  useEffect(() => {
+    if (swiperRef.current) {
+      swiperRef.current.on("slideChange", () => {
+        setIsBeginning(swiperRef.current.isBeginning);
+        setIsEnd(swiperRef.current.isEnd);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    getGalleryPics()
+      .then((res) => {
+        setGallery(res.data.data.galleries);
+      })
+      .catch((err) => {
+        console.error("Error fetching gallery images:", err);
+      });
+  }, []);
+  
+  return (
+    <StyledGallery>
+      <Heading title={"مـعـرض الـصـور"} />
+      <StyledGalleryList>
+        {!isBeginning && (
+          <StyledLeftArrowNavigation>
+            <button onClick={() => swiperRef.current?.slidePrev()}>
+              <ChevronLeftIcon width={30} height={30} />
+            </button>
+          </StyledLeftArrowNavigation>
+        )}
+        {!isEnd && (
+          <StyledRightArrowNavigation>
+            <button onClick={() => swiperRef.current?.slideNext()}>
+              <ChevronRightIcon width={30} height={30} />
+            </button>
+          </StyledRightArrowNavigation>
+        )}
+
+        <Swiper
+          effect="coverflow"
+          grabCursor={true}
+          coverflowEffect={{
+            rotate: 0,
+            stretch: 0,
+            depth: 200,
+            modifier: 1.5,
+            slideShadows: false,
+          }}
+          slidesPerView={"auto"}
+          centeredSlides={false}
+          spaceBetween={15}
+          slidesPerGroup={1}
+          navigation={false}
+          modules={[Pagination, Navigation]}
+          className="mySwiper"
+          onSwiper={(swiper) => (swiperRef.current = swiper)}
+          onSlideChange={(swiper) => {
+            setIsBeginning(swiper.isBeginning);
+            setIsEnd(swiper.isEnd);
+          }}
+        >
+          {gallery.map((pic, index) => {
+            return (
+              <SwiperSlide key={index}>
+                <StyledProductCard>
+                  <StyledProductImage>
+                    <img
+                      src={pic.photo}
+                      alt={pic.description}
+                    />
+                  </StyledProductImage>
+                </StyledProductCard>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </StyledGalleryList>
+    </StyledGallery>
+  );
+};
+
+export default Gallery;
 
 const StyledGallery = styled.section`
   width: 100%;
@@ -110,81 +202,3 @@ const StyledProductImage = styled.div`
     object-fit: cover;
   }
 `;
-
-const Gallery = () => {
-  const swiperRef = useRef(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  useEffect(() => {
-    if (swiperRef.current) {
-      swiperRef.current.on("slideChange", () => {
-        setIsBeginning(swiperRef.current.isBeginning);
-        setIsEnd(swiperRef.current.isEnd);
-      });
-    }
-  }, []);
-  
-  return (
-    <StyledGallery>
-      <Heading title={"مـعـرض الـصـور"} />
-      <StyledGalleryList>
-        {!isBeginning && (
-          <StyledLeftArrowNavigation>
-            <button onClick={() => swiperRef.current?.slidePrev()}>
-              <ChevronLeftIcon width={30} height={30} />
-            </button>
-          </StyledLeftArrowNavigation>
-        )}
-        {!isEnd && (
-          <StyledRightArrowNavigation>
-            <button onClick={() => swiperRef.current?.slideNext()}>
-              <ChevronRightIcon width={30} height={30} />
-            </button>
-          </StyledRightArrowNavigation>
-        )}
-
-        <Swiper
-          effect="coverflow"
-          grabCursor={true}
-          coverflowEffect={{
-            rotate: 0,
-            stretch: 0,
-            depth: 200,
-            modifier: 1.5,
-            slideShadows: false,
-          }}
-          slidesPerView={"auto"}
-          centeredSlides={false}
-          spaceBetween={15}
-          slidesPerGroup={1}
-          navigation={false}
-          modules={[Pagination, Navigation]}
-          className="mySwiper"
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-          onSlideChange={(swiper) => {
-            setIsBeginning(swiper.isBeginning);
-            setIsEnd(swiper.isEnd);
-          }}
-        >
-          {[...Array(10)].map((_, index) => {
-            return (
-              <SwiperSlide key={index}>
-                <StyledProductCard>
-                  <StyledProductImage>
-                    <img
-                      src="https://ma.bouchrafilalilahlou.com/cdn/shop/files/custom_resized_5d1127c3-01b7-426f-a9ba-5ddf77025254.jpg?crop=region&crop_height=1023&crop_left=0&crop_top=0&crop_width=819&v=1690670418&width=720"
-                      alt="صورة قفطان"
-                    />
-                  </StyledProductImage>
-                </StyledProductCard>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
-      </StyledGalleryList>
-    </StyledGallery>
-  );
-};
-
-export default Gallery;

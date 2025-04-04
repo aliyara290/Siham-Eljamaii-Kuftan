@@ -8,6 +8,7 @@ use App\Interfaces\Auth\ForgetPasswordInterface;
 use App\Interfaces\CategoryInterface;
 use App\Interfaces\ColorInterface;
 use App\Interfaces\ContactInterface;
+use App\Interfaces\GalleryInterface;
 use App\Interfaces\OrderInterface;
 use App\Interfaces\PaymentInterface;
 use App\Interfaces\ProductInterface;
@@ -17,6 +18,7 @@ use App\Repositories\Auth\ForgetPasswordRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ColorRepository;
 use App\Repositories\ContactRepository;
+use App\Repositories\GalleryRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SizeRepository;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(GalleryInterface::class, GalleryRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
         $this->app->bind(AuthInterface::class, AuthRepository::class);
         $this->app->bind(ProductInterface::class, ProductRepository::class);

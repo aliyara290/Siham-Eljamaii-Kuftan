@@ -81,6 +81,7 @@ const ContactPage = () => {
       .then((res) => {
         setIsSubmitting(false);
         setSubmitSuccess(true);
+        console.log("Form submitted successfully:", res.data);
         
         setFormData({
           name: "",

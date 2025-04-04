@@ -9,6 +9,7 @@ use App\Http\Controllers\V1\OrderController;
 use App\Http\Controllers\V1\ProductController;
 use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\ContactController;
+use App\Http\Controllers\V1\GalleryController;
 use App\Http\Controllers\V1\SizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,12 +28,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/google', [AuthController::class, 'redirectToGoogle']);
         Route::get('/google/callback', [AuthController::class, 'handleGoogleCallback']);
         Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth:sanctum');
-        
+
         // Password reset routes
         Route::post('/forgot-password', [ForgetPasswordController::class, 'sendResetLink']);
         Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
     });
-    
+
     // Product filter routes - these come first to avoid route conflicts
     Route::prefix('products')->group(function () {
         Route::get('/filters/category/{slug}', [ProductController::class, 'getByCategory']);
@@ -40,7 +41,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/filters/color/{colorId}', [ProductController::class, 'getByColor']);
         Route::get('/filters/price', [ProductController::class, 'getByPrice']);
     });
-    
+
     Route::get('/colors', [ColorController::class, 'index']);
     Route::get('/sizes', [SizeController::class, 'index']);
     Route::apiResource('/categories', CategoryController::class);
@@ -64,7 +65,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
         });
     });
-    
+
     // Order routes (all protected)
     Route::prefix('orders')->middleware('auth:sanctum')->group(function () {
         Route::post('/', [OrderController::class, 'store']);
@@ -74,7 +75,7 @@ Route::prefix('v1')->group(function () {
         // Admin routes (would need admin middleware in a real app)
         Route::get('/user/{userId}', [OrderController::class, 'userOrders']);
     });
-    
+
     // Protected routes (write operations)
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('products', [ProductController::class, 'store']);
@@ -83,14 +84,25 @@ Route::prefix('v1')->group(function () {
         Route::delete('products/{id}', [ProductController::class, 'destroy']);
     });
 
-     // Contact routes
-     Route::post('/contact', [ContactController::class, 'store']);
-    
-     // Admin contact routes (protected)
-    //  Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
-         Route::get('/contacts', [ContactController::class, 'index']);
-         Route::get('/contacts/{id}', [ContactController::class, 'show']);
-         Route::patch('/contacts/{id}/status', [ContactController::class, 'updateStatus']);
-         Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
-    //  });
+    // Contact routes
+    Route::post('/contact', [ContactController::class, 'store']);
+
+    // Admin contact routes (protected)
+    Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
+        Route::get('/contacts', [ContactController::class, 'index']);
+        Route::get('/contacts/{id}', [ContactController::class, 'show']);
+        Route::patch('/contacts/{id}/status', [ContactController::class, 'updateStatus']);
+        Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
+    });
+
+    // Public gallery routes
+    Route::get('/galleries', [GalleryController::class, 'index']);
+    Route::get('/galleries/{gallery}', [GalleryController::class, 'show']);
+
+    // Protected gallery routes (for admin)
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/galleries', [GalleryController::class, 'store']);
+        Route::post('/galleries/{gallery}', [GalleryController::class, 'update']);
+        Route::delete('/galleries/{gallery}', [GalleryController::class, 'destroy']);
+    });
 });
