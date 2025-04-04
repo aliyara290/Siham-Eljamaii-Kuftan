@@ -18,10 +18,21 @@ const ShippingPage = () => {
 
         <StyledSectionContainer>
           <StyledSection>
-            <SectionTitle>طرق الشحن المتاحة</SectionTitle>
+            <SectionTitle>مناطق الشحن المتاحة</SectionTitle>
             <SectionText>
-              نوفر خدمة توصيل سريعة وآمنة لجميع أنحاء المغرب ودول العالم. نتعامل مع شركات شحن موثوقة لضمان وصول منتجاتك بأمان وفي الوقت المحدد.
+              نوفر حالياً خدمة التوصيل فقط إلى المغرب والإمارات العربية المتحدة. نتعامل مع شركات شحن موثوقة لضمان وصول منتجاتك بأمان وفي الوقت المحدد.
             </SectionText>
+            
+            <LimitedShippingAlert>
+              <AlertIcon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              </AlertIcon>
+              <AlertText>الشحن متاح فقط داخل المغرب والإمارات العربية المتحدة.</AlertText>
+            </LimitedShippingAlert>
             
             <ShippingMethodsTable>
               <thead>
@@ -46,22 +57,16 @@ const ShippingPage = () => {
                   <TableCell>100 - 150 درهم</TableCell>
                 </tr>
                 <tr>
-                  <TableCell>دول الشرق الأوسط وشمال أفريقيا</TableCell>
-                  <TableCell>شحن دولي</TableCell>
-                  <TableCell>5-10 أيام عمل</TableCell>
-                  <TableCell>200 - 350 درهم</TableCell>
+                  <TableCell>الإمارات العربية المتحدة - المدن الرئيسية</TableCell>
+                  <TableCell>شحن دولي سريع</TableCell>
+                  <TableCell>3-5 أيام عمل</TableCell>
+                  <TableCell>200 - 300 درهم</TableCell>
                 </tr>
                 <tr>
-                  <TableCell>أوروبا وأمريكا الشمالية</TableCell>
-                  <TableCell>شحن دولي مميز</TableCell>
-                  <TableCell>7-14 يوم عمل</TableCell>
-                  <TableCell>350 - 550 درهم</TableCell>
-                </tr>
-                <tr>
-                  <TableCell>باقي دول العالم</TableCell>
-                  <TableCell>شحن دولي مميز</TableCell>
-                  <TableCell>14-21 يوم عمل</TableCell>
-                  <TableCell>450 - 750 درهم</TableCell>
+                  <TableCell>الإمارات العربية المتحدة - المناطق البعيدة</TableCell>
+                  <TableCell>شحن دولي قياسي</TableCell>
+                  <TableCell>5-7 أيام عمل</TableCell>
+                  <TableCell>250 - 350 درهم</TableCell>
                 </tr>
               </tbody>
             </ShippingMethodsTable>
@@ -73,8 +78,8 @@ const ShippingPage = () => {
               نقدم شحناً مجانياً للطلبات التي تتجاوز قيمة معينة:
             </SectionText>
             <FeatureList>
-              <FeatureItem>للطلبات داخل المغرب: شحن مجاني للطلبات التي تتجاوز 3000 درهم</FeatureItem>
-              <FeatureItem>للطلبات الدولية: شحن مجاني للطلبات التي تتجاوز 7000 درهم</FeatureItem>
+              <FeatureItem>للطلبات داخل المغرب: شحن مجاني للطلبات التي تتجاوز 5000 درهم</FeatureItem>
+              <FeatureItem>للطلبات إلى الإمارات العربية المتحدة: شحن مجاني للطلبات التي تتجاوز 5000 درهم</FeatureItem>
             </FeatureList>
           </StyledSection>
 
@@ -88,16 +93,19 @@ const ShippingPage = () => {
           <StyledSection>
             <SectionTitle>التوصيل في نفس اليوم</SectionTitle>
             <SectionText>
-              نقدم خدمة التوصيل في نفس اليوم في المدن الرئيسية التالية داخل المغرب:
+              نقدم خدمة التوصيل في نفس اليوم في المدن الرئيسية التالية:
             </SectionText>
             <FeatureList>
-              <FeatureItem>الرباط</FeatureItem>
-              <FeatureItem>الدار البيضاء</FeatureItem>
-              <FeatureItem>مراكش</FeatureItem>
+              <FeatureItem>المغرب: الرباط والدار البيضاء ومراكش</FeatureItem>
+              <FeatureItem>الإمارات: دبي وأبو ظبي والشارقة</FeatureItem>
             </FeatureList>
             <SectionText>
-              تنطبق هذه الخدمة على الطلبات المقدمة قبل الساعة 12 ظهرًا، وتخضع لرسوم إضافية قدرها 150 درهم.
+              تنطبق هذه الخدمة على الطلبات المقدمة قبل الساعة 12 ظهرًا، وتخضع لرسوم إضافية قدرها:
             </SectionText>
+            <FeatureList>
+              <FeatureItem>المغرب: 150 درهم مغربي</FeatureItem>
+              <FeatureItem>الإمارات: 75 درهم إماراتي</FeatureItem>
+            </FeatureList>
           </StyledSection>
 
           <StyledSection>
@@ -113,21 +121,21 @@ const ShippingPage = () => {
           <StyledSection>
             <SectionTitle>الأسئلة الشائعة حول الشحن</SectionTitle>
             <FAQItem>
+              <FAQQuestion>لماذا لا تقدمون خدمات الشحن لدول أخرى؟</FAQQuestion>
+              <FAQAnswer>
+                حالياً، نركز على توفير أفضل تجربة شحن وتوصيل في المغرب والإمارات العربية المتحدة. نخطط لتوسيع نطاق خدماتنا لتشمل دولاً أخرى في المستقبل القريب.
+              </FAQAnswer>
+            </FAQItem>
+            <FAQItem>
               <FAQQuestion>هل يمكنني تغيير عنوان التوصيل بعد تقديم الطلب؟</FAQQuestion>
               <FAQAnswer>
-                نعم، يمكنك تغيير عنوان التوصيل إذا لم يتم شحن طلبك بعد. يرجى الاتصال بخدمة العملاء في أقرب وقت ممكن مع ذكر رقم الطلب والعنوان الجديد.
+                نعم، يمكنك تغيير عنوان التوصيل إذا لم يتم شحن طلبك بعد، طالما أن العنوان الجديد في نفس البلد (المغرب أو الإمارات). يرجى الاتصال بخدمة العملاء في أقرب وقت ممكن مع ذكر رقم الطلب والعنوان الجديد.
               </FAQAnswer>
             </FAQItem>
             <FAQItem>
               <FAQQuestion>هل يمكنني اختيار تاريخ ووقت محدد للتسليم؟</FAQQuestion>
               <FAQAnswer>
                 للأسف، لا يمكننا ضمان تواريخ وأوقات تسليم محددة نظرًا لاعتمادنا على شركات الشحن الخارجية. ومع ذلك، يمكنك إضافة تعليمات خاصة بالتسليم في ملاحظات الطلب، وسنبذل قصارى جهدنا لاستيعابها.
-              </FAQAnswer>
-            </FAQItem>
-            <FAQItem>
-              <FAQQuestion>هل تقدمون الشحن الدولي لجميع البلدان؟</FAQQuestion>
-              <FAQAnswer>
-                نعم، نحن نشحن إلى معظم دول العالم. إذا كان لديك أي شك حول توفر الشحن إلى بلدك، يرجى التواصل معنا قبل إتمام الطلب.
               </FAQAnswer>
             </FAQItem>
             <FAQItem>
@@ -140,6 +148,12 @@ const ShippingPage = () => {
               <FAQQuestion>ماذا يحدث إذا لم أكن متواجدًا عند وصول الطلب؟</FAQQuestion>
               <FAQAnswer>
                 إذا لم تكن متواجدًا، سيترك مندوب التوصيل إشعارًا وسيحاول التوصيل مرة أخرى. بعد ثلاث محاولات غير ناجحة، سيتم إعادة المنتج إلينا. يمكنك الاتصال بنا لترتيب عملية إعادة الشحن، والتي قد تخضع لرسوم إضافية.
+              </FAQAnswer>
+            </FAQItem>
+            <FAQItem>
+              <FAQQuestion>أعيش خارج المغرب والإمارات، هل يمكنني الشراء؟</FAQQuestion>
+              <FAQAnswer>
+                نعم، يمكنك الشراء من موقعنا حتى إذا كنت تعيش خارج المغرب والإمارات، ولكن عليك توفير عنوان للشحن في أحد هذين البلدين. يمكنك استخدام خدمات إعادة التوجيه أو الترتيب مع صديق أو قريب في المغرب أو الإمارات لاستلام الطلب ثم إعادة شحنه إليك.
               </FAQAnswer>
             </FAQItem>
           </StyledSection>
@@ -226,6 +240,27 @@ const SectionText = styled.p`
   line-height: 1.7;
   color: var(--neutral-700);
   margin-bottom: 2rem;
+`;
+
+const LimitedShippingAlert = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: var(--info-100);
+  padding: 1.5rem 2rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2.5rem;
+`;
+
+const AlertIcon = styled.div`
+  color: var(--info-500);
+  flex-shrink: 0;
+`;
+
+const AlertText = styled.p`
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--neutral-800);
 `;
 
 const ShippingMethodsTable = styled.table`

@@ -3,48 +3,63 @@ import styled from "styled-components";
 import Heading from "../../components/heading/Heading";
 import SubHeading from "../../components/heading/SubHeading";
 
-
-const ReturnPolicyPage = () => {
+const NoReturnPolicyPage = () => {
   return (
     <StyledReturnPolicyPage>
       <StyledReturnPolicyContent>
         <StyledPageHeader>
           <Heading title="سياسة الإرجاع" weight={500} />
           <SubHeading 
-            title="تفاصيل سياسة الإرجاع والاستبدال لضمان رضاك التام عن منتجاتنا"
+            title="نعتذر، لا يمكن إرجاع أو تغيير المنتجات بعد الشراء"
             size="lg" 
           />
         </StyledPageHeader>
 
         <StyledSectionContainer>
           <StyledSection>
-            <SectionTitle>شروط الإرجاع</SectionTitle>
+            <SectionTitle>سياسة عدم الإرجاع</SectionTitle>
             <SectionText>
-              نحن نسعى دائمًا لتقديم منتجات عالية الجودة تلبي توقعاتك. ومع ذلك، إذا لم تكن راضيًا تمامًا عن مشترياتك، فيمكنك إرجاعها وفقًا للشروط التالية:
+              نظراً للطبيعة الخاصة لمنتجاتنا والجهد المبذول في تصميمها وتصنيعها يدوياً، تُطبق سياسة عدم الإرجاع أو التغيير على جميع المشتريات. لذا نرجو التأكد من اختيارك قبل إتمام عملية الشراء.
             </SectionText>
             
             <FeatureList>
-              <FeatureItem>يجب تقديم طلب الإرجاع في غضون 14 يومًا من تاريخ استلام المنتج.</FeatureItem>
-              <FeatureItem>يجب أن تكون المنتجات بحالتها الأصلية، غير مستخدمة، وبكامل تغليفها وملصقاتها.</FeatureItem>
-              <FeatureItem>يجب تقديم إيصال الشراء أو إثبات الشراء مع طلب الإرجاع.</FeatureItem>
-              <FeatureItem>المنتجات المصممة خصيصًا حسب الطلب غير قابلة للإرجاع إلا في حالة وجود عيوب تصنيع.</FeatureItem>
-              <FeatureItem>المجوهرات والإكسسوارات غير قابلة للإرجاع لأسباب تتعلق بالنظافة، إلا في حالة وجود عيوب.</FeatureItem>
+              <FeatureItem>جميع المبيعات نهائية ولا يمكن استرداد قيمتها.</FeatureItem>
+              <FeatureItem>لا نقبل إرجاع أو استبدال المنتجات بعد الشراء مهما كانت الأسباب.</FeatureItem>
+              <FeatureItem>يجب التأكد من المقاس واللون والتصميم قبل إتمام عملية الشراء.</FeatureItem>
+              <FeatureItem>لا يمكن إلغاء الطلب بعد تأكيده ودفع قيمته.</FeatureItem>
+              <FeatureItem>المنتجات المصممة خصيصاً حسب الطلب غير قابلة للإلغاء بعد بدء التصنيع.</FeatureItem>
             </FeatureList>
           </StyledSection>
 
           <StyledSection>
-            <SectionTitle>عملية الإرجاع</SectionTitle>
+            <SectionTitle>الاستثناءات المحدودة</SectionTitle>
             <SectionText>
-              لإرجاع أو استبدال منتج، يرجى اتباع الخطوات التالية:
+              على الرغم من سياسة عدم الإرجاع، قد نقدم استثناءات محدودة جداً في الحالات التالية:
+            </SectionText>
+            
+            <FeatureList>
+              <FeatureItem>استلام منتج به عيب تصنيع واضح وجسيم يجعله غير قابل للاستخدام نهائياً (يجب تقديم الدليل خلال 24 ساعة من الاستلام).</FeatureItem>
+              <FeatureItem>استلام منتج مختلف تماماً عما تم طلبه (يجب الإبلاغ خلال 24 ساعة من الاستلام).</FeatureItem>
+            </FeatureList>
+            
+            <SectionText>
+              في هالات الاستثناء المذكورة أعلاه، سيتم تقييم الحالة بشكل فردي من قبل فريقنا، ولا يوجد ضمان للإرجاع أو الاستبدال.
+            </SectionText>
+          </StyledSection>
+
+          <StyledSection>
+            <SectionTitle>التوصيات قبل الشراء</SectionTitle>
+            <SectionText>
+              نظراً لسياسة عدم الإرجاع، نوصي بالخطوات التالية قبل إتمام عملية الشراء:
             </SectionText>
             
             <ProcessSteps>
               <ProcessStep>
                 <StepNumber>1</StepNumber>
                 <StepContent>
-                  <StepTitle>الاتصال بخدمة العملاء</StepTitle>
+                  <StepTitle>دراسة المنتج بعناية</StepTitle>
                   <StepDescription>
-                    قم بالتواصل مع فريق خدمة العملاء عبر البريد الإلكتروني على info@siham-kuftan.com أو عبر الهاتف على +212 520 123456 في غضون 14 يومًا من استلام طلبك.
+                    تأكد من قراءة وصف المنتج بدقة والاطلاع على جميع المعلومات المتعلقة بالمقاسات والخامات والألوان.
                   </StepDescription>
                 </StepContent>
               </ProcessStep>
@@ -52,9 +67,9 @@ const ReturnPolicyPage = () => {
               <ProcessStep>
                 <StepNumber>2</StepNumber>
                 <StepContent>
-                  <StepTitle>تعبئة نموذج الإرجاع</StepTitle>
+                  <StepTitle>التحقق من جدول المقاسات</StepTitle>
                   <StepDescription>
-                    بعد الموافقة على طلب الإرجاع، سنرسل لك نموذج إرجاع يجب تعبئته وإرفاقه مع المنتج المرتجع.
+                    راجع جدول المقاسات بدقة وقم بقياس نفسك قبل اختيار المقاس المناسب. يمكنك الاطلاع على دليل المقاسات الخاص بنا.
                   </StepDescription>
                 </StepContent>
               </ProcessStep>
@@ -62,9 +77,9 @@ const ReturnPolicyPage = () => {
               <ProcessStep>
                 <StepNumber>3</StepNumber>
                 <StepContent>
-                  <StepTitle>تغليف المنتج</StepTitle>
+                  <StepTitle>استشارة فريق المبيعات</StepTitle>
                   <StepDescription>
-                    قم بتغليف المنتج بعناية في العبوة الأصلية أو عبوة مناسبة مع التأكد من إرفاق نموذج الإرجاع وإيصال الشراء.
+                    إذا كان لديك أي استفسار أو تردد، يرجى التواصل مع فريق المبيعات لدينا قبل الشراء للحصول على جميع المعلومات اللازمة.
                   </StepDescription>
                 </StepContent>
               </ProcessStep>
@@ -72,19 +87,9 @@ const ReturnPolicyPage = () => {
               <ProcessStep>
                 <StepNumber>4</StepNumber>
                 <StepContent>
-                  <StepTitle>شحن المنتج</StepTitle>
+                  <StepTitle>التأكد من الطلب</StepTitle>
                   <StepDescription>
-                    قم بإرسال المنتج إلى العنوان المحدد في نموذج الإرجاع. نوصي باستخدام خدمة شحن مع إمكانية التتبع.
-                  </StepDescription>
-                </StepContent>
-              </ProcessStep>
-              
-              <ProcessStep>
-                <StepNumber>5</StepNumber>
-                <StepContent>
-                  <StepTitle>معالجة الإرجاع</StepTitle>
-                  <StepDescription>
-                    بمجرد استلامنا للمنتج، سنقوم بفحصه ومعالجة طلب الإرجاع أو الاستبدال في غضون 5-7 أيام عمل.
+                    قبل تأكيد الطلب، تحقق مرة أخرى من جميع التفاصيل بما في ذلك المقاس واللون والكمية وتفاصيل التوصيل.
                   </StepDescription>
                 </StepContent>
               </ProcessStep>
@@ -92,91 +97,38 @@ const ReturnPolicyPage = () => {
           </StyledSection>
 
           <StyledSection>
-            <SectionTitle>رد المبالغ والاستبدال</SectionTitle>
-            <SectionText>
-              بعد استلام وفحص المنتج المرتجع، سنقوم بمعالجة طلبك وفقًا لخيارك:
-            </SectionText>
-            
-            <OptionList>
-              <OptionItem>
-                <OptionTitle>استرداد المبلغ</OptionTitle>
-                <OptionDescription>
-                  سيتم رد المبلغ بنفس طريقة الدفع الأصلية التي استخدمتها للشراء. قد يستغرق ظهور المبلغ المسترد في حسابك ما يصل إلى 14 يومًا، اعتمادًا على البنك الذي تتعامل معه.
-                </OptionDescription>
-              </OptionItem>
-              
-              <OptionItem>
-                <OptionTitle>استبدال المنتج</OptionTitle>
-                <OptionDescription>
-                  إذا كنت ترغب في استبدال المنتج بلون أو حجم مختلف، سنقوم بشحن البديل بمجرد توفره. في حالة وجود فرق في السعر، سيتم تحصيله أو رده حسب الحالة.
-                </OptionDescription>
-              </OptionItem>
-              
-              <OptionItem>
-                <OptionTitle>رصيد في المتجر</OptionTitle>
-                <OptionDescription>
-                  يمكنك اختيار الحصول على رصيد في المتجر يمكن استخدامه في عمليات شراء مستقبلية. الرصيد في المتجر صالح لمدة عام واحد من تاريخ الإصدار.
-                </OptionDescription>
-              </OptionItem>
-            </OptionList>
-          </StyledSection>
-
-          <StyledSection>
-            <SectionTitle>تكاليف الإرجاع</SectionTitle>
-            <SectionText>
-              يتحمل العميل تكلفة شحن المنتجات المرتجعة، إلا في الحالات التالية:
-            </SectionText>
-            
-            <FeatureList>
-              <FeatureItem>استلام منتج به عيب تصنيع.</FeatureItem>
-              <FeatureItem>استلام منتج مختلف عما تم طلبه.</FeatureItem>
-              <FeatureItem>استلام منتج تالف أثناء الشحن.</FeatureItem>
-            </FeatureList>
-            
-            <SectionText>
-              في الحالات المذكورة أعلاه، سنقوم بتغطية تكاليف الشحن لاستعادة المنتج وإرسال البديل.
-            </SectionText>
-          </StyledSection>
-
-          <StyledSection>
-            <SectionTitle>الأسئلة الشائعة حول الإرجاع</SectionTitle>
+            <SectionTitle>الأسئلة الشائعة حول سياسة الإرجاع</SectionTitle>
             <FAQItem>
-              <FAQQuestion>هل يمكنني إرجاع منتج تم شراؤه خلال فترة التخفيضات؟</FAQQuestion>
+              <FAQQuestion>لماذا لا تسمحون بإرجاع المنتجات؟</FAQQuestion>
               <FAQAnswer>
-                نعم، المنتجات المشتراة خلال فترة التخفيضات تخضع لنفس سياسة الإرجاع، باستثناء المنتجات المميزة بعلامة "لا يمكن إرجاعها" أو "البيع النهائي".
+                منتجاتنا مصنوعة يدوياً وتتطلب وقتاً وجهداً كبيراً، كما أنها مصممة خصيصاً لكل عميل. ونظراً لطبيعة المنتجات التقليدية الفاخرة، لا يمكن إعادة بيعها بسهولة بعد تجربتها أو ارتدائها.
               </FAQAnswer>
             </FAQItem>
             <FAQItem>
-              <FAQQuestion>كم من الوقت يستغرق معالجة الإرجاع؟</FAQQuestion>
+              <FAQQuestion>ماذا لو كان المقاس غير مناسب لي؟</FAQQuestion>
               <FAQAnswer>
-                بمجرد استلامنا للمنتج المرتجع، تستغرق عملية الفحص 2-3 أيام عمل. بعد الموافقة على الإرجاع، يتم معالجة الاسترداد في غضون 5-7 أيام عمل.
+                نحن نقدم جدول مقاسات تفصيلي لكل منتج ونوصي بشدة بقياس نفسك بدقة أو مقارنة المقاسات بملابس مناسبة لديك قبل الطلب. يمكنك أيضاً التواصل معنا للاستشارة حول المقاس المناسب.
               </FAQAnswer>
             </FAQItem>
             <FAQItem>
-              <FAQQuestion>ماذا لو تغير رأيي بعد تقديم طلب الإرجاع؟</FAQQuestion>
+              <FAQQuestion>ماذا لو كان هناك عيب في المنتج؟</FAQQuestion>
               <FAQAnswer>
-                إذا غيرت رأيك بعد تقديم طلب الإرجاع، يرجى الاتصال بخدمة العملاء في أسرع وقت ممكن. إذا لم يتم شحن المنتج المرتجع بعد، يمكننا إلغاء طلب الإرجاع.
+                نحن نفحص كل منتج بعناية قبل شحنه لضمان خلوه من العيوب. في حالة نادرة جداً إذا كان هناك عيب تصنيع جسيم يجعل المنتج غير قابل للاستخدام، يمكنك إبلاغنا خلال 24 ساعة من استلام المنتج مع تقديم صور واضحة للعيب، وسنقوم بتقييم الحالة بشكل فردي.
               </FAQAnswer>
             </FAQItem>
             <FAQItem>
-              <FAQQuestion>هل يمكنني إرجاع جزء من الطلب فقط؟</FAQQuestion>
+              <FAQQuestion>هل توفرون خدمة التعديل؟</FAQQuestion>
               <FAQAnswer>
-                نعم، يمكنك إرجاع منتج واحد أو أكثر من طلبك دون الحاجة إلى إرجاع جميع المنتجات.
-              </FAQAnswer>
-            </FAQItem>
-            <FAQItem>
-              <FAQQuestion>ماذا لو اكتشفت عيبًا في المنتج بعد فترة الإرجاع؟</FAQQuestion>
-              <FAQAnswer>
-                جميع منتجاتنا مغطاة بضمان ضد عيوب التصنيع لمدة 6 أشهر من تاريخ الشراء. إذا اكتشفت عيبًا بعد فترة الإرجاع، يرجى التواصل مع خدمة العملاء مع تقديم صور للعيب.
+                نحن نوفر خدمة التعديل بتكلفة إضافية في حال رغبتم في تغيير أي جزء من المنتج بعد استلامه، ولكن يجب أن يتم التواصل معنا لتقييم إمكانية التعديل والتكاليف المترتبة على ذلك.
               </FAQAnswer>
             </FAQItem>
           </StyledSection>
         </StyledSectionContainer>
 
         <StyledContactSection>
-          <Heading title="هل تحتاج إلى مساعدة إضافية؟" weight={500} />
+          <Heading title="هل تحتاج إلى مساعدة قبل الشراء؟" weight={500} />
           <SubHeading 
-            title="فريق خدمة العملاء لدينا جاهز للإجابة على أي استفسارات لديك" 
+            title="فريق خدمة العملاء لدينا جاهز للإجابة على استفساراتك ومساعدتك في اختيار المنتج المناسب" 
             size="lg" 
           />
           <ContactButton href="/contact">تواصل معنا</ContactButton>
@@ -186,7 +138,7 @@ const ReturnPolicyPage = () => {
   );
 };
 
-export default ReturnPolicyPage;
+export default NoReturnPolicyPage;
 
 // Styled Components
 const StyledReturnPolicyPage = styled.div`
@@ -276,7 +228,7 @@ const FeatureItem = styled.li`
     width: 0.8rem;
     height: 0.8rem;
     border-radius: 50%;
-    background-color: var(--neutral-400);
+    background-color: var(--danger-500);
   }
 `;
 
@@ -318,31 +270,6 @@ const StepTitle = styled.h4`
 `;
 
 const StepDescription = styled.p`
-  font-size: var(--text-md);
-  line-height: 1.6;
-  color: var(--neutral-700);
-`;
-
-const OptionList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  margin: 2.5rem 0;
-`;
-
-const OptionItem = styled.div`
-  border-right: 2px solid var(--neutral-300);
-  padding-right: 2rem;
-`;
-
-const OptionTitle = styled.h4`
-  font-size: var(--text-md);
-  font-weight: 600;
-  color: var(--neutral-800);
-  margin-bottom: 1rem;
-`;
-
-const OptionDescription = styled.p`
   font-size: var(--text-md);
   line-height: 1.6;
   color: var(--neutral-700);
