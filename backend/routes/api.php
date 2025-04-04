@@ -8,6 +8,7 @@ use App\Http\Controllers\V1\ColorController;
 use App\Http\Controllers\V1\OrderController;
 use App\Http\Controllers\V1\ProductController;
 use App\Http\Controllers\V1\PaymentController;
+use App\Http\Controllers\V1\ContactController;
 use App\Http\Controllers\V1\SizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -81,4 +82,15 @@ Route::prefix('v1')->group(function () {
         Route::patch('products/{id}', [ProductController::class, 'update']);
         Route::delete('products/{id}', [ProductController::class, 'destroy']);
     });
+
+     // Contact routes
+     Route::post('/contact', [ContactController::class, 'store']);
+    
+     // Admin contact routes (protected)
+     Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
+         Route::get('/contacts', [ContactController::class, 'index']);
+         Route::get('/contacts/{id}', [ContactController::class, 'show']);
+         Route::patch('/contacts/{id}/status', [ContactController::class, 'updateStatus']);
+         Route::delete('/contacts/{id}', [ContactController::class, 'destroy']);
+     });
 });

@@ -7,6 +7,7 @@ use App\Interfaces\Auth\AuthInterface;
 use App\Interfaces\Auth\ForgetPasswordInterface;
 use App\Interfaces\CategoryInterface;
 use App\Interfaces\ColorInterface;
+use App\Interfaces\ContactInterface;
 use App\Interfaces\OrderInterface;
 use App\Interfaces\PaymentInterface;
 use App\Interfaces\ProductInterface;
@@ -15,6 +16,7 @@ use App\Repositories\Auth\AuthRepository;
 use App\Repositories\Auth\ForgetPasswordRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ColorRepository;
+use App\Repositories\ContactRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\SizeRepository;
@@ -37,9 +39,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ColorInterface::class, ColorRepository::class);
         $this->app->bind(SizeInterface::class, SizeRepository::class);
         $this->app->bind(ForgetPasswordInterface::class, ForgetPasswordRepository::class);
+        $this->app->bind(ContactInterface::class, ContactRepository::class);
         // In AppServiceProvider.php
-$this->app->bind(\App\Interfaces\Auth\ResetPasswordInterface::class, \App\Repositories\Auth\ResetPasswordRepository::class);
-
+        $this->app->bind(\App\Interfaces\Auth\ResetPasswordInterface::class, \App\Repositories\Auth\ResetPasswordRepository::class);
     }
 
     /**
