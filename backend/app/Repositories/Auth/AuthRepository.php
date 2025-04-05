@@ -35,12 +35,21 @@ class AuthRepository implements AuthInterface
                 );
             }
 
-            return $this->success([
-                "user" => $user,
-                "token" => $user->createToken("API Token of " . $user->name)->plainTextToken,
-                "message" => "User register successfully",
-            ]);
+            $accessTokenExpireAt = Carbon::now()->addHours(1);
+            $refreshTokenExpireAt = Carbon::now()->addDays(7);
 
+            $accessToken = $user->createToken("access_token", ["*"], $accessTokenExpireAt)->plainTextToken;
+            $refreshToken = $user->createToken("refresh_token", ["refresh"], $refreshTokenExpireAt)->plainTextToken;
+
+            return $this->success([
+                'user' => $user,
+                'tokens' => [
+                    "accessToken" => $accessToken,
+                    "accessTokenExpiresAt" => $accessTokenExpireAt,
+                    "refreshToken" => $refreshToken,
+                    "refreshTokenExpiresAt" => $refreshTokenExpireAt,
+                ],
+            ]);
         } catch (Exception $e) {
             return $this->error(
                 "",
@@ -53,11 +62,11 @@ class AuthRepository implements AuthInterface
     public function login($request)
     {
         try {
-            
+
             if (!Auth::attempt($request->only(['email', 'password']))) {
                 return $this->error('', 'Credential do not match', 401);
             };
-            
+
             $user = User::where('email', $request->email)->first();
             $user->tokens()->delete();
 
@@ -68,15 +77,14 @@ class AuthRepository implements AuthInterface
             $refreshToken = $user->createToken("refresh_token", ["refresh"], $refreshTokenExpireAt)->plainTextToken;
 
             return $this->success([
-                'response' => [
-                    "userId" => $user->id,
+                'user' => $user,
+                'tokens' => [
                     "accessToken" => $accessToken,
                     "accessTokenExpiresAt" => $accessTokenExpireAt,
                     "refreshToken" => $refreshToken,
                     "refreshTokenExpiresAt" => $refreshTokenExpireAt,
                 ],
             ]);
-
         } catch (Exception $e) {
             return $this->error(
                 "",
@@ -86,11 +94,12 @@ class AuthRepository implements AuthInterface
         }
     }
 
-    public function refreshToken($request) {
+    public function refreshToken($request)
+    {
         $currentAccessToken = $request->bearerToken();
         $refreshToken = PersonalAccessToken::findToken($currentAccessToken);
 
-        if(!$refreshToken || !$refreshToken->can('refresh') || $refreshToken->expire_at->isPast()) {
+        if (!$refreshToken || !$refreshToken->can('refresh') || $refreshToken->expire_at->isPast()) {
             return response()->json(["message" => "Invalid or expired token"], 401);
         }
 
@@ -170,5 +179,3 @@ class AuthRepository implements AuthInterface
         }
     }
 }
-
-

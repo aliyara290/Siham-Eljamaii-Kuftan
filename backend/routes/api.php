@@ -15,20 +15,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // User authentication routes
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 
 Route::prefix('v1')->group(function () {
     // Auth routes
     Route::prefix('auth')->group(function () {
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        })->middleware('auth:sanctum');
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
         Route::get('/google', [AuthController::class, 'redirectToGoogle']);
         Route::get('/google/callback', [AuthController::class, 'handleGoogleCallback']);
         Route::post('/logout', [AuthController::class, 'destroy'])->middleware('auth:sanctum');
-
+        Route::post('/refresh', [AuthController::class, 'refreshToken']);
         // Password reset routes
         Route::post('/forgot-password', [ForgetPasswordController::class, 'sendResetLink']);
         Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
@@ -60,8 +59,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/webhook', [PaymentController::class, 'handleWebhook']);
         // Protected routes
         Route::middleware('auth:sanctum')->group(function () {
-            Route::post('/create-intent', [PaymentController::class, 'createPaymentIntent']);
-            Route::post('/process', [PaymentController::class, 'processPayment']);
+            Route::post('/payment-intent', [PaymentController::class, 'createPaymentIntent']);
+            Route::post('/process-payment', [PaymentController::class, 'processPayment']);
             Route::get('/{paymentId}', [PaymentController::class, 'getPaymentDetails']);
         });
     });
