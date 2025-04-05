@@ -9,7 +9,7 @@ export const AuthContext = createContext();
 const initialState = {
   user: null,
   isAuthenticated: false,
-  loading: false,
+  loading: true, // Start with loading true to prevent flash of unauthenticated content
   error: null
 };
 
@@ -93,9 +93,11 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('auth_token');
+      const refreshToken = localStorage.getItem('refresh_token');
       const userData = localStorage.getItem('user');
       
-      if (!token) {
+      if (!token && !refreshToken) {
+        dispatch({ type: AUTH_ACTIONS.SET_USER, payload: null });
         return;
       }
       
@@ -118,10 +120,35 @@ export const AuthProvider = ({ children }) => {
           payload: currentUser
         });
       } catch (error) {
-        // Token is invalid, clear localStorage
+        console.error('Error verifying token:', error);
+        
+        // Try to refresh the token if we have a refresh token
+        if (refreshToken) {
+          try {
+            const response = await AuthService.refreshToken(refreshToken);
+            
+            if (response && response.data) {
+              // Store new tokens
+              localStorage.setItem('auth_token', response.data.tokens.accessToken);
+              localStorage.setItem('refresh_token', response.data.tokens.refreshToken);
+              localStorage.setItem('user', JSON.stringify(response.data.user));
+              
+              dispatch({
+                type: AUTH_ACTIONS.SET_USER,
+                payload: response.data.user
+              });
+              return;
+            }
+          } catch (refreshError) {
+            console.error('Error refreshing token:', refreshError);
+          }
+        }
+        
+        // If refreshing failed or there's no refresh token, clear localStorage
         localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
-        b
+        
         dispatch({
           type: AUTH_ACTIONS.LOGOUT
         });
@@ -150,7 +177,7 @@ export const AuthProvider = ({ children }) => {
       
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: response.user
+        payload: response.data.user
       });
       
       // Sync local cart with API after login
@@ -173,13 +200,15 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await AuthService.register(userData);
+      
       // Store token and user data in localStorage
-      localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('auth_token', response.data.tokens.accessToken);
+      localStorage.setItem('refresh_token', response.data.tokens.refreshToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: response.user
+        payload: response.data.user
       });
       
       // Sync local cart with API after registration
@@ -207,9 +236,12 @@ export const AuthProvider = ({ children }) => {
     } finally {
       // Clear localStorage and state regardless of API response
       localStorage.removeItem('auth_token');
+      localStorage.removeItem('refresh_token');
       localStorage.removeItem('user');
       
       dispatch({ type: AUTH_ACTIONS.LOGOUT });
+      
+      return { success: true };
     }
   };
   
@@ -236,4 +268,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};  
+};

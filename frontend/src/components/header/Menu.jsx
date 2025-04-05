@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 const Menu = ({ open, onClose }) => {
   const menuRef = useRef(null);
   const [openCollections, setOpenCollections] = useState({});
-  const { logout } = useAuth();
+  const { logout, isAuthenticated, user, loading } = useAuth();
   const navigate = useNavigate();
 
   // Static collection data
@@ -125,11 +125,8 @@ const Menu = ({ open, onClose }) => {
     onClose();
     try {
       const logoutResponse = await logout();
-      if (logoutResponse.success) {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user");
+      if (logoutResponse && logoutResponse.success) {
         navigate("/account/login");
-        
       }
     } catch (error) {
       console.error("Logout error:", error);
@@ -139,11 +136,35 @@ const Menu = ({ open, onClose }) => {
   return (
     <StyledMenu ref={menuRef} open={open}>
       <StyledHeader>
-        <span>القائمة</span>
+        <span>القائمة</span>
         <CloseButton onClick={onClose}>
           <XMarkIcon width={24} height={24} />
         </CloseButton>
       </StyledHeader>
+
+      {/* User Profile Section - Only shown when authenticated */}
+      {isAuthenticated && user && (
+        <UserProfileSection>
+          <UserAvatar>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="size-9"
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </UserAvatar>
+          <UserInfo>
+            <UserName>{user.name}</UserName>
+            <UserEmail>{user.email}</UserEmail>
+          </UserInfo>
+        </UserProfileSection>
+      )}
 
       <StyledContent>
         <StyledCategories>
@@ -169,25 +190,178 @@ const Menu = ({ open, onClose }) => {
           ))}
         </StyledCategories>
 
-        {/* <MenuDivider /> */}
+        <MenuDivider />
 
         <StyledLinks>
+          {/* Account related links */}
+          {isAuthenticated ? (
+            <>
+              <MenuItem>
+                <Link to="/account/profile" onClick={onClose}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <p>الملف الشخصي</p>
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/account/orders" onClick={onClose}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  <p>طلباتي</p>
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/account/addresses" onClick={onClose}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <p>العناوين</p>
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <span onClick={handleLogout}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <p>تسجيل الخروج</p>
+                </span>
+              </MenuItem>
+            </>
+          ) : (
+            <>
+              <MenuItem>
+                <Link to="/account/login" onClick={onClose}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <p>تسجيل الدخول</p>
+                </Link>
+              </MenuItem>
+              <MenuItem>
+                <Link to="/account/register" onClick={onClose}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                    />
+                  </svg>
+                  <p>إنشاء حساب</p>
+                </Link>
+              </MenuItem>
+            </>
+          )}
+
+          {/* Support section links */}
+          <MenuDivider />
+          <MenuSectionTitle>الدعم والمساعدة</MenuSectionTitle>
           <MenuItem>
-            <span onClick={handleLogout}>
+            <Link to="/faq" onClick={onClose}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
+                fill="none"
                 viewBox="0 0 24 24"
-                fill="currentColor"
-                className="size-10"
+                stroke="currentColor"
+                className="size-6"
               >
                 <path
-                  fillRule="evenodd"
-                  d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
-                  clipRule="evenodd"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p>تسجيل الخروج</p>
-            </span>
+              <p>الأسئلة الشائعة</p>
+            </Link>
+          </MenuItem>
+          <MenuItem>
+            <Link to="/contact" onClick={onClose}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+              <p>اتصل بنا</p>
+            </Link>
           </MenuItem>
         </StyledLinks>
       </StyledContent>
@@ -197,6 +371,7 @@ const Menu = ({ open, onClose }) => {
 
 export default Menu;
 
+// Styled Components
 const StyledMenu = styled.div`
   position: fixed;
   top: 0;
@@ -226,13 +401,6 @@ const StyledHeader = styled.div`
   }
 `;
 
-const StyledLogo = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #333;
-`;
-
 const CloseButton = styled.button`
   background: none;
   border: none;
@@ -249,6 +417,69 @@ const CloseButton = styled.button`
   &:hover {
     background-color: #f5f5f5;
     color: #333;
+  }
+`;
+
+// User Profile Section
+const UserProfileSection = styled.div`
+  padding: 1.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background-color: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+`;
+
+const UserAvatar = styled.div`
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--neutral-400);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  flex-shrink: 0;
+`;
+
+const UserInfo = styled.div`
+  flex: 1;
+  overflow: hidden;
+`;
+
+const UserName = styled.h3`
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--neutral-800);
+  /* margin-bottom: 0.3rem; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const UserEmail = styled.p`
+  font-size: var(--text-sm);
+  color: var(--neutral-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const UserActionButton = styled.button`
+  padding: 0.6rem 1.2rem;
+  background-color: var(--neutral-200);
+  border: none;
+  border-radius: 0.3rem;
+  color: var(--neutral-800);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--neutral-300);
   }
 `;
 
@@ -344,6 +575,14 @@ const MenuDivider = styled.div`
   margin: 20px 15px;
 `;
 
+const MenuSectionTitle = styled.h3`
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--neutral-700);
+  padding: 0 30px;
+  margin-bottom: 15px;
+`;
+
 const StyledLinks = styled.ul`
   list-style: none;
   padding: 0;
@@ -353,6 +592,7 @@ const StyledLinks = styled.ul`
 const MenuItem = styled.li`
   margin: 5px 0;
 
+  a,
   span {
     display: flex;
     align-items: center;
@@ -362,32 +602,11 @@ const MenuItem = styled.li`
     text-decoration: none;
     font-size: 16px;
     transition: all 0.2s ease;
+    cursor: pointer;
 
     &:hover {
       color: #333;
       background-color: #f9f9f9;
     }
-  }
-`;
-
-const StyledFooter = styled.div`
-  padding: 20px 30px;
-  border-top: 1px solid #f0f0f0;
-`;
-
-const SocialLinks = styled.div`
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-`;
-
-const SocialLink = styled.a`
-  color: #888;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: #333;
   }
 `;

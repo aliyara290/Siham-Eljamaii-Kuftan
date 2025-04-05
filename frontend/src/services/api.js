@@ -1,6 +1,24 @@
 // src/services/api.js
 import axios from "axios";
 
+// Track if we're currently refreshing a token
+let isRefreshing = false;
+// Queue of failed requests to retry after token refresh
+let failedQueue = [];
+
+// Process the failed queue requests with the new token
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  
+  failedQueue = [];
+};
+
 // Create an Axios instance with default configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
@@ -14,7 +32,6 @@ const api = axios.create({
 // Request interceptor - runs before each request
 api.interceptors.request.use(
   (config) => {
-    ``;
     // Get the token from localStorage
     const token = localStorage.getItem("auth_token");
 
@@ -31,21 +48,100 @@ api.interceptors.request.use(
 );
 
 // Response interceptor - runs after each response
-// Enhanced error handling
 api.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    // Handle specific error codes
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // If the error is 401 and we haven't tried to refresh the token yet
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If we're already refreshing, add this request to the queue
+        return new Promise(function(resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(token => {
+            originalRequest.headers['Authorization'] = 'Bearer ' + token;
+            return api(originalRequest);
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      // Get the refresh token from localStorage
+      const refreshToken = localStorage.getItem("refresh_token");
+      
+      if (!refreshToken) {
+        // No refresh token available, redirect to login
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user");
+        
+        if (!window.location.pathname.includes("/account/login")) {
+          window.location.href = "/account/login";
+        }
+        
+        return Promise.reject({
+          message: "Authentication required",
+          status: 401
+        });
+      }
+
+      try {
+        // Try to refresh the token
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/v1/auth/refresh`,
+          { refresh_token: refreshToken },
+          {
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json' 
+            }
+          }
+        );
+        
+        const { accessToken, refreshToken: newRefreshToken } = response.data.tokens;
+        
+        // Store new tokens
+        localStorage.setItem("auth_token", accessToken);
+        localStorage.setItem("refresh_token", newRefreshToken);
+        
+        // Update authorization header for the original request
+        originalRequest.headers['Authorization'] = 'Bearer ' + accessToken;
+        
+        // Process requests in the queue
+        processQueue(null, accessToken);
+        
+        return api(originalRequest);
+      } catch (err) {
+        // Refresh token failed, clear auth data
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user");
+        
+        // Process failed queue
+        processQueue(err, null);
+        
+        // Redirect to login
+        if (!window.location.pathname.includes("/account/login")) {
+          window.location.href = "/account/login";
+        }
+        
+        return Promise.reject({
+          message: "Authentication expired. Please login again.",
+          status: 401
+        });
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    // Handle other specific error codes
     if (error.response) {
       switch (error.response.status) {
-        case 401:
-          // Authentication error
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("user");
-          if (!window.location.pathname.includes("/account/login")) {
-            window.location.href = "/account/login";
-          }
-          break;
         case 403:
           // Forbidden - user doesn't have permission
           console.error("Permission denied");
@@ -76,7 +172,8 @@ export const AuthService = {
   login: (credentials) => api.post("/v1/auth/login", credentials),
   register: (userData) => api.post("/v1/auth/register", userData),
   logout: () => api.post("/v1/auth/logout"),
-  getUser: () => api.get("/user"), // This matches your sanctum route
+  getUser: () => api.get("/v1/user"), // You might need to adjust this to match your API endpoint
+  refreshToken: (refreshToken) => api.post("/v1/auth/refresh", { refresh_token: refreshToken }),
   forgotPassword: (email) => api.post("/v1/auth/forgot-password", { email }),
   resetPassword: (data) => api.post("/v1/auth/reset-password", data),
 };

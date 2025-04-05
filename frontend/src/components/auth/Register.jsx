@@ -15,20 +15,22 @@ const Register = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { register, isAuthenticated, error, clearError } = useAuth();
+  const { register, isAuthenticated, error, clearError, loading } = useAuth();
   const navigate = useNavigate();
   
   // If user is already authenticated, redirect to homepage
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
       navigate("/");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, loading]);
   
   // Clear auth errors when component unmounts
   useEffect(() => {
     return () => {
-      clearError();
+      if (clearError) {
+        clearError();
+      }
     };
   }, [clearError]);
   
@@ -90,6 +92,7 @@ const Register = () => {
       
       if (result.success) {
         // Redirect handled by useEffect
+        navigate("/");
       } else if (result.error && result.error.errors) {
         // Handle validation errors from API
         const apiErrors = {};
@@ -106,6 +109,15 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
+
+  // If page is still loading auth state, show loading indicator
+  if (loading) {
+    return (
+      <StyledAuthContent>
+        <LoadingMessage>Loading...</LoadingMessage>
+      </StyledAuthContent>
+    );
+  }
   
   return (
     <StyledAuthContent>
@@ -186,7 +198,7 @@ const Register = () => {
 
 export default Register;
 
-// Styled Components (reusing existing styles)
+// Styled Components
 const StyledAuthContent = styled.div`
   width: 100%;
   background-color: var(--neutral-100);
@@ -196,7 +208,12 @@ const StyledAuthContent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  
+`;
+
+const LoadingMessage = styled.div`
+  font-size: var(--text-lg);
+  color: var(--neutral-600);
+  padding: 2rem;
 `;
 
 const StyledFormContent = styled.form`

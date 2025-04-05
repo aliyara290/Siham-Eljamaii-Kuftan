@@ -13,23 +13,19 @@ const Login = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { login, isAuthenticated, error, clearError } = useAuth();
+  const { login, isAuthenticated, error, clearError, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Get the redirect path from location state or default to home
+  const from = location.state?.from?.pathname || "/";
   
   // If user is already authenticated, redirect to the previous page or homepage
   useEffect(() => {
-    let isMounted = true;
-    
-    if (isAuthenticated) {
-      navigate("/");
+    if (isAuthenticated && !loading) {
+      navigate(from, { replace: true });
     }
-    
-    return () => {
-      isMounted = false;
-    };
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from, loading]);
   
   // Clear auth errors when component unmounts
   useEffect(() => {
@@ -87,7 +83,7 @@ const Login = () => {
       const result = await login(credentials);
       
       if (result.success) {
-        navigate("/");
+        navigate(from, { replace: true });
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -95,6 +91,15 @@ const Login = () => {
       setIsSubmitting(false);
     }
   };
+  
+  // If page is still loading auth state, show loading indicator
+  if (loading) {
+    return (
+      <StyledAuthContent>
+        <LoadingMessage>Loading...</LoadingMessage>
+      </StyledAuthContent>
+    );
+  }
   
   return (
     <StyledAuthContent>
@@ -162,6 +167,12 @@ const StyledAuthContent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const LoadingMessage = styled.div`
+  font-size: var(--text-lg);
+  color: var(--neutral-600);
+  padding: 2rem;
 `;
 
 const StyledFormContent = styled.form`

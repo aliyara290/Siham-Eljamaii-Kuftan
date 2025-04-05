@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.jsx
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import NotFound from "../pages/NotFound";
 import HomePage from "../pages/home/Home";
 import Layouts from "../layouts/Layouts";
@@ -21,18 +21,37 @@ import CheckoutPage from "../pages/checkout/CheckoutPage";
 import OrderConfirmationPage from "../pages/checkout/OrderConfirmationPage";
 import { useAuth } from "../context/AuthContext";
 
-// Protected route component to ensure user is authenticated
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
+  const location = useLocation();
   
   if (loading) {
-    // Show loading indicator while checking authentication
-    return <div>Loading...</div>;
+
+    return <div className="bg-white fixed top-0 left-0 z-50 w-full h-screen text-black">Loading...</div>;
   }
   
   if (!isAuthenticated) {
     // Redirect to login page if not authenticated
-    return <Navigate to="/account/login" replace />;
+    // Store the current location they were trying to go to
+    return <Navigate to="/account/login" state={{ from: location }} replace />;
+  }
+  
+  return children;
+};
+
+// Route that redirects authenticated users to home
+const AuthRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="bg-white fixed top-0 left-0 z-50 w-full h-screen text-black flex items-center justify-center">
+      <span class="loader"></span>
+    </div>;
+  }
+  
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
   }
   
   return children;
@@ -44,8 +63,6 @@ const AppRoutes = () => {
       <Route path="/" element={<Layouts />}>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/account/login" element={<LoginPage />} />
-        <Route path="/account/register" element={<RegisterPage />} />
         <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/collections" element={<CollectionsPage />} />
         <Route path="/collection/:slug" element={<CollectionPage />} />
@@ -58,9 +75,29 @@ const AppRoutes = () => {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/cart" element={<CartPage />} />
         
+        {/* Authentication routes */}
+        <Route path="/account/login" element={
+          <AuthRoute>
+            <LoginPage />
+          </AuthRoute>
+        } />
+        <Route path="/account/register" element={
+          <AuthRoute>
+            <RegisterPage />
+          </AuthRoute>
+        } />
+        
         {/* Routes that require a completed cart */}
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
+        <Route path="/checkout" element={
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/order-confirmation" element={
+          <ProtectedRoute>
+            <OrderConfirmationPage />
+          </ProtectedRoute>
+        } />
         
         {/* Protected routes (require authentication) */}
         <Route path="/account/profile" element={
