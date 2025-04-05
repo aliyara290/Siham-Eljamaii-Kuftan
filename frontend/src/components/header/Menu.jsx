@@ -1,11 +1,14 @@
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useAuth } from "../../context/AuthContext";
 
 const Menu = ({ open, onClose }) => {
   const menuRef = useRef(null);
   const [openCollections, setOpenCollections] = useState({});
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   // Static collection data
   const collections = [
@@ -19,21 +22,21 @@ const Menu = ({ open, onClose }) => {
           id: "moroccan-kaftan",
           name_ar: "قفطان مغربي",
           name_en: "Moroccan Kaftan",
-          icon: "moroccan-kaftan"
+          icon: "moroccan-kaftan",
         },
         {
           id: "modern-kaftan",
           name_ar: "قفطان عصري",
           name_en: "Modern Kaftan",
-          icon: "modern-kaftan"
+          icon: "modern-kaftan",
         },
         {
           id: "traditional-kaftan",
           name_ar: "قفطان تقليدي",
           name_en: "Traditional Kaftan",
-          icon: "traditional-kaftan"
-        }
-      ]
+          icon: "traditional-kaftan",
+        },
+      ],
     },
     {
       id: "jelaba",
@@ -45,21 +48,21 @@ const Menu = ({ open, onClose }) => {
           id: "embroidered-jelaba",
           name_ar: "جلابة مطرزة",
           name_en: "Embroidered Jelaba",
-          icon: "embroidered-jelaba"
+          icon: "embroidered-jelaba",
         },
         {
           id: "modern-jelaba",
           name_ar: "جلابة عصرية",
           name_en: "Modern Jelaba",
-          icon: "modern-jelaba"
+          icon: "modern-jelaba",
         },
         {
           id: "traditional-jelaba",
           name_ar: "جلابة تقليدية",
           name_en: "Traditional Jelaba",
-          icon: "traditional-jelaba"
-        }
-      ]
+          icon: "traditional-jelaba",
+        },
+      ],
     },
     {
       id: "accessories",
@@ -71,34 +74,34 @@ const Menu = ({ open, onClose }) => {
           id: "headwear",
           name_ar: "غطاء الرأس",
           name_en: "Headwear",
-          icon: "headwear"
+          icon: "headwear",
         },
         {
           id: "belts",
           name_ar: "أحزمة",
           name_en: "Belts",
-          icon: "belt"
+          icon: "belt",
         },
         {
           id: "shoes",
           name_ar: "أحذية",
           name_en: "Shoes",
-          icon: "shoes"
+          icon: "shoes",
         },
         {
           id: "jewelry",
           name_ar: "مجوهرات",
           name_en: "Jewelry",
-          icon: "jewelry"
-        }
-      ]
-    }
+          icon: "jewelry",
+        },
+      ],
+    },
   ];
 
   const toggleCollection = (collectionId) => {
-    setOpenCollections(prev => ({
+    setOpenCollections((prev) => ({
       ...prev,
-      [collectionId]: !prev[collectionId]
+      [collectionId]: !prev[collectionId],
     }));
   };
 
@@ -118,85 +121,95 @@ const Menu = ({ open, onClose }) => {
     };
   }, [open, onClose]);
 
-  return (
-    
-      <StyledMenu ref={menuRef} open={open}>
-        <StyledHeader>
-         <span>القائمة</span>
-          <CloseButton onClick={onClose}>
-            <XMarkIcon width={24} height={24} />
-          </CloseButton>
-        </StyledHeader>
-
-        <StyledContent>
-          <StyledCategories>
-            {collections.map(collection => (
-              <CategoryItem key={collection.id}>
-                <CategoryHeader onClick={() => toggleCollection(collection.id)}>
-                  <CategoryName>{collection.nameArr}</CategoryName>
-                  <CategoryIcon isOpen={openCollections[collection.id]}>
-                    <ChevronDownIcon width={18} height={18} />
-                  </CategoryIcon>
-                </CategoryHeader>
-                
-                <SubcategoryList isOpen={openCollections[collection.id]}>
-                  {collection.children.map(child => (
-                    <SubcategoryItem key={child.id}>
-                      <Link to={`/collection/${child.id}`} onClick={onClose}>
-                        {child.name_ar}
-                      </Link>
-                    </SubcategoryItem>
-                  ))}
-                </SubcategoryList>
-              </CategoryItem>
-            ))}
-          </StyledCategories>
-          
-          {/* <MenuDivider /> */}
-          
-          {/* <StyledLinks>
-            <MenuItem>
-              <Link to="/account/login" onClick={onClose}>الحساب</Link>
-            </MenuItem>
-            <MenuItem>
-              <Link to="/faq" onClick={onClose}>الأسئلة الشائعة</Link>
-            </MenuItem>
-            <MenuItem>
-              <Link to="/shipping" onClick={onClose}>الشحن</Link>
-            </MenuItem>
-            <MenuItem>
-              <Link to="/contact" onClick={onClose}>إتصل بنا</Link>
-            </MenuItem>
-          </StyledLinks> */}
-        </StyledContent>
+  const handleLogout = async () => {
+    onClose();
+    try {
+      const logoutResponse = await logout();
+      if (logoutResponse.success) {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user");
+        navigate("/account/login");
         
-        <StyledFooter>
-          <SocialLinks>
-            <SocialLink href="#" target="_blank" rel="noopener noreferrer">Instagram</SocialLink>
-            <SocialLink href="#" target="_blank" rel="noopener noreferrer">Facebook</SocialLink>
-            <SocialLink href="#" target="_blank" rel="noopener noreferrer">Twitter</SocialLink>
-          </SocialLinks>
-        </StyledFooter>
-      </StyledMenu>
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  return (
+    <StyledMenu ref={menuRef} open={open}>
+      <StyledHeader>
+        <span>القائمة</span>
+        <CloseButton onClick={onClose}>
+          <XMarkIcon width={24} height={24} />
+        </CloseButton>
+      </StyledHeader>
+
+      <StyledContent>
+        <StyledCategories>
+          {collections.map((collection) => (
+            <CategoryItem key={collection.id}>
+              <CategoryHeader onClick={() => toggleCollection(collection.id)}>
+                <CategoryName>{collection.nameArr}</CategoryName>
+                <CategoryIcon isOpen={openCollections[collection.id]}>
+                  <ChevronDownIcon width={18} height={18} />
+                </CategoryIcon>
+              </CategoryHeader>
+
+              <SubcategoryList isOpen={openCollections[collection.id]}>
+                {collection.children.map((child) => (
+                  <SubcategoryItem key={child.id}>
+                    <Link to={`/collection/${child.id}`} onClick={onClose}>
+                      {child.name_ar}
+                    </Link>
+                  </SubcategoryItem>
+                ))}
+              </SubcategoryList>
+            </CategoryItem>
+          ))}
+        </StyledCategories>
+
+        {/* <MenuDivider /> */}
+
+        <StyledLinks>
+          <MenuItem>
+            <span onClick={handleLogout}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-10"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v13.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5V15a.75.75 0 0 1 1.5 0v3.75a3 3 0 0 1-3 3h-6a3 3 0 0 1-3-3V5.25a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3V9A.75.75 0 0 1 15 9V5.25a1.5 1.5 0 0 0-1.5-1.5h-6Zm10.72 4.72a.75.75 0 0 1 1.06 0l3 3a.75.75 0 0 1 0 1.06l-3 3a.75.75 0 1 1-1.06-1.06l1.72-1.72H9a.75.75 0 0 1 0-1.5h10.94l-1.72-1.72a.75.75 0 0 1 0-1.06Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <p>تسجيل الخروج</p>
+            </span>
+          </MenuItem>
+        </StyledLinks>
+      </StyledContent>
+    </StyledMenu>
   );
 };
 
 export default Menu;
 
-
 const StyledMenu = styled.div`
   position: fixed;
   top: 0;
-  right: ${({ open }) => (open ? '0' : '-100%')};
+  right: ${({ open }) => (open ? "0" : "-100%")};
   width: 420px;
   height: 100vh;
   background-color: #fff;
-  transition: right 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+  transition: right 0.4s cubic-bezier(0.77, 0.2, 0.05, 1);
   display: flex;
   flex-direction: column;
   box-shadow: -4px 0 25px rgba(0, 0, 0, 0.1);
   z-index: 20000;
-  
+
   @media (max-width: 520px) {
     width: 90vw;
   }
@@ -232,7 +245,7 @@ const CloseButton = styled.button`
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background-color: #f5f5f5;
     color: #333;
@@ -243,15 +256,18 @@ const StyledContent = styled.div`
   flex: 1;
   overflow-y: auto;
   padding: 20px 0;
-  
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
   &::-webkit-scrollbar {
     width: 5px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background-color: #ddd;
     border-radius: 10px;
@@ -275,7 +291,7 @@ const CategoryHeader = styled.div`
   padding: 15px 30px;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background-color: #f9f9f9;
   }
@@ -289,7 +305,7 @@ const CategoryName = styled.span`
 
 const CategoryIcon = styled.div`
   transition: transform 0.3s ease;
-  transform: ${({ isOpen }) => isOpen ? 'rotate(180deg)' : 'rotate(0)'};
+  transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0)")};
   color: #888;
 `;
 
@@ -297,7 +313,7 @@ const SubcategoryList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: ${({ isOpen }) => isOpen ? '500px' : '0'};
+  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
   overflow: hidden;
   transition: max-height 0.4s ease;
   background-color: #f9f9f9;
@@ -305,7 +321,7 @@ const SubcategoryList = styled.ul`
 
 const SubcategoryItem = styled.li`
   margin: 5px 0;
-  
+
   a {
     display: block;
     padding: 12px 30px 12px 50px;
@@ -314,7 +330,7 @@ const SubcategoryItem = styled.li`
     font-size: 15px;
     transition: all 0.2s ease;
     position: relative;
-    
+
     &:hover {
       color: #333;
       background-color: #f1f1f1;
@@ -336,15 +352,17 @@ const StyledLinks = styled.ul`
 
 const MenuItem = styled.li`
   margin: 5px 0;
-  
-  a {
-    display: block;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     padding: 12px 30px;
     color: #666;
     text-decoration: none;
     font-size: 16px;
     transition: all 0.2s ease;
-    
+
     &:hover {
       color: #333;
       background-color: #f9f9f9;
@@ -368,7 +386,7 @@ const SocialLink = styled.a`
   text-decoration: none;
   font-size: 14px;
   transition: color 0.2s ease;
-  
+
   &:hover {
     color: #333;
   }

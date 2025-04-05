@@ -144,8 +144,9 @@ export const AuthProvider = ({ children }) => {
       const response = await AuthService.login(credentials);
       
       // Store token and user data in localStorage
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('auth_token', response.data.tokens.accessToken);
+      localStorage.setItem('refresh_token', response.data.tokens.refreshToken);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
@@ -172,10 +173,9 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await AuthService.register(userData);
-      
       // Store token and user data in localStorage
-      localStorage.setItem('auth_token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,

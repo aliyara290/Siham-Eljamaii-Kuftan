@@ -17,21 +17,19 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Get the redirect path from location state or default to homepage
-  const from = location.state?.from?.pathname || "/";
   
   // If user is already authenticated, redirect to the previous page or homepage
   useEffect(() => {
     let isMounted = true;
     
-    if (isMounted && isAuthenticated) {
-      navigate(from, { replace: true });
+    if (isAuthenticated) {
+      navigate("/");
     }
     
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, navigate]);
   
   // Clear auth errors when component unmounts
   useEffect(() => {
@@ -82,14 +80,14 @@ const Login = () => {
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
     
     try {
       const result = await login(credentials);
       
       if (result.success) {
-        // Redirect handled by useEffect
+        navigate("/");
       }
     } catch (err) {
       console.error('Login error:', err);

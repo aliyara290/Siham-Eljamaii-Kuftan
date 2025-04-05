@@ -115,9 +115,9 @@ export const CartService = {
 export const CheckoutService = {
   // Checkout and order related services
   createPaymentIntent: (cartData) =>
-    api.post("/checkout/payment-intent", cartData),
+    api.post("/payments/payment-intent", cartData),
   processPayment: (paymentData) =>
-    api.post("/checkout/process-payment", paymentData),
+    api.post("/payments/process-payment", paymentData),
   placeOrder: (orderData) => api.post("/orders", orderData),
   getShippingMethods: () => api.get("/checkout/shipping-methods"),
   applyCoupon: (code) => api.post("/checkout/apply-coupon", { code }),
