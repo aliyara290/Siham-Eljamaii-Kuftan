@@ -96,7 +96,7 @@ const Login = () => {
   if (loading) {
     return (
       <StyledAuthContent>
-        <LoadingMessage>Loading...</LoadingMessage>
+        <LoadingMessage>جاري التحميل...</LoadingMessage>
       </StyledAuthContent>
     );
   }

@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const Register = () => {
+  // Form state
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -15,6 +16,7 @@ const Register = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   
+  // Get auth context
   const { register, isAuthenticated, error, clearError, loading } = useAuth();
   const navigate = useNavigate();
   
@@ -34,6 +36,7 @@ const Register = () => {
     };
   }, [clearError]);
   
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
@@ -51,6 +54,7 @@ const Register = () => {
     }
   };
   
+  // Form validation
   const validateForm = () => {
     const errors = {};
     
@@ -78,6 +82,7 @@ const Register = () => {
     return Object.keys(errors).length === 0;
   };
   
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -88,10 +93,11 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
+      // Call register function from auth context
       const result = await register(userData);
       
       if (result.success) {
-        // Redirect handled by useEffect
+        // Redirect to home page
         navigate("/");
       } else if (result.error && result.error.errors) {
         // Handle validation errors from API
@@ -110,7 +116,7 @@ const Register = () => {
     }
   };
 
-  // If page is still loading auth state, show loading indicator
+  // Show loading indicator while checking auth state
   if (loading) {
     return (
       <StyledAuthContent>

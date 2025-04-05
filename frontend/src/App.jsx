@@ -6,11 +6,11 @@ import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <CartProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <CartProvider>
         <AppRoutes />
-      </AuthProvider>
-    </CartProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
