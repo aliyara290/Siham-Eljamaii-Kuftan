@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from "axios";
 
 // Track if we're currently refreshing a token
@@ -91,6 +90,7 @@ api.interceptors.response.use(
       }
 
       try {
+        console.log('API interceptor: Attempting to refresh token');
         // Try to refresh the token
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL || "http://localhost:8000/api"}/v1/auth/refresh`,
@@ -103,11 +103,21 @@ api.interceptors.response.use(
           }
         );
         
+        console.log('API interceptor: Refresh token response:', response.data);
+        
+        if (!response.data || !response.data.tokens) {
+          throw new Error('Invalid refresh token response');
+        }
+        
         const { accessToken, refreshToken: newRefreshToken } = response.data.tokens;
         
         // Store new tokens
         localStorage.setItem("auth_token", accessToken);
         localStorage.setItem("refresh_token", newRefreshToken);
+        
+        if (response.data.user) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
         
         // Update authorization header for the original request
         originalRequest.headers['Authorization'] = 'Bearer ' + accessToken;
@@ -115,8 +125,10 @@ api.interceptors.response.use(
         // Process requests in the queue
         processQueue(null, accessToken);
         
+        console.log('API interceptor: Token refresh successful, retrying original request');
         return api(originalRequest);
       } catch (err) {
+        console.error('API interceptor: Refresh token failed:', err);
         // Refresh token failed, clear auth data
         localStorage.removeItem("auth_token");
         localStorage.removeItem("refresh_token");

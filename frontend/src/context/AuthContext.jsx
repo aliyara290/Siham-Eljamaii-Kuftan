@@ -92,18 +92,21 @@ export const AuthProvider = ({ children }) => {
   // Check for token and user data in localStorage on initial render
   useEffect(() => {
     const checkAuth = async () => {
+      console.log('Checking authentication...');
       const token = localStorage.getItem('auth_token');
       const refreshToken = localStorage.getItem('refresh_token');
       const userData = localStorage.getItem('user');
       
       if (!token && !refreshToken) {
+        console.log('No tokens found, user is not authenticated');
         dispatch({ type: AUTH_ACTIONS.SET_USER, payload: null });
         return;
       }
       
       try {
+        // If we have user data stored, use it immediately to prevent a flash of unauthenticated content
         if (userData) {
-          // If we have user data stored, use it immediately
+          console.log('Found user data in localStorage, using it temporarily');
           dispatch({
             type: AUTH_ACTIONS.SET_USER,
             payload: JSON.parse(userData)
@@ -111,7 +114,9 @@ export const AuthProvider = ({ children }) => {
         }
         
         // Verify token by fetching current user from API
+        console.log('Fetching current user to verify token...');
         const currentUser = await AuthService.getUser();
+        console.log('Current user data:', currentUser);
         
         // Update user data
         localStorage.setItem('user', JSON.stringify(currentUser));
@@ -119,25 +124,43 @@ export const AuthProvider = ({ children }) => {
           type: AUTH_ACTIONS.SET_USER,
           payload: currentUser
         });
+        console.log('Authentication verified successfully');
       } catch (error) {
         console.error('Error verifying token:', error);
         
         // Try to refresh the token if we have a refresh token
         if (refreshToken) {
+          console.log('Attempting to refresh token...');
           try {
             const response = await AuthService.refreshToken(refreshToken);
+            console.log('Refresh token response:', response);
             
-            if (response && response.data) {
+            // Check if the response has the expected structure
+            if (response && response.tokens) {
+              console.log('Token refresh successful, saving new tokens');
               // Store new tokens
-              localStorage.setItem('auth_token', response.data.tokens.accessToken);
-              localStorage.setItem('refresh_token', response.data.tokens.refreshToken);
-              localStorage.setItem('user', JSON.stringify(response.data.user));
+              localStorage.setItem('auth_token', response.tokens.accessToken);
+              localStorage.setItem('refresh_token', response.tokens.refreshToken);
               
-              dispatch({
-                type: AUTH_ACTIONS.SET_USER,
-                payload: response.data.user
-              });
+              if (response.user) {
+                localStorage.setItem('user', JSON.stringify(response.user));
+                dispatch({
+                  type: AUTH_ACTIONS.SET_USER,
+                  payload: response.user
+                });
+              } else {
+                // If user data isn't included in the refresh response, fetch it
+                console.log('Fetching user data after token refresh');
+                const userData = await AuthService.getUser();
+                localStorage.setItem('user', JSON.stringify(userData));
+                dispatch({
+                  type: AUTH_ACTIONS.SET_USER,
+                  payload: userData
+                });
+              }
               return;
+            } else {
+              console.error('Refresh token response is missing expected data');
             }
           } catch (refreshError) {
             console.error('Error refreshing token:', refreshError);
@@ -145,6 +168,7 @@ export const AuthProvider = ({ children }) => {
         }
         
         // If refreshing failed or there's no refresh token, clear localStorage
+        console.log('Authentication failed, logging out');
         localStorage.removeItem('auth_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user');
@@ -164,35 +188,58 @@ export const AuthProvider = ({ children }) => {
   }, []);
   
   // Login function
-  const login = async (credentials) => {
-    dispatch({ type: AUTH_ACTIONS.LOGIN_REQUEST });
+ // Login function
+const login = async (credentials) => {
+  dispatch({ type: AUTH_ACTIONS.LOGIN_REQUEST });
+  
+  try {
+    const response = await AuthService.login(credentials);
+    console.log('Login response:', response);
     
-    try {
-      const response = await AuthService.login(credentials);
-      
-      // Store token and user data in localStorage
-      localStorage.setItem('auth_token', response.data.tokens.accessToken);
-      localStorage.setItem('refresh_token', response.data.tokens.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      
-      dispatch({
-        type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: response.data.user
-      });
-      
-      // Sync local cart with API after login
-      await syncCartWithApi();
-      
-      return { success: true };
-    } catch (error) {
-      dispatch({
-        type: AUTH_ACTIONS.LOGIN_FAILURE,
-        payload: error.message || 'Login failed. Please check your credentials.'
-      });
-      
-      return { success: false, error };
+    // Check the actual structure of the response
+    if (!response) {
+      throw new Error('No response received from login request');
     }
-  };
+    
+    // Determine the correct structure based on the response
+    const accessToken = response.data?.tokens?.accessToken;
+    const refreshToken = response.data?.tokens?.refreshToken;
+    const user = response.data?.user;
+    
+    if (!accessToken || !refreshToken) {
+      console.error('Missing tokens in the response', response);
+      throw new Error('Authentication failed: Invalid response format');
+    }
+    
+    if (!user) {
+      console.error('Missing user data in the response', response);
+      throw new Error('Authentication failed: User data not found');
+    }
+    
+    // Store token and user data in localStorage
+    localStorage.setItem('auth_token', accessToken);
+    localStorage.setItem('refresh_token', refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
+    
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_SUCCESS,
+      payload: user
+    });
+    
+    // Sync local cart with API after login
+    await syncCartWithApi();
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Login error details:', error);
+    dispatch({
+      type: AUTH_ACTIONS.LOGIN_FAILURE,
+      payload: error.message || 'Login failed. Please check your credentials.'
+    });
+    
+    return { success: false, error };
+  }
+};
   
   // Register function
   const register = async (userData) => {
@@ -200,6 +247,7 @@ export const AuthProvider = ({ children }) => {
     
     try {
       const response = await AuthService.register(userData);
+      console.log('Register response:', response);
       
       // Store token and user data in localStorage
       localStorage.setItem('auth_token', response.data.tokens.accessToken);
@@ -208,7 +256,7 @@ export const AuthProvider = ({ children }) => {
       
       dispatch({
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
-        payload: response.data.user
+        payload: response.user
       });
       
       // Sync local cart with API after registration
@@ -216,6 +264,7 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
+      console.error('Registration error details:', error);
       dispatch({
         type: AUTH_ACTIONS.LOGIN_FAILURE,
         payload: error.message || 'Registration failed. Please try again.'
